@@ -1,0 +1,49 @@
+command_tree
+|
+|/init
+|
+|/char
+--| set
+----| CHR|STR|INT|WIS|DEX|CON [value]
+----| proficiency_bonus [value]
+----| primary_skill [skillname]
+----| AC [value]
+----| class [classname]
+----| race [racename]
+----| spellDC [value]
+----| level [value]
+----| known_spell [name]
+----| spellslots [level] [qty]
+----| name [value]
+----| inv
+------| add [item] [qty]
+------| remove [item] [qty]
+------| equip [item]
+------| 
+--| get
+----| sheet
+----| stats
+----| skills
+----| AC
+----| equipped
+----| inv
+|
+|/lookup
+--| spells [classname] [level]
+--| backgrounds [background name]
+--| feats [classname]
+--| weapons
+--| armor
+--| items
+--| creatures [name]
+--| statblock [creature_name]
+|
+|/roll
+--| initiative [d/adv]
+--| attack [d/adv]
+--| spellcast [spellname | spell ID] [slot_level]
+--| damage [weaponname or spellname]
+--| save [stat] [d/adv]
+--| 
+|
+|/help [command]
