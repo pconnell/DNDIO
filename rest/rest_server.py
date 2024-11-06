@@ -1,6 +1,16 @@
 from flask import Flask, request, Response, send_file
 import logging, base64, jsonpickle, io
 import redis, json, os, hashlib
+from protobufs import (
+    workerChar_pb2,
+    workerChar_pb2_grpc,
+    workerInit_pb2,
+    workerInit_pb2_grpc,
+    workerLookup_pb2,
+    workerLookup_pb2_grpc,
+    workerRoll_pb2,
+    workerRoll_pb2_grpc
+)
 
 REDIS_SERVICE_HOST = os.getenv('REDIS_HOST') or 'localhost'
 REDIS_SERVICE_PORT = os.getenv('REDIS_PORT') or '6379'

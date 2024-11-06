@@ -3,7 +3,8 @@ import subprocess as sub
 import psycopg2 as pg
 #cassandra?
 from google.cloud import storage
-
+from protobufs import workerInit_pb2
+from protobufs import workerChar_pb2_grpc
 
 REDIS_SERVICE_HOST = os.getenv('REDIS_HOST') or 'localhost'
 REDIS_SERVICE_PORT = os.getenv('REDIS_PORT') or '6379'
