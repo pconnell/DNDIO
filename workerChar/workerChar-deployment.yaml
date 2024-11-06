@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: pconnell89/demucs-worker
+        image: pconnell89/workerChar
         resources:
           requests:
             cpu: 2
@@ -23,12 +23,6 @@ spec:
         - name: REDIS_HOST
           value: "redis"
         - name: REDIS_PORT
-          value: "6379"
-        - name: MINIO_HOST
-          value: "minio-proj.minio-ns.svc.cluster.local:9000"
-        - name: MINIO_USER
-          value: "rootuser"
-        - name: MINIO_PASS
-          value: "rootpass123"        
+          value: "6379"      
         - name: GET_HOSTS_FROM
           value: dns

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: workerInit
-        image: pconnell89/demucs-worker #update
+        image: pconnell89/workerInit #update
         resources:
           requests:
             cpu: 2 #update

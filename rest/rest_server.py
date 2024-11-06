@@ -16,6 +16,16 @@ r = redis.Redis(
     host=REDIS_SERVICE_HOST,
     port=REDIS_SERVICE_PORT
 )
+
+def lookup_response(args):
+    pass
+
+def roll_response(args):
+    pass
+
+def char_response(args):
+    pass
+
 @app.route('/apiv1/roll',methods=['GET'])
 def roll():
     pass
@@ -29,16 +39,7 @@ def lookup():
     pass
 
 @app.route('/apiv1/remove',methods=['GET'])
-def remove_track():
-    pass
-
-def lookup_response():
-    pass
-
-def roll_response():
-    pass
-
-def char_response():
+def remove_char():
     pass
 
 @app.route('/apiv1/respond',methods=['GET'])

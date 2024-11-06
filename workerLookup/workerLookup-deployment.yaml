@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: workerLookup
-        image: pconnell89/demucs-worker #update
+        image: pconnell89/workerLookup #update
         resources:
           requests:
             cpu: 2 #update
