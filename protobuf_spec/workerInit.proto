@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service add {
+	rpc add(addMsg) returns (addReply) {}
+}
+
+message addMsg {
+	int32 a = 1;
+	int32 b = 2;
+}
+
+message addReply {
+	int32 sum = 1;
+	string user = 2;
+	string channel = 3;
+}

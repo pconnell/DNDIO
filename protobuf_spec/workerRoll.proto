@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+service rollAttack {
+	rpc rollAttack(rollAttackmsg) returns (rollReply) {}
+}
+
+service rollInitiative {
+	rpc rollInitiative(rollIniativemsg) returns (rollReply) {}
+}
+
+service rollSpellcast {
+	rpc rollSpellcast(rollSpellcastmsg) returns (rollReply) {}
+}
+
+service rollDamage {
+	rpc rollDamage(rollDamagemsg) returns (rollReply) {}
+}
+
+service rollSave {
+	rpc rollSave(rollSavemsg) returns (rollReply) {}
+}
+
+message rollReply{
+	repeated int32 dice = 1;
+	repeated int32 mod_dice = 2;
+	int32 roll_sum = 3;
+	string user = 4;
+	string channel = 5;
+}
+
+message rollAttackmsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string user = 3;
+	string channel = 4;
+}
+
+message rollIniativemsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string user = 3;
+	string channel = 4;
+}
+
+message rollSpellcastmsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string user = 3;
+	string channel = 4;
+}
+
+message rollDamagemsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string user = 3;
+	string channel = 4;
+}
+
+message rollSavemsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string user = 3;
+	string channel = 4;
+}

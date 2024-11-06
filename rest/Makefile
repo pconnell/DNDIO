@@ -2,27 +2,9 @@ VERSION=v1
 DOCKERUSER=pconnell89
 
 build:
-	docker build -f Dockerfile -t demucs-worker .
+	docker build -f Dockerfile -t rest-svr
 push:
-	docker tag demucs-worker $(DOCKERUSER)/demucs-worker:$(VERSION)
-	docker push $(DOCKERUSER)/demucs-worker:$(VERSION)
-	docker tag demucs-worker $(DOCKERUSER)/demucs-worker:latest
-	docker push $(DOCKERUSER)/demucs-worker:latest
-
-gkebuild:
-	docker build -f gke-Dockerfile -t gke-demucs-worker2 .
-
-gkepush:
-	docker tag gke-demucs-worker2 $(DOCKERUSER)/gke-demucs-worker2:$(VERSION)
-	docker push $(DOCKERUSER)/gke-demucs-worker2:$(VERSION)
-	docker tag gke-demucs-worker2 $(DOCKERUSER)/gke-demucs-worker2:latest
-	docker push $(DOCKERUSER)/gke-demucs-worker2:latest
-run:
-	docker run --rm -i \
-		--name=demucs \
-		-v $(current-dir)input:/data/input \
-		-v $(current-dir)output:/data/output \
-		-v $(current-dir)models:/data/models \
-		xserrat/facebook-demucs:latest \
-		"python3 -m demucs.separate --out /data/output \
-		/data/input/$(track)"
+	docker tag rest-svr $(DOCKERUSER)/rest-svr:$(VERSION)
+	docker push $(DOCKERUSER)/cass-db:$(VERSION)
+	docker tag rest-svr$(DOCKERUSER)/rest-svr:latest
+	docker push $(DOCKERUSER)/rest-svr:latest

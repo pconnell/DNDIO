@@ -24,7 +24,8 @@ command_tree
 ------| add [item] [qty]
 ------| remove [item] [qty]
 ------| equip [item]
-------| 
+----| feats
+------| add [name]
 --| get
 ----| baseState?
 ----| currState?
@@ -37,6 +38,7 @@ command_tree
 ----|
 --| feats
 ----| add [name]
+--| init
 |
 |/lookup
 --| spells [classname] [level]

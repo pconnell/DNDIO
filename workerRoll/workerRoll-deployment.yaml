@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: pconnell89/workerRoll #update
+        image: pconnell89/workerRoll
         resources:
           requests:
             cpu: 2

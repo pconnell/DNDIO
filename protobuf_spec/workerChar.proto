@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+service setChar {
+	rpc setChar(setcharmsg) returns (setcharreply) {}
+}
+
+service getChar {
+	rpc getChar(setcharmsg) returns (getcharreply) {}
+}
+
+message setcharmsg {
+	string main_cmd = 1;
+	string child_cmd = 2;
+	string value = 3;
+}
+
+message setcharreply {
+	string response = 1;
+}
+
+message getcharmsg {
+	string main_cmd = 1;
+	string value = 3;
+}
+
+message getcharreply {
+	string response = 1;
+}
