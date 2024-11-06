@@ -17,7 +17,7 @@ For Class CSCI 5253 (DataCenter Scale Computing), this project team seeks to dev
 
     * Requesting Dice Roll services
 
-    * Looking up important game information and rules
+    * Looking up important game information
 
 Within Discord, we will build a bot similar to [Dice Maiden](https://discord.com/application-directory/572301609305112596), but with additional features and commands that simplify the rolling of dice, integrating character information to do so and save players' time during campaigns.
 
@@ -25,15 +25,17 @@ Within Discord, we will build a bot similar to [Dice Maiden](https://discord.com
 
 To develop and deliver this service, the project team plans to leverage the following technologies and systems:
 
-* Database implementation in MySQL (for campaign/character information, and for game information/rules)
+* Database implementation in Cassandra (for campaign/character information, and for game information/rules)
 
-* Message queueing and handling (e.g. RabbitMQ for service scalability across multiple Discord servers)
+* Message queueing and handling (e.g. Redis for message queueing from API server to worker handlers)
 
-* Discord API/Bot Integration (receive and relay user requests to cloud service handlers)
+* Discord API/Bot Integration (receive and relay user requests to cloud REST API)
 
-* Virtualization/Containerization for dice roll, character interface, and game information/rule lookup services
+* Virtualization/Containerization (docker/k8s on GKE) for dice roll, character interface, and game information/rule lookup services
 
-* API and/or protocol buffer implementation for relaying user messages and commands from Discord Servers to services in the cloud
+* API with protocol buffer implementation for relaying user messages and commands from Discord Servers to REST API and backend cloud services
+
+INSERT IMAGE HERE OF SERVICE ARCHITECTURE
 
 ## Scope
 
@@ -55,13 +57,29 @@ As a proof-of-concept project, this project will not provide or automate 100% of
 
 ## General languages/tech:
 
-* MySQL & PhpMyAdmin for DBMS
+* Cassandra for DBMS
 
-* Docker / Ubuntu Linux for cloud service virtulization and containers
+* Docker/k8s containers for cloud service virtulization and containers
 
-* Python for API devleopment
+    * Scaling of workers based on client demand
 
-* Protobufs for message relaying and handling between services and users
+* Python for:
+    
+    * REST API devleopment
+
+    * Worker scaling based on request volume
+
+* Message queueing and handling in Redis:
+
+    * character interaction queue
+
+    * roll request queue
+
+    * lookup request queue
+
+    * character sheet builder queue
+
+* Protobufs for message relaying and handling messages from Discord Bot to API server
 
 * Others as needed
 
@@ -113,4 +131,16 @@ As a proof-of-concept project, this project will not provide or automate 100% of
 
 * Successfully enqueue and dequeue requests and responses between users and cloud services
 
-* Successfully store, read, and update character and campaign information to/from cloud services
+* Successfully store, read, and update character information to/from cloud services
+
+* Write scripts in Python to submit large volumes of requests to:
+
+    * Initialize new Discord channels and characters
+
+    * Submit updates to character stats
+
+    * Submit updates to character known spells
+
+    * Request lookups of available stat blocks and equipment information
+
+    * 

@@ -1,0 +1,28 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: workerRoll
+spec:
+  selector:
+    matchLabels:
+      app: workerRoll
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workerRoll
+    spec:
+      containers:
+      - name: worker
+        image: pconnell89/demucs-worker #update
+        resources:
+          requests:
+            cpu: 2
+            memory: 6Gi #update
+        env:
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"   
+        - name: GET_HOSTS_FROM
+          value: dns

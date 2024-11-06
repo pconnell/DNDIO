@@ -12,8 +12,13 @@ command_tree
 ----| race [racename]
 ----| spellDC [value]
 ----| level [value]
-----| known_spell [name]
-----| spellslots [level] [qty]
+----| spells 
+------| add [spellname]
+------| remove [spellname]
+------| prepare [spellname]
+----| spellslots 
+------| add [level] [qty]
+------| remove [level] [qty]
 ----| name [value]
 ----| inv
 ------| add [item] [qty]
@@ -21,12 +26,17 @@ command_tree
 ------| equip [item]
 ------| 
 --| get
+----| baseState?
+----| currState?
 ----| sheet
 ----| stats
 ----| skills
 ----| AC
 ----| equipped
 ----| inv
+----|
+--| feats
+----| add [name]
 |
 |/lookup
 --| spells [classname] [level]
