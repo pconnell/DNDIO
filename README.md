@@ -35,7 +35,7 @@ To develop and deliver this service, the project team plans to leverage the foll
 
 * API with protocol buffer implementation for relaying user messages and commands from Discord Servers to REST API and backend cloud services
 
-INSERT IMAGE HERE OF SERVICE ARCHITECTURE
+![Proposed Architecture](./imgs/Architecture.png)
 
 ## Scope
 
