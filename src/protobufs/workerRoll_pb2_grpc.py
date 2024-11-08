@@ -241,7 +241,7 @@ class rollSpellcast(object):
             _registered_method=True)
 
 
-class rollDamageStub(object):
+class rollSpellDamageStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -250,43 +250,43 @@ class rollDamageStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.rollDamage = channel.unary_unary(
-                '/rollDamage/rollDamage',
-                request_serializer=workerRoll__pb2.rollDamagemsg.SerializeToString,
+        self.rollSpellDamage = channel.unary_unary(
+                '/rollSpellDamage/rollSpellDamage',
+                request_serializer=workerRoll__pb2.rollSpellDamagemsg.SerializeToString,
                 response_deserializer=workerRoll__pb2.rollReply.FromString,
                 _registered_method=True)
 
 
-class rollDamageServicer(object):
+class rollSpellDamageServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def rollDamage(self, request, context):
+    def rollSpellDamage(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_rollDamageServicer_to_server(servicer, server):
+def add_rollSpellDamageServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'rollDamage': grpc.unary_unary_rpc_method_handler(
-                    servicer.rollDamage,
-                    request_deserializer=workerRoll__pb2.rollDamagemsg.FromString,
+            'rollSpellDamage': grpc.unary_unary_rpc_method_handler(
+                    servicer.rollSpellDamage,
+                    request_deserializer=workerRoll__pb2.rollSpellDamagemsg.FromString,
                     response_serializer=workerRoll__pb2.rollReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'rollDamage', rpc_method_handlers)
+            'rollSpellDamage', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('rollDamage', rpc_method_handlers)
+    server.add_registered_method_handlers('rollSpellDamage', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class rollDamage(object):
+class rollSpellDamage(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def rollDamage(request,
+    def rollSpellDamage(request,
             target,
             options=(),
             channel_credentials=None,
@@ -299,8 +299,80 @@ class rollDamage(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/rollDamage/rollDamage',
-            workerRoll__pb2.rollDamagemsg.SerializeToString,
+            '/rollSpellDamage/rollSpellDamage',
+            workerRoll__pb2.rollSpellDamagemsg.SerializeToString,
+            workerRoll__pb2.rollReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class rollAttackDamageStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.rollAttackDamage = channel.unary_unary(
+                '/rollAttackDamage/rollAttackDamage',
+                request_serializer=workerRoll__pb2.rollAttackDamagemsg.SerializeToString,
+                response_deserializer=workerRoll__pb2.rollReply.FromString,
+                _registered_method=True)
+
+
+class rollAttackDamageServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def rollAttackDamage(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_rollAttackDamageServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'rollAttackDamage': grpc.unary_unary_rpc_method_handler(
+                    servicer.rollAttackDamage,
+                    request_deserializer=workerRoll__pb2.rollAttackDamagemsg.FromString,
+                    response_serializer=workerRoll__pb2.rollReply.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'rollAttackDamage', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('rollAttackDamage', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class rollAttackDamage(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def rollAttackDamage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/rollAttackDamage/rollAttackDamage',
+            workerRoll__pb2.rollAttackDamagemsg.SerializeToString,
             workerRoll__pb2.rollReply.FromString,
             options,
             channel_credentials,

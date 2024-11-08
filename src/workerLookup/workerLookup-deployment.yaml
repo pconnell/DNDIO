@@ -17,8 +17,8 @@ spec:
         image: pconnell89/workerLookup #update
         resources:
           requests:
-            cpu: 2 #update
-            memory: 6Gi #update
+            cpu: 100m 
+            memory: 300Mi 
         env:
         - name: REDIS_HOST
           value: "redis"

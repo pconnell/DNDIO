@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>project-proposal</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Project Proposal_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Project Proposal_files/libs/quarto-html/quarto.js"></script>
+<script src="Project Proposal_files/libs/quarto-html/popper.min.js"></script>
+<script src="Project Proposal_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Project Proposal_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Project Proposal_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Project Proposal_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Project Proposal_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Project Proposal_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Project Proposal_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="dndio" class="level1">
+<h1>DNDIO</h1>
+<p>A proof-of-concept application for integrating DND games with Discord.</p>
+<p>Project Team:</p>
+<ul>
+<li><p>Patrick Connelly, paco2756@colorado.edu</p></li>
+<li><p>Alexis Cooper,</p></li>
+<li><p>Ghizlaine Rehioui, ghizlane.rehioui@colorado.edu</p></li>
+</ul>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>For Class CSCI 5253 (DataCenter Scale Computing), this project team seeks to develop a set of services that:</p>
+<ul>
+<li><p>provides a repository of information for building DND characters</p></li>
+<li><p>stores character information and state in a cloud-native database</p></li>
+<li><p>Enables players and dungeon masters to interface with character state via Discord:</p>
+<ul>
+<li><p>Discord Server Initialization for a DND campaign</p></li>
+<li><p>Getting and setting character attributes</p></li>
+<li><p>Requesting Dice Roll services</p></li>
+<li><p>Looking up important game information</p></li>
+</ul></li>
+</ul>
+<p>Within Discord, we will build a bot similar to <a href="https://discord.com/application-directory/572301609305112596">Dice Maiden</a>, but with additional features and commands that simplify the rolling of dice, integrating character information to do so and save players’ time during campaigns.</p>
+</section>
+<section id="project-goals" class="level2">
+<h2 class="anchored" data-anchor-id="project-goals">Project Goals</h2>
+<p>This project ceeks to create and deploy a cloud-native service set leveraging multiple technologies to simplify the process of participating in Dungeons and Dragons (DND) campaign sessions, integrating the service with a social media application such that players can interact and have an easier time playing.</p>
+<p>The short list of goals are as follows:</p>
+<ul>
+<li><p>Implement a Discord bot to listen for and relay commands to and from cloud services</p></li>
+<li><p>Implement multi-region service clusters for accessibility, responsiveness, and …</p></li>
+<li><p>Implement distributed databases for storage of campaign information, player information, and general information on DND to simplify the playing process</p></li>
+<li><p>Automate services for players to enable simple commands for:</p>
+<ul>
+<li><p>Rolling dice under multiple game conditions</p></li>
+<li><p>Create-Read-Update-Delete operations for character information</p></li>
+<li><p>Read / Lookup rules and information for various in-game requirements (equipment, spells, attacks, weapons, etc)</p></li>
+</ul></li>
+<li><p>Implement client-service efficiencies using protocol buffers and message queueing</p></li>
+<li><p>Create a large volume of mock campaigns, characters, and users for testing</p></li>
+<li><p>Create stress-testing virtual machines in multiple regions to verify that cloud services remain available and responsive for:</p>
+<ul>
+<li><p>Dice roll commands</p></li>
+<li><p>Character CRUD operations</p></li>
+<li><p>Game lookup operations</p></li>
+</ul></li>
+</ul>
+<p>More specific implementation goals include the following:</p>
+<ul>
+<li><p>Provide a Discord channel initialization service that:</p>
+<ul>
+<li><p>Creates individual chats between Discord Bot and each character for interacting with their cloud-based character data</p></li>
+<li><p>stores new blank characters in the cloud service</p></li>
+</ul></li>
+<li><p>Provide a character interface service that allows players to:</p>
+<ul>
+<li><p>Roll values and assign to character stats including Charisma, Strength, Intelligence, Wisdom, Dexterity, and Constitution</p></li>
+<li><p>Lookup, select, and set Key Character Information:</p>
+<ul>
+<li><p>Alignment</p></li>
+<li><p>Background</p></li>
+<li><p>Inventory</p></li>
+<li><p>Spells / Cantrips Known</p></li>
+<li><p>Weapons</p></li>
+<li><p>Equipped Items</p></li>
+<li><p>Hit Points &amp; Hit Dice</p></li>
+</ul></li>
+<li><p>Request die rolls for:</p>
+<ul>
+<li><p>Initiative (determine turn order)</p></li>
+<li><p>attack (with equipped weapon)</p></li>
+<li><p>spellcasting (for known spells)</p></li>
+<li><p>skillcheck (for any skill)</p></li>
+</ul></li>
+</ul></li>
+<li><p>The character interface service respond to requests:</p>
+<ul>
+<li><p>In the individual channel for the character’s user with verbose information</p></li>
+<li><p>In the campaign channel with summarized actions taken</p></li>
+<li><p>Provide help messages/syntax for any erroneous requests</p></li>
+</ul></li>
+<li><p>Successfully enqueue and dequeue requests and responses between users and cloud services</p></li>
+<li><p>Successfully store, read, and update character information to/from cloud services</p></li>
+<li><p>Write scripts in Python to submit large volumes of requests to:</p>
+<ul>
+<li><p>Initialize new Discord channels and characters</p></li>
+<li><p>Submit updates to character stats</p></li>
+<li><p>Submit updates to character known spells</p></li>
+<li><p>Request lookups of available stat blocks and equipment information</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="high-level-service-concept" class="level2">
+<h2 class="anchored" data-anchor-id="high-level-service-concept">High-Level Service Concept</h2>
+<!-- 
+* (Completed) Teams: If you are in a team, each individual should upload the same pdf.  In the pdf, clearly list team members.
+
+* (Completed)Title and list of project participants
+
+* (Completed) Project Goals: What are you trying to accomplish, in terms that should be clear to others in the class.
+
+* (Partial) A specific list of software and hardware components 
+
+* (Partial) An architectural diagram showing the interactions between system components - see this article for a reasonable exampleLinks to an external site.
+
+* (Not started) A description of the interaction of the different software and hardware components
+
+* (Not started) A description of how you will debug your proposed project and what training or testing mechanism will be used.
+
+* (Completed) Explain why you believe this project idea will meet the eventual project requirements (use of four different cloud technologies)
+-->
+</section>
+<section id="service-architecture-and-implementation-requirements" class="level2">
+<h2 class="anchored" data-anchor-id="service-architecture-and-implementation-requirements">Service Architecture and Implementation Requirements</h2>
+<p>To develop and deliver this service, the project team plans to leverage the following technologies and systems:</p>
+<ul>
+<li><p>Database implementation</p>
+<ul>
+<li><p>Perform web scraping to gather large volumes of DND information for parsing</p></li>
+<li><p>Parse raw text data from scraped data to record or database format</p></li>
+<li><p>Implementation of DBMS in Cassandra (for campaign/character information, and for game information/rules)</p></li>
+<li><p>Creation and population of Cassandra DB tables using parsed data</p></li>
+<li><p>Creation of additional tables for managing information on campaigns, discord channels, discord users, and their characters.</p></li>
+</ul></li>
+<li><p>Message queueing and handling in RabbitMQ</p>
+<ul>
+<li><p>Queue for inbound API calls to multiple workers</p></li>
+<li><p>Queues for worker calls to and from DBMS service</p></li>
+</ul></li>
+<li><p>Discord API/Bot Integration</p>
+<ul>
+<li><p>Coding a bot to listen for user commands</p></li>
+<li><p>Perform command error checking and validation</p></li>
+<li><p>Encapuslation of commands into protocol buffer messages, relaying to cloud services</p></li>
+<li><p>Receipt of responses from cloud services, de-encapsulating and outputting to users in Discord</p></li>
+</ul></li>
+<li><p>REST API Server</p>
+<ul>
+<li><p>Receive inbound requests from Discord users and channels</p></li>
+<li><p>Parse requests and relay to worker queues</p></li>
+</ul></li>
+<li><p>Virtualization/Containerization</p>
+<ul>
+<li><p>Build stress testing servers in multiple gcloud regions and zones</p></li>
+<li><p>Stress-testing scripts to pump large volume of commands into the cloud service</p></li>
+<li><p>Logging to caputre the input commands and output results</p></li>
+<li><p>Error counting and checking</p></li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./imgs/Architecture.png" class="img-fluid figure-img"></p>
+<figcaption>Proposed Architecture</figcaption>
+</figure>
+</div>
+</section>
+<section id="system-and-component-interactions" class="level2">
+<h2 class="anchored" data-anchor-id="system-and-component-interactions">System and Component Interactions</h2>
+</section>
+<section id="debugging" class="level2">
+<h2 class="anchored" data-anchor-id="debugging">Debugging</h2>
+<p>Develop cloud services locally within Docker Desktop and Kubernetes, including:</p>
+<ul>
+<li><p>DBMS</p></li>
+<li><p>RestAPI</p></li>
+<li><p>Worker functions as a service</p></li>
+<li><p>gRPC / protocol buffer implementation</p></li>
+</ul>
+<p>During the debugging phase, we’ll test the conceptual flows of data from a single Discord channel to ensure our identified commands are functioning as desired and required.</p>
+<p>Additionally, we’ll execute the components of our stress testing scripts locally to ensure that they are well-coded, functioning as needed, and capturing the performance data necessary for testing and validation.</p>
+<p>After initial development and debugging are completed, the project will proceed to cloud deployment, during which the same tests will be implemented</p>
+</section>
+<section id="testing-validation" class="level2">
+<h2 class="anchored" data-anchor-id="testing-validation">Testing / Validation</h2>
+<p>To test and validate our project - we plan to deploy virtual machines in multiple regions. These VMs will be deployed with mock data, representing a large volume (hundreds) of DND campaigns with a large volume (thousands) of users, and their corresponding characters.</p>
+<p>Additionally, we will have testing scripts to iterate through our identified commands for each of the characters in the mock data. The intent here is to produce a large volume of REST requests to the cloud service.</p>
+<p>During the stress testing run, some data capture is necessary. We intend to gather the following information to store locally and export from the VMs:</p>
+<ul>
+<li><p>Executed requests and their responses (csv).</p></li>
+<li><p>Time between request and response (csv)</p></li>
+<li><p>Whether or not the response had an error or failed to return data (csv).</p></li>
+</ul>
+<p>The following additional information needs to be captured from cloud services:</p>
+<ul>
+<li><p>When / if cloud systems:</p>
+<ul>
+<li><p>scale up and scale down</p></li>
+<li><p>fail or have system errors</p></li>
+</ul></li>
+</ul>
+<p>This will first be done at a lower rate to verify that the services are functioning and stable, with a short time delay between commands. Further tests can be conducted with shorter or no time delay between commands. These additional tests are needed to ensure there is not a substantial performance backlog and that the cloud deployments scale sufficiently to meet user demand.</p>
+</section>
+<section id="scope" class="level2">
+<h2 class="anchored" data-anchor-id="scope">Scope</h2>
+<p>As a proof-of-concept project, this project will not provide or automate 100% of the features and functionality of a Dungeons and Dragons Campaign. The ultimate goal is to simplify dice rolling for players to accelerate the ability to cast spells, perform attacks, and so forth. As such, the following aspects are out-of-scope for this proof of concept:</p>
+<ul>
+<li><p>Automating rule enforcement for characters such as:</p>
+<ul>
+<li><p>changes to class features</p></li>
+<li><p>changes to character levels</p></li>
+<li><p>changes to known cantrips/spells</p></li>
+<li><p>changes to proficiency bonus or skill modifiers</p></li>
+</ul></li>
+<li><p>Integrating temporary character bonuses or handicaps imposed by other spells, feats, or other abilities</p></li>
+<li><p>Tracking historic character information and changes over time</p></li>
+</ul>
+</section>
+<section id="general-languagestech" class="level2">
+<h2 class="anchored" data-anchor-id="general-languagestech">General languages/tech:</h2>
+<ul>
+<li><p>Cassandra for DBMS</p></li>
+<li><p>Docker/k8s containers for cloud service virtulization and containers</p>
+<ul>
+<li>Scaling of workers based on client demand</li>
+</ul></li>
+<li><p>Python for:</p>
+<ul>
+<li><p>REST API devleopment</p></li>
+<li><p>Protocol buffer implementation</p></li>
+<li><p>Worker scaling based on request volume</p></li>
+</ul></li>
+<li><p>Message queueing and handling in Redis:</p>
+<ul>
+<li><p>character interaction queue</p></li>
+<li><p>roll request queue</p></li>
+<li><p>lookup request queue</p></li>
+<li><p>initialization service queue</p></li>
+<li><p>DBMS queues (one for each worker type)</p></li>
+</ul></li>
+<li><p>Protobufs for message relaying and handling messages from Discord Bot to API server</p></li>
+<li><p>Others as needed</p></li>
+</ul>
+</section>
+<section id="requirements-fulfillment" class="level2">
+<h2 class="anchored" data-anchor-id="requirements-fulfillment">Requirements Fulfillment</h2>
+<ul>
+<li><p>Five core technologies from the course are identified for use in this project:</p>
+<ul>
+<li><p>protocol buffers + RestAPI</p></li>
+<li><p>message queueing (RabbitMQ)</p></li>
+<li><p>databases (Cassandra)</p></li>
+<li><p>software-defined networking (multi-region service integration)</p></li>
+<li><p>virtual machines (stress testing) and containerization (cloud services)</p></li>
+</ul></li>
+<li><p>Additional technologies incorporated:</p>
+<ul>
+<li><p>Discord API</p></li>
+<li><p>Python for web scraping and data gathering</p></li>
+</ul></li>
+</ul>
+<p>Additionally, we are passionate about this project. A service like this, provided that the fullest extent of required data and implementation were performed, could serve as a workable cloud-native business model. There are existing web services like <a href="">Roll20</a>, <a href="">Obsidian</a>, and <a href="">DNDBeyond</a>, but none of them have integration with Discord. <a href="https://discord.com/application-directory/572301609305112596">Dice Maiden</a> provides dice rolling integration with Discord, but still forces players to look up information necessary to roll their dice. This project seeks to bring those capabilities together!</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

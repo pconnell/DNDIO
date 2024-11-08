@@ -17,8 +17,8 @@ spec:
         image: pconnell89/workerChar
         resources:
           requests:
-            cpu: 2
-            memory: 6Gi
+            cpu: 100m 
+            memory: 100Mi 
         env:
         - name: REDIS_HOST
           value: "redis"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: worker #update
-        image: pconnell89/cass-db#update
+        image: pconnell89/cass-db
         resources:
           requests:
             cpu: 2 #update

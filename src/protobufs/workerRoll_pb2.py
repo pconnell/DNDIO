@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10workerRoll.proto\"\\\n\trollReply\x12\x0c\n\x04\x64ice\x18\x01 \x03(\x05\x12\x10\n\x08mod_dice\x18\x02 \x03(\x05\x12\x10\n\x08roll_sum\x18\x03 \x01(\x05\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"I\n\rrollAttackmsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t\"K\n\x0frollIniativemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t\"L\n\x10rollSpellcastmsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t\"I\n\rrollDamagemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t\"G\n\x0brollSavemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t28\n\nrollAttack\x12*\n\nrollAttack\x12\x0e.rollAttackmsg\x1a\n.rollReply\"\x00\x32\x42\n\x0erollInitiative\x12\x30\n\x0erollInitiative\x12\x10.rollIniativemsg\x1a\n.rollReply\"\x00\x32\x41\n\rrollSpellcast\x12\x30\n\rrollSpellcast\x12\x11.rollSpellcastmsg\x1a\n.rollReply\"\x00\x32\x38\n\nrollDamage\x12*\n\nrollDamage\x12\x0e.rollDamagemsg\x1a\n.rollReply\"\x00\x32\x32\n\x08rollSave\x12&\n\x08rollSave\x12\x0c.rollSavemsg\x1a\n.rollReply\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10workerRoll.proto\"q\n\trollReply\x12\x14\n\x0croll_summary\x18\x01 \x01(\t\x12\x12\n\nroll_total\x18\x02 \x01(\x05\x12\x1b\n\x13roll_total_modified\x18\x03 \x01(\x05\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"Y\n\rrollAttackmsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0e\n\x06weapon\x18\x03 \x01(\t\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"K\n\x0frollIniativemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04user\x18\x03 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x04 \x01(\t\"[\n\x10rollSpellcastmsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\r\n\x05spell\x18\x03 \x01(\t\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"_\n\x13rollAttackDamagemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0e\n\x06weapon\x18\x03 \x01(\t\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"]\n\x12rollSpellDamagemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\r\n\x05spell\x18\x03 \x01(\t\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\"U\n\x0brollSavemsg\x12\x0b\n\x03\x61\x64v\x18\x01 \x01(\x08\x12\x0c\n\x04\x64\x61\x64v\x18\x02 \x01(\x08\x12\x0c\n\x04stat\x18\x03 \x01(\t\x12\x0c\n\x04user\x18\x04 \x01(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t28\n\nrollAttack\x12*\n\nrollAttack\x12\x0e.rollAttackmsg\x1a\n.rollReply\"\x00\x32\x42\n\x0erollInitiative\x12\x30\n\x0erollInitiative\x12\x10.rollIniativemsg\x1a\n.rollReply\"\x00\x32\x41\n\rrollSpellcast\x12\x30\n\rrollSpellcast\x12\x11.rollSpellcastmsg\x1a\n.rollReply\"\x00\x32G\n\x0frollSpellDamage\x12\x34\n\x0frollSpellDamage\x12\x13.rollSpellDamagemsg\x1a\n.rollReply\"\x00\x32J\n\x10rollAttackDamage\x12\x36\n\x10rollAttackDamage\x12\x14.rollAttackDamagemsg\x1a\n.rollReply\"\x00\x32\x32\n\x08rollSave\x12&\n\x08rollSave\x12\x0c.rollSavemsg\x1a\n.rollReply\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,25 +32,29 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'workerRoll_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_ROLLREPLY']._serialized_start=20
-  _globals['_ROLLREPLY']._serialized_end=112
-  _globals['_ROLLATTACKMSG']._serialized_start=114
-  _globals['_ROLLATTACKMSG']._serialized_end=187
-  _globals['_ROLLINIATIVEMSG']._serialized_start=189
-  _globals['_ROLLINIATIVEMSG']._serialized_end=264
-  _globals['_ROLLSPELLCASTMSG']._serialized_start=266
-  _globals['_ROLLSPELLCASTMSG']._serialized_end=342
-  _globals['_ROLLDAMAGEMSG']._serialized_start=344
-  _globals['_ROLLDAMAGEMSG']._serialized_end=417
-  _globals['_ROLLSAVEMSG']._serialized_start=419
-  _globals['_ROLLSAVEMSG']._serialized_end=490
-  _globals['_ROLLATTACK']._serialized_start=492
-  _globals['_ROLLATTACK']._serialized_end=548
-  _globals['_ROLLINITIATIVE']._serialized_start=550
-  _globals['_ROLLINITIATIVE']._serialized_end=616
-  _globals['_ROLLSPELLCAST']._serialized_start=618
-  _globals['_ROLLSPELLCAST']._serialized_end=683
-  _globals['_ROLLDAMAGE']._serialized_start=685
-  _globals['_ROLLDAMAGE']._serialized_end=741
-  _globals['_ROLLSAVE']._serialized_start=743
-  _globals['_ROLLSAVE']._serialized_end=793
+  _globals['_ROLLREPLY']._serialized_end=133
+  _globals['_ROLLATTACKMSG']._serialized_start=135
+  _globals['_ROLLATTACKMSG']._serialized_end=224
+  _globals['_ROLLINIATIVEMSG']._serialized_start=226
+  _globals['_ROLLINIATIVEMSG']._serialized_end=301
+  _globals['_ROLLSPELLCASTMSG']._serialized_start=303
+  _globals['_ROLLSPELLCASTMSG']._serialized_end=394
+  _globals['_ROLLATTACKDAMAGEMSG']._serialized_start=396
+  _globals['_ROLLATTACKDAMAGEMSG']._serialized_end=491
+  _globals['_ROLLSPELLDAMAGEMSG']._serialized_start=493
+  _globals['_ROLLSPELLDAMAGEMSG']._serialized_end=586
+  _globals['_ROLLSAVEMSG']._serialized_start=588
+  _globals['_ROLLSAVEMSG']._serialized_end=673
+  _globals['_ROLLATTACK']._serialized_start=675
+  _globals['_ROLLATTACK']._serialized_end=731
+  _globals['_ROLLINITIATIVE']._serialized_start=733
+  _globals['_ROLLINITIATIVE']._serialized_end=799
+  _globals['_ROLLSPELLCAST']._serialized_start=801
+  _globals['_ROLLSPELLCAST']._serialized_end=866
+  _globals['_ROLLSPELLDAMAGE']._serialized_start=868
+  _globals['_ROLLSPELLDAMAGE']._serialized_end=939
+  _globals['_ROLLATTACKDAMAGE']._serialized_start=941
+  _globals['_ROLLATTACKDAMAGE']._serialized_end=1015
+  _globals['_ROLLSAVE']._serialized_start=1017
+  _globals['_ROLLSAVE']._serialized_end=1067
 # @@protoc_insertion_point(module_scope)

@@ -46,9 +46,9 @@ command_tree
 --| feats [classname]
 --| weapons
 --| armor
---| items
---| creatures [name]
---| statblock [creature_name]
+--| items #future implementation
+--| creatures [name] #future implementation
+--| statblock [creature_name]   # future implementation
 |
 |/roll
 --| initiative [d/adv]

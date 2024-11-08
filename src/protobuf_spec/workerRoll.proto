@@ -12,8 +12,12 @@ service rollSpellcast {
 	rpc rollSpellcast(rollSpellcastmsg) returns (rollReply) {}
 }
 
-service rollDamage {
-	rpc rollDamage(rollDamagemsg) returns (rollReply) {}
+service rollSpellDamage {
+	rpc rollSpellDamage(rollSpellDamagemsg) returns (rollReply) {}
+}
+
+service rollAttackDamage {
+	rpc rollAttackDamage(rollAttackDamagemsg) returns (rollReply) {}
 }
 
 service rollSave {
@@ -21,9 +25,9 @@ service rollSave {
 }
 
 message rollReply{
-	repeated int32 dice = 1;
-	repeated int32 mod_dice = 2;
-	int32 roll_sum = 3;
+	string roll_summary = 1;
+	int32 roll_total = 2;
+	int32 roll_total_modified = 3;
 	string user = 4;
 	string channel = 5;
 }
@@ -31,8 +35,9 @@ message rollReply{
 message rollAttackmsg {
 	bool adv = 1;
 	bool dadv = 2;
-	string user = 3;
-	string channel = 4;
+	string weapon = 3;
+	string user = 4;
+	string channel = 5;
 }
 
 message rollIniativemsg {
@@ -45,20 +50,31 @@ message rollIniativemsg {
 message rollSpellcastmsg {
 	bool adv = 1;
 	bool dadv = 2;
-	string user = 3;
-	string channel = 4;
+	string spell = 3;
+	string user = 4;
+	string channel = 5;
 }
 
-message rollDamagemsg {
+message rollAttackDamagemsg {
 	bool adv = 1;
 	bool dadv = 2;
-	string user = 3;
-	string channel = 4;
+	string weapon = 3;
+	string user = 4;
+	string channel = 5;
+}
+
+message rollSpellDamagemsg {
+	bool adv = 1;
+	bool dadv = 2;
+	string spell = 3;
+	string user = 4;
+	string channel = 5;
 }
 
 message rollSavemsg {
 	bool adv = 1;
 	bool dadv = 2;
-	string user = 3;
-	string channel = 4;
+	string stat = 3;
+	string user = 4;
+	string channel = 5;
 }

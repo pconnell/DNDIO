@@ -17,8 +17,8 @@ spec:
         image: pconnell89/workerRoll
         resources:
           requests:
-            cpu: 2
-            memory: 6Gi #update
+            cpu: 100m 
+            memory: 200Mi 
         env:
         - name: REDIS_HOST
           value: "redis"
