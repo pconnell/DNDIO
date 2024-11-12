@@ -1,0 +1,26 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cassdb #update
+spec:
+  selector:
+    matchLabels:
+      app: cassdb #update
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cassdb #update
+    spec:
+      containers:
+      - name: cassdb #update
+        image: pconnell89/cass-db
+        resources:
+          requests:
+            cpu: 2 #update
+            memory: 6Gi #update
+        env:
+        - name: RMQ_HOST
+          value: localhost
+        - name: GET_HOSTS_FROM
+          value: dns

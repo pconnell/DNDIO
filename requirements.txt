@@ -1,0 +1,8 @@
+cassandra-driver
+redis
+jsonpickle
+discord.py
+grpcio-tools
+protobuf-compiler
+#google apis?
+google-cloud-storage

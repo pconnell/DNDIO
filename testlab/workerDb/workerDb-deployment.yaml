@@ -1,0 +1,49 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: workerdb
+spec:
+  selector:
+    matchLabels:
+      app: workerdb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workerdb
+    spec:
+      containers:
+      - name: workerdb
+        image: pconnell89/workerdb
+        resources:
+          requests:
+            cpu: 100m 
+            memory: 100Mi 
+        env:
+        - name: RMQ_HOST
+          value: rabbitmq
+        - name: RMQ_PORT
+          value: "5672"
+        - name: CASS_HOST
+          value: "cassdb01-cassandra"
+        - name: CASS_PORT
+          value: "9402"
+        - name: CASS_USER
+          value: cassandra
+        - name: CASS_PASS
+          value: changeme
+        - name: GET_HOSTS_FROM
+          value: dns
+---
+---          
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: workerdb
+#   labels:
+#     app: workerdb
+#     tier: backend
+# spec:
+#   selector:
+#     app: workerdb
+#     tier: backend

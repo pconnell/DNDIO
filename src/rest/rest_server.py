@@ -1,4 +1,3 @@
-from flask import Flask, request, Response, send_file
 import logging, base64, jsonpickle, io
 import redis, json, os, hashlib
 from protobufs import (
@@ -11,64 +10,438 @@ from protobufs import (
     workerRoll_pb2,
     workerRoll_pb2_grpc
 )
+import grpc, pika, uuid
 
 REDIS_SERVICE_HOST = os.getenv('REDIS_HOST') or 'localhost'
 REDIS_SERVICE_PORT = os.getenv('REDIS_PORT') or '6379'
 
+RMQ_SERVICE = os.getenv('RMQ_HOST')
+
 bucketname = 'toworker'
 logbucket = 'logging'
 
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.DEBUG)
-app = Flask(__name__)
+# r = redis.Redis(
+#     host=REDIS_SERVICE_HOST,
+#     port=REDIS_SERVICE_PORT
+# )
 
-r = redis.Redis(
-    host=REDIS_SERVICE_HOST,
-    port=REDIS_SERVICE_PORT
-)
+class workerSetCharService(workerChar_pb2_grpc.getCharServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
 
-def lookup_response(args):
-    pass
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
 
-def roll_response(args):
-    pass
+    def setChar(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request #update
+        )
 
-def char_response(args):
-    pass
+        while self.response is None:
+            self.connection.process_data_events()
 
-@app.route('/apiv1/roll',methods=['GET'])
-def roll():
-    pass
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+        
 
-@app.route('/apiv1/char',methods=['GET'])
-def char():
-    pass
+class workerGetCharService(workerChar_pb2_grpc.setCharServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
 
-@app.route('/apiv1/lookup',methods=['GET'])
-def lookup():
-    pass
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
 
-@app.route('/apiv1/remove',methods=['GET'])
-def remove_char():
-    pass
+    def getChar(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request #update
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
 
-@app.route('/apiv1/respond',methods=['GET'])
-def respond():
-    """ 
-    used by workers to relay completion of a work request
-    back to the appropriate discord channel
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerLookupService(workerInit_pb2_grpc.addServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def lookup(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerRollAttackService(workerRoll_pb2_grpc.rollAttackServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def roll(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerRollAttackDamageService(workerRoll_pb2_grpc.rollAttackDamageServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def rollAttack(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
     
-    - are response types needed?
-    """
-    pass
 
-@app.route('/apiv1/workerlogs',methods=['GET'])
-def get_logs():
-    pass
+class workerRollInitiativeService(workerRoll_pb2_grpc.rollInitiativeServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
 
-def allMsgs(r,thread):
-    data = [ x.decode('utf-8') for x in r.lrange(thread, 0, -1) ]
-    return Response(json.dumps(data), mimetype="application/json")
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def rollInitiative(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerRollSpellDamageService(workerRoll_pb2_grpc.rollSpellDamageServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def rollSpellDamage(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerRollSpellcastService(workerRoll_pb2_grpc.rollSpellcastServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def rollSpellcast(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+class workerRollSaveService(workerRoll_pb2_grpc.rollSaveServicer):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=RMQ_SERVICE
+            )
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(
+            queue='',exclusive=True
+        )
+        self.callback_queue = result.method.queue
+        self.channel.basic_consume(
+            queue=self.callback_queue,
+            on_message_callback=self.on_response,
+            auto_ack=True
+        )
+
+    def on_response(self,ch,method,props,body):
+        if self.corr_id == props.correlation_id:
+            self.response = body
+
+    def rollSave(self,request,context):
+        self.response = None
+        self.corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(
+            exchange='',
+            routing_key = 'workerSetCharREST',
+            properties=pika.BasicProperties(
+                reply_to=self.callback_queue,
+                correlation_id=self.corr_id
+            ), 
+            body = request
+        )
+        
+        while self.response is None:
+            self.connection.process_data_events()
+
+        return workerChar_pb2.setcharreply(
+            response = self.response
+        )
+
+def serve(d=False,v=False):
+    s = grpc.server()
+    workerChar_pb2_grpc.add_getCharServicer_to_server(
+        workerSetCharService(),s
+    )
+    workerChar_pb2_grpc.add_getCharServicer_to_server(
+        workerGetCharService(),s
+    )
+    workerLookup_pb2_grpc.add_lookupServicer_to_server(
+        workerLookupService(),s
+    )
+    workerRoll_pb2_grpc.add_rollInitiativeServicer_to_server(
+        workerRollInitiativeService(),s
+    )
+    workerRoll_pb2_grpc.add_rollAttackServicer_to_server(
+        workerRollAttackService(),s
+    )
+    workerRoll_pb2_grpc.add_rollSpellcastServicer_to_server(
+        workerRollSpellcastService(),s
+    )
+    workerRoll_pb2_grpc.add_rollAttackDamageServicer_to_server(
+        workerRollAttackDamageService(),s
+    )
+    workerRoll_pb2_grpc.add_rollSpellDamageServicer_to_server(
+        workerRollSpellDamageService(),s
+    )
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000,debug=True)
+    channel = grpc.insecure_channel('localhost') #update
+    funcs = {
+        '':{
+            'stub':workerChar_pb2_grpc.setCharStub(channel),
+            'func':print
+        },
+        '':{
+            'stub':workerChar_pb2_grpc.setCharStub(channel),
+            'func':print
+        }
+    }
+    pass

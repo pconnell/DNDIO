@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+service sendmsg {
+	rpc sendmsg(msg) returns (msgreply) {}
+}
+
+message msg {
+	string cmd = 1;
+	int32 num = 2;
+}
+
+message msgreply {
+	string response = 1;
+	bool outcome = 2;
+}

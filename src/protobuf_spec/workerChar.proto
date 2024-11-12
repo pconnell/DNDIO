@@ -9,9 +9,10 @@ service getChar {
 }
 
 message setcharmsg {
-	string main_cmd = 1;
-	string child_cmd = 2;
-	string value = 3;
+	string cmd = 1;
+	string args = 2;
+	string channel = 3;
+	string user = 4;
 }
 
 message setcharreply {
@@ -19,8 +20,10 @@ message setcharreply {
 }
 
 message getcharmsg {
-	string main_cmd = 1;
-	string value = 3;
+	string cmd = 1;
+	string args = 2;
+	string channel = 3;
+	string user = 4;
 }
 
 message getcharreply {

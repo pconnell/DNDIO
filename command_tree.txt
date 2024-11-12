@@ -6,7 +6,7 @@ command_tree
 --| set
 ----| CHR|STR|INT|WIS|DEX|CON [value]
 ----| proficiency_bonus [value]
-----| primary_skill [skillname]
+----| skill [skillname]
 ----| AC [value]
 ----| class [classname]
 ----| race [racename]

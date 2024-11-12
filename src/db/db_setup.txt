@@ -1,0 +1,88 @@
+CREATE KEYSPACE DNDIO WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 1 };
+USE DNDIO;
+
+CREATE TABLE DC_channels (
+
+)
+
+CREATE TABLE DC_users (
+
+);
+
+CREATE TABLE channel_user (
+
+);
+
+CREATE TABLE user_character (
+
+);
+
+CREATE TABLE weapon (
+    id uuid,
+    weapon_type text,
+    range smallint,
+    properties text,
+    weight smallint,
+    dmg_die_size smallint,
+    dmg_die_qty smallint,
+    dmg_type text,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE weapon_props (
+    id uuid,
+    property text,
+    description text,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE armor (
+
+);
+
+CREATE TABLE spell (
+    id uuid,
+    name text,
+    school text,
+    lvl smallint,
+    cast_time text,
+    range smallint,
+    duration text,
+    components text,
+    material text,
+    conc boolean, 
+    requires_save boolean,
+    save_type text,
+    dmg_die_size smallint,
+    dmg_die_qty smallint,
+    has_per_level_increase boolean,
+    per_level_increase list<frozen<map<int,text>>>,
+    has_at_level_increase boolean,
+    at_level_increase list<frozen<map<int,text>>>,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE character (
+    id uuid,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE character_weapon (
+    id uuid,
+    char_id uuid,
+    weapon_id uuid,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE character_spell (
+    id uuid,
+    char_id uuid,
+    weapon_id uuid,
+    PRIMARY KEY (id)
+);
+
+
+INSERT INTO spell 
+    ()
+VALUES
+    ();

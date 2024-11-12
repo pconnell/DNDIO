@@ -1,0 +1,28 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: workerChar
+spec:
+  selector:
+    matchLabels:
+      app: workerChar
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workerChar
+    spec:
+      containers:
+      - name: workerChar
+        image: pconnell89/workerChar
+        resources:
+          requests:
+            cpu: 100m 
+            memory: 100Mi 
+        env:
+        - name: RMQ_HOST
+          value: localhost
+        - name: RMQ_PORT
+          value: 5672
+        - name: GET_HOSTS_FROM
+          value: dns
