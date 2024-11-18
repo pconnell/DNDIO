@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+service rollSvc {
+    rpc roll(dndiomsg) returns (rollreply);
+}
+
+service charSvc {
+    rpc char(dndiomsg) returns (charreply);
+}
+
+service lookupSvc {
+    rpc lookup(dndiomsg) returns (lookupreply);
+}
+
+service initSvc {
+    rpc init(dndiomsg) returns (initreply);
+}
+
+message dndiomsg {
+    string cmd = 1;
+    string subcmd = 2;
+    string args = 3; 
+    string dc_channel = 4;
+    string user = 5;
+}
+
+message dndioreply {
+    string orig_cmd = 1;
+    bool status = 2;
+    string dc_channel = 3;
+    string dc_user = 4;
+}
+
+message charreply {
+//    string orig_cmd = 1;
+//    bool status = 2;
+//    string dc_channel = 3;
+//    string dc_user = 4;
+    dndioreply common = 1;
+    repeated string columns = 5;
+    repeated string dtype = 6;
+    repeated string values = 7;
+}
+
+message lookupreply {
+//    string orig_cmd = 1;
+//    bool status = 2;
+//    string dc_channel = 3;
+//    string dc_user = 4;
+    dndioreply common = 1;
+    repeated string columns = 5;
+    repeated string dtype = 6;
+    repeated string values = 7;
+}
+
+message rollreply {
+//    string orig_cmd = 1;
+//    bool status = 2;
+//   string dc_channel = 3;
+//    string dc_user = 4;
+    dndioreply common = 1;
+    repeated int32 roll_unmod = 5; //update - may need repeated "roll" messages that capture damage type(s)
+    string modifiers = 6;
+    repeated int32 roll_mod = 7; //keep - could be useful if multiple rolls are done with different targets
+    int32 roll_total = 8; //useful if the dmg goes to a single target
+}
+
+message initreply {
+    dndioreply common = 1;
+}

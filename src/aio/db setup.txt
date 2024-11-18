@@ -1,0 +1,207 @@
+USE DNDIO;
+
+CREATE TABLE campaign (
+    id text, //unsure
+    owner text, //unsure - maybe discord user name
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE users(
+    campaign_id text, //unsure
+    user_id text, //unsure
+    PRIMARY KEY (user_id)
+);
+
+CREATE TABLE characters(
+    campaign_id text,
+    user_id text,
+    char_name text,
+    class uuid,
+    level smallint,
+    align text, 
+    max_hp smallint, 
+    curr_hp smallint,
+    CHR smallint, 
+    STR smallint,
+    INT smallint,
+    WIS smallint,
+    DEX smallint,
+    CON smallint,
+    AC smallint,
+    prof_bonus smallint,
+    hit_dice frozen<map<smallint,smallint>>,
+    background text,
+    PRIMARY KEY (campaign_id,user_id)
+);
+
+CREATE TABLE weapons (
+    id uuid,
+    weapon_type text,
+    range smallint,
+    properties text,
+    weight smallint,
+    dmg list<frozen<map<text,frozen<map<smallint,smallint>>>>>,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE spells (
+    id uuid,
+    name text,
+    school text,
+    lvl smallint,
+    cast_time text,
+    range smallint,
+    duration text,
+    components text,
+    material text,
+    conc boolean, 
+    requires_save boolean,
+    dmg list<frozen<map<int,list<frozen<map<text,frozen<map<smallint,smallint>>>>>>>>,
+    upcast boolean,
+    description text,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE armor (
+    id uuid,
+    name text,
+    type text,
+    AC smallint,
+    min_str smallint,
+    impact_stealth boolean,
+    weight smallint,
+    off_on_time smallint,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE char_map (
+    campaign_id text,
+    char_id text,
+    spells list<uuid>,
+    armor list<uuid>,
+    weapons list<uuid>,
+    PRIMARY KEY(campaign_id,char_id)
+);
+
+CREATE TABLE classes (
+    class_key text,
+    class_name text,
+    char_level smallint,
+    prof_bonus smallint,
+    features list<text>,
+    hit_dice frozen<map<smallint,smallint>>,
+    lvl_hp frozen<map<smallint,smallint>>,
+    proficiencies list<frozen<map<text,list<text>>>>,
+    cantrips_known smallint,
+    spells_known smallint,
+    spellslots list<frozen<map<smallint,smallint>>>,
+    infusions smallint,
+    infused_items smallint,
+    sorc_points smallint,
+    rages smallint,
+    martial_arts smallint,
+    ki_points smallint,
+    unarmored_mvmt smallint,
+    sneak_attack frozen<map<smallint,smallint>>,
+    PRIMARY KEY(class_key)
+);
+
+
+example thinking-through-it queries...
+////////////////////////////////////////////////////////////
+//adding a weapon
+SELECT user_id FROM users WHERE campaign_id = {};
+SELECT id FROM weapons WHERE name = {} allow filtering;
+UPDATE char_map 
+    SET weapons = [{weapon_id}] + weapons 
+    WHERE char_id = {};
+////////////////////////////////////////////////////////////
+//removing a weapon
+SELECT id FROM weapons WHERE name = {} allow filtering;
+//python - get the index of the item in the list...
+DELETE weapons[{index}] from char_map WHERE id = {char id}
+////////////////////////////////////////////////////////////
+//adding a spell
+SELECT user_id FROM users WHERE campaign_id = {id};
+SELECT id FROM spells WHERE name={spellname} allow filtering;
+UPDATE char_map
+    SET spells = [{spell_id}] + spells
+    WHERE char_id = {id};
+////////////////////////////////////////////////////////////
+//removing a spell
+SELECT id FROM spells WHERE name = {} allow filtering;
+DELETE spells[{index}] FROM char_map WHERE id = {char_id}
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+//adding armor
+SELECT user_id FROM users WHERE campaign_id = {id};
+SELECT id FROM armor WHERE name={armor name} allow filtering;
+UPDATE char_map
+    SET armor = [{armor_id}] + armor
+    WHERE char_id = {id};
+////////////////////////////////////////////////////////////
+//removing a spell
+SELECT id FROM armor WHERE name = {} allow filtering;
+DELETE armor[{index}] FROM char_map WHERE id = {char_id};
+////////////////////////////////////////////////////////////
+//rolling a spell
+SELECT * FROM spells where name = {} allow filtering;
+SELECT spells FROM char_map WHERE char_id = {};
+SELECT * from character where id = {};
+//verify that the spell is available
+//roll the dice
+//return the result
+////////////////////////////////////////////////////////////
+SELECT * from weapons WHERE name = {} allow filtering;
+SELECT weapons FROM char_map WHERE char_id = {};
+SELECT * from character where id = {};
+//character has the weapon
+//get character modifiers only?
+//roll the dice
+//return the result
+
+
+////////////////////////////////////////////////////////////
+SELECT weapons FROM char_map WHERE char_id = {};
+SELECT id FROM weapons WHERE name = {} allow filtering;
+SELECT equipped FROM char_map WHERE char_id = {};
+//if the weapon is in the available weapons list
+UPDATE char_map 
+    SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
+
+//otherwise... get the available weapons and tell them the names
+SELECT name FROM weapons WHERE id IN {} //weapons query above;
+////////////////////////////////////////////////////////////
+///only really applicable for wizards...
+SELECT spells FROM char_map WHERE char_id = {};
+SELECT id FROM spells WHERE name = {} allow filtering;
+SELECT equipped FROM char_map WHERE char_id = {};
+//if the spell is in the available weapons list
+UPDATE char_map 
+    SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
+
+//otherwise... get the available weapons and tell them the names
+SELECT name FROM spells WHERE id IN {} //weapons query above;
+////////////////////////////////////////////////////////////
+///only really applicable for wizards...
+SELECT armor FROM char_map WHERE char_id = {};
+SELECT id FROM armor WHERE name = {} allow filtering;
+SELECT equipped FROM char_map WHERE char_id = {};
+//if the spell is in the available weapons list
+UPDATE char_map 
+    SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
+
+//otherwise... get the available weapons and tell them the names
+SELECT name FROM armor WHERE id IN {} //weapons query above;
+////////////////////////////////////////////////////////////
+
+
+
+SELECT * FROM spells WHERE id IN (
+    SELECT spells FROM char_map WHERE char_id = {};
+);
+
+UPDATE char_map //add/remove to/from appropriate list...
+SELECT id FROM spells WHERE name = {};
+
+//UPDATE characters SET class={} WHERE 
