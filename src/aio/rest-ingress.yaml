@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+  name: frontend
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: rest.default.svc.cluster.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rest
+            port:
+              number: 80
+  tls:
+  # This secret must exist beforehand
+  # The cert must also contain the subj-name grpctest.dev.mydomain.com
+  # https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/PREREQUISITES.md#tls-certificates
+  # creation steps:
+    # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=frontend" -addext "subjectAltName = DNS:frontend.default.svc.cluster.local"
+    # kubectl create secret tls dndio --key="tls.key" --cert="tls.crt"
+  - secretName: dndio 
+    hosts:
+      - rest.default.svc.cluster.local #dns name of the service - must be in the certificate

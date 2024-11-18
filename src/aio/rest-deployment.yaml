@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rest
+    tier: frontend
+  name: rest #rest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rest
+  template:
+    metadata:
+      labels:
+        app: rest
+    spec:
+      containers:
+      - image: pconnell89/grpctest  # Edit this for your reponame
+        resources:
+          limits:
+            cpu: 100m
+            memory: 400Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+        env:
+        - name: RMQ_HOST
+          value: rabbitmq
+        - name: RMQ_PORT
+          value: "5672"
+        - name: GET_HOSTS_FROM
+          value: dns
+        name: master
+        ports:
+        - containerPort: 5000
+
+---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: rest #rest
+#   name: rest
+# spec:
+#   ports:
+#   - port: 80
+#     protocol: TCP
+#     targetPort: 5000
+#   selector:
+#     app: rest #rest
+#   type: ClusterIP

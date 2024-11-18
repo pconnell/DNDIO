@@ -1,0 +1,29 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: rest
+#   name: rest
+# spec:
+#   ports:
+#   - port: 80
+#     protocol: TCP
+#     targetPort: 5000
+#   selector:
+#     app: rest
+#   type: ClusterIP
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rest #rest
+  name: rest
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: rest #rest
+  type: ClusterIP
