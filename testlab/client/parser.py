@@ -11,6 +11,8 @@ parser_init = subparsers.add_parser('init',help='channel initialization')
 ##########################################################################
 
 ##########################################################################
+#                     Get Character Info Commands                        #
+##########################################################################
 parser_char = subparsers.add_parser('char',help='char help')
 
 char_sub = parser_char.add_subparsers(help='char commands')
