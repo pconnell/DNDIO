@@ -1,0 +1,38 @@
+Name,type,cost,cost_unit,dmg,props,normal_range,long_range,mod,wgt
+Club,Melee,1,sp,{'1hnd': {'bludgeoning': {1: 4}}},['Light'],5,5,['STR'],2.0
+Dagger,Melee,2,gp,{'1hnd': {'piercing': {1: 4}}},"['Finesse', 'light', 'thrown (20/60)']",20,60,"['STR', 'DEX']",1.0
+Greatclub,Melee,2,sp,{'1hnd': {'bludgeoning': {1: 8}}},['Two-handed'],5,5,['STR'],10.0
+Handaxe,Melee,5,gp,{'1hnd': {'slashing': {1: 6}}},"['Light', 'thrown (20/60)']",20,60,['STR'],2.0
+Javelin,Melee,5,sp,{'1hnd': {'piercing': {1: 6}}},['Thrown (30/120)'],5,5,['STR'],2.0
+Light hammer,Melee,2,gp,{'1hnd': {'bludgeoning': {1: 4}}},"['Light', 'thrown (20/60)']",20,60,['STR'],2.0
+Mace,Melee,5,gp,{'1hnd': {'bludgeoning': {1: 6}}},[],5,5,['STR'],4.0
+Quarterstaff,Melee,2,sp,"{'1hnd': {'bludgeoning': {1: 6}}, '2hnd': {'bludgeoning': {1: 8}}}",['Versatile (1d8)'],5,5,['STR'],4.0
+Sickle,Melee,1,gp,{'1hnd': {'slashing': {1: 4}}},['Light'],5,5,['STR'],2.0
+Spear,Melee,1,gp,"{'1hnd': {'piercing': {1: 6}}, '2hnd': {'piercing': {1: 8}}}","['Thrown (20/60)', 'versatile (1d8)']",5,5,['STR'],3.0
+"Crossbow, light",Ranged,25,gp,{'1hnd': {'piercing': {1: 8}}},"['Ammunition', 'range (80/320)', 'loading', 'two-handed']",80,320,['STR'],5.0
+Dart,Ranged,5,cp,{'1hnd': {'piercing': {1: 4}}},"['Finesse', 'thrown (20/60)']",20,60,"['STR', 'DEX']",0.25
+Shortbow,Ranged,25,gp,{'1hnd': {'piercing': {1: 6}}},"['Ammunition', 'range (80/320)', 'two-handed']",80,320,['STR'],2.0
+Sling,Ranged,1,sp,{'1hnd': {'bludgeoning': {1: 4}}},"['Ammunition', 'range (30/120)']",30,120,['STR'],0.0
+Battleaxe,Melee,10,gp,"{'1hnd': {'slashing': {1: 8}}, '2hnd': {'slashing': {1: 10}}}",['Versatile (1d10)'],5,5,['STR'],4.0
+Flail,Melee,10,gp,{'1hnd': {'bludgeoning': {1: 8}}},[],5,5,['STR'],2.0
+Glaive,Melee,20,gp,{'1hnd': {'slashing': {1: 10}}},"['Heavy', 'reach', 'two-handed']",10,10,['STR'],6.0
+Greataxe,Melee,30,gp,{'1hnd': {'slashing': {1: 12}}},"['Heavy', 'two-handed']",5,5,['STR'],7.0
+Greatsword,Melee,50,gp,{'1hnd': {'slashing': {2: 6}}},"['Heavy', 'two-handed']",5,5,['STR'],6.0
+Halberd,Melee,20,gp,{'1hnd': {'slashing': {1: 10}}},"['Heavy', 'reach', 'two-handed']",10,10,['STR'],6.0
+Lance,Melee,10,gp,{'1hnd': {'piercing': {1: 12}}},"['Reach', 'special']",10,10,['STR'],6.0
+Longsword,Melee,15,gp,"{'1hnd': {'slashing': {1: 8}}, '2hnd': {'slashing': {1: 10}}}",['Versatile (1d10)'],5,5,['STR'],3.0
+Maul,Melee,10,gp,{'1hnd': {'bludgeoning': {2: 6}}},"['Heavy', 'two-handed']",5,5,['STR'],10.0
+Morningstar,Melee,15,gp,{'1hnd': {'piercing': {1: 8}}},[],5,5,['STR'],4.0
+Pike,Melee,5,gp,{'1hnd': {'piercing': {1: 10}}},"['Heavy', 'reach', 'two-handed']",10,10,['STR'],18.0
+Rapier,Melee,25,gp,{'1hnd': {'piercing': {1: 8}}},['Finesse'],5,5,"['STR', 'DEX']",2.0
+Scimitar,Melee,25,gp,{'1hnd': {'slashing': {1: 6}}},"['Finesse', 'light']",5,5,"['STR', 'DEX']",3.0
+Shortsword,Melee,10,gp,{'1hnd': {'piercing': {1: 6}}},"['Finesse', 'light']",5,5,"['STR', 'DEX']",2.0
+Trident,Melee,5,gp,"{'1hnd': {'piercing': {1: 6}}, '2hnd': {'piercing': {1: 8}}}","['Thrown (20/60)', 'versatile (1d8)']",5,5,['STR'],4.0
+War pick,Melee,5,gp,{'1hnd': {'piercing': {1: 8}}},[],5,5,['STR'],2.0
+Warhammer,Melee,15,gp,"{'1hnd': {'bludgeoning': {1: 8}}, '2hnd': {'bludgeoning': {1: 10}}}",['Versatile (1d10)'],5,5,['STR'],2.0
+Whip,Melee,2,gp,{'1hnd': {'slashing': {1: 4}}},"['Finesse', 'reach']",10,10,"['STR', 'DEX']",3.0
+Blowgun,Ranged,10,gp,{'1hnd': {}},"['Ammunition', 'range (25/100)', 'loading']",25,100,['STR'],1.0
+"Crossbow, hand",Ranged,75,gp,{'1hnd': {'piercing': {1: 6}}},"['Ammunition', 'range (30/120)', 'light', 'loading']",30,120,['STR'],3.0
+"Crossbow, heavy",Ranged,50,gp,{'1hnd': {'piercing': {1: 10}}},"['Ammunition', 'range (100/400)', 'heavy', 'loading', 'two-handed']",100,400,['STR'],18.0
+Longbow,Ranged,50,gp,{'1hnd': {'piercing': {1: 8}}},"['Ammunition', 'range (150/600)', 'heavy', 'two-Handed']",150,600,['STR'],2.0
+Net,Ranged,1,gp,{'1hnd': {}},"['Special', 'thrown (5/15)']",5,15,['STR'],3.0

@@ -62,16 +62,31 @@ CREATE TABLE spells (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE armor (
+create table armor (
     id uuid,
     name text,
-    type text,
-    AC smallint,
-    min_str smallint,
-    impact_stealth boolean,
+    minSTR smallint,
+    stealth_disadv boolean,
     weight smallint,
-    off_on_time smallint,
+    type text,
+    baseAC smallint,
+    modAC text,
+    cost_amt smallint,
+    cost_unit text,
+    don text,
+    doff text,
     PRIMARY KEY (id)
+);
+
+create table classes (
+    class_id text,
+    level smallint,
+    prof_bonus smallint,
+    features list<text>,
+    class text,
+    class_specific frozen<map<text,smallint>>,
+    spellslots frozen<map<smallint,smallint>>,
+    PRIMARY KEY (class_id)
 );
 
 CREATE TABLE char_map (
@@ -92,6 +107,8 @@ CREATE TABLE classes (
     hit_dice frozen<map<smallint,smallint>>,
     lvl_hp frozen<map<smallint,smallint>>,
     proficiencies list<frozen<map<text,list<text>>>>,
+    atk_mod text,
+    spellcast_mod text, 
     cantrips_known smallint,
     spells_known smallint,
     spellslots list<frozen<map<smallint,smallint>>>,
@@ -169,7 +186,7 @@ SELECT equipped FROM char_map WHERE char_id = {};
 UPDATE char_map 
     SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
 
-//otherwise... get the available weapons and tell them the names
+//otherwiseget the available weapons and tell them the names
 SELECT name FROM weapons WHERE id IN {} //weapons query above;
 ////////////////////////////////////////////////////////////
 ///only really applicable for wizards...
@@ -180,7 +197,7 @@ SELECT equipped FROM char_map WHERE char_id = {};
 UPDATE char_map 
     SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
 
-//otherwise... get the available weapons and tell them the names
+//otherwiseget the available weapons and tell them the names
 SELECT name FROM spells WHERE id IN {} //weapons query above;
 ////////////////////////////////////////////////////////////
 ///only really applicable for wizards...
@@ -191,7 +208,7 @@ SELECT equipped FROM char_map WHERE char_id = {};
 UPDATE char_map 
     SET equipped = [{'armor':[ids]},{'spells':[ids]},{'weapon':[id]}]
 
-//otherwise... get the available weapons and tell them the names
+//otherwiseget the available weapons and tell them the names
 SELECT name FROM armor WHERE id IN {} //weapons query above;
 ////////////////////////////////////////////////////////////
 

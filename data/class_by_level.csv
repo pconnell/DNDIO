@@ -1,0 +1,261 @@
+level,prof_bonus,features,class,class_specific,spellslots
+1,2,"['Rage', ' Unarmored Defense']",Barbarian,"{'rages': 2, 'rage_dmg': 2}",
+2,2,"['Reckless Attack', ' Danger Sense']",Barbarian,"{'rages': 2, 'rage_dmg': 2}",
+3,2,[],Barbarian,"{'rages': 3, 'rage_dmg': 2}",
+4,2,['Ability Score Improvement'],Barbarian,"{'rages': 3, 'rage_dmg': 2}",
+5,3,[],Barbarian,"{'rages': 3, 'rage_dmg': 2}",
+6,3,['Path feature'],Barbarian,"{'rages': 4, 'rage_dmg': 2}",
+7,3,[],Barbarian,"{'rages': 4, 'rage_dmg': 2}",
+8,3,['Ability Score Improvement'],Barbarian,"{'rages': 4, 'rage_dmg': 2}",
+9,4,[],Barbarian,"{'rages': 4, 'rage_dmg': 3}",
+10,4,"['Path feature', '  Primal Knowledge (Optional)']",Barbarian,"{'rages': 4, 'rage_dmg': 3}",
+11,4,[],Barbarian,"{'rages': 4, 'rage_dmg': 3}",
+12,4,['Ability Score Improvement'],Barbarian,"{'rages': 5, 'rage_dmg': 3}",
+13,5,[],Barbarian,"{'rages': 5, 'rage_dmg': 3}",
+14,5,['Path feature'],Barbarian,"{'rages': 5, 'rage_dmg': 3}",
+15,5,[],Barbarian,"{'rages': 5, 'rage_dmg': 3}",
+16,5,['Ability Score Improvement'],Barbarian,"{'rages': 5, 'rage_dmg': 4}",
+17,6,[],Barbarian,"{'rages': 6, 'rage_dmg': 4}",
+18,6,['Indomitable Might'],Barbarian,"{'rages': 6, 'rage_dmg': 4}",
+19,6,['Ability Score Improvement'],Barbarian,"{'rages': 6, 'rage_dmg': 4}",
+20,6,['Primal Champion'],Barbarian,"{'rages': 999, 'rage_dmg': 4}",
+1,2,"['Spellcasting', ' Bardic Inspiration (d6)']",Bard,"{'cantrips_known': 2, 'spells_known': 4}","{1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+2,2,"['Jack of All Trades', ' Song of Rest (d6)', '  Magical Inspiration (Optional)']",Bard,"{'cantrips_known': 2, 'spells_known': 5}","{1: 3, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+3,2,"['Bard College', ' Expertise']",Bard,"{'cantrips_known': 2, 'spells_known': 6}","{1: 4, 2: 2, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+4,2,"['Ability Score Improvement', '  Bardic Versatility (Optional)']",Bard,"{'cantrips_known': 3, 'spells_known': 7}","{1: 4, 2: 3, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+5,3,"['Bardic Inspiration (d8)', ' Font of Inspiration']",Bard,"{'cantrips_known': 3, 'spells_known': 8}","{1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+6,3,"['Countercharm', ' Bard College feature']",Bard,"{'cantrips_known': 3, 'spells_known': 9}","{1: 4, 2: 3, 3: 3, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+7,3,[],Bard,"{'cantrips_known': 3, 'spells_known': 10}","{1: 4, 2: 3, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+8,3,"['Ability Score Improvement', '  Bardic Versatility (Optional)']",Bard,"{'cantrips_known': 3, 'spells_known': 11}","{1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+9,4,['Song of Rest (d8)'],Bard,"{'cantrips_known': 3, 'spells_known': 12}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0}"
+10,4,"['Bardic Inspiration (d10)', ' Expertise', ' Magical Secrets']",Bard,"{'cantrips_known': 4, 'spells_known': 14}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 0, 7: 0, 8: 0, 9: 0}"
+11,4,[],Bard,"{'cantrips_known': 4, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+12,4,"['Ability Score Improvement', '  Bardic Versatility (Optional)']",Bard,"{'cantrips_known': 4, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+13,5,['Song of Rest (d10)'],Bard,"{'cantrips_known': 4, 'spells_known': 16}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+14,5,"['Magical Secrets', ' Bard College feature']",Bard,"{'cantrips_known': 4, 'spells_known': 18}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+15,5,['Bardic Inspiration (d12)'],Bard,"{'cantrips_known': 4, 'spells_known': 19}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+16,5,"['Ability Score Improvement', '  Bardic Versatility (Optional)']",Bard,"{'cantrips_known': 4, 'spells_known': 19}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+17,6,['Song of Rest (d12)'],Bard,"{'cantrips_known': 4, 'spells_known': 20}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}"
+18,6,['Magical Secrets'],Bard,"{'cantrips_known': 4, 'spells_known': 22}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}"
+19,6,"['Ability Score Improvement', '  Bardic Versatility (Optional)']",Bard,"{'cantrips_known': 4, 'spells_known': 22}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1}"
+20,6,['Superior Inspiration'],Bard,"{'cantrips_known': 4, 'spells_known': 22}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1}"
+1,2,"['Druidic', ' Spellcasting']",Druid,{'cantrips_known': 2},"{1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+2,2,"['Wild Shape', ' Druid Circle', '  Wild Companion (Optional)']",Druid,{'cantrips_known': 2},"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+3,2,[],Druid,{'cantrips_known': 2},"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+4,2,"['Wild Shape improvement', ' Ability Score Improvement', '  Cantrip Versatility (Optional)']",Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+5,3,[],Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+6,3,['Druid Circle feature'],Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+7,3,[],Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+8,3,"['Wild Shape improvement', ' Ability Score Improvement', '  Cantrip Versatility (Optional)']",Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+9,4,[],Druid,{'cantrips_known': 3},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0}"
+10,4,['Druid Circle feature'],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 0, 7: 0, 8: 0, 9: 0}"
+11,4,[],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+12,4,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+13,5,[],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+14,5,['Druid Circle feature'],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+15,5,[],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+16,5,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+17,6,[],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}"
+18,6,"['Timeless Body', ' Beast Spells']",Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}"
+19,6,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1}"
+20,6,['Archdruid'],Druid,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1}"
+1,2,"['Fighting Style', ' Second Wind']",Fighter,,
+2,2,['Action Surge (x1)'],Fighter,,
+3,2,['Martial Archetype'],Fighter,,
+4,2,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+5,3,['Extra Attack (x1)'],Fighter,,
+6,3,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+7,3,['Martial Archetype feature'],Fighter,,
+8,3,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+9,4,['Indomitable (x1)'],Fighter,,
+10,4,['Martial Archetype feature'],Fighter,,
+11,4,['Extra Attack (x2)'],Fighter,,
+12,4,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+13,5,['Indomitable (x2)'],Fighter,,
+14,5,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+15,5,['Martial Archetype feature'],Fighter,,
+16,5,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+17,6,"['Action Surge (x2)', ' Indomitable (x3)']",Fighter,,
+18,6,['Martial Archetype feature'],Fighter,,
+19,6,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Fighter,,
+20,6,['Extra Attack (x3)'],Fighter,,
+1,2,"['Unarmored Defense', ' Martial Arts']",Monk,"{'ki_points': 0, 'unarmored_mvmt': 0, 'martial_arts_dice': 4, 'martial_arts_dmg': 1}",
+2,2,"['Ki', ' Unarmored Movement', '  Dedicated Weapon (Optional)']",Monk,"{'ki_points': 2, 'unarmored_mvmt': 10, 'martial_arts_dice': 4, 'martial_arts_dmg': 1}",
+3,2,"['Monastic Tradition', ' Deflect Missiles', '  Ki-Fueled Attack (Optional)']",Monk,"{'ki_points': 3, 'unarmored_mvmt': 10, 'martial_arts_dice': 4, 'martial_arts_dmg': 1}",
+4,2,"['Ability Score Improvement', ' Slow Fall', '  Quickened Healing (Optional)']",Monk,"{'ki_points': 4, 'unarmored_mvmt': 10, 'martial_arts_dice': 4, 'martial_arts_dmg': 1}",
+5,3,"['Extra Attack', ' Stunning Strike', '  Focused Aim (Optional)']",Monk,"{'ki_points': 5, 'unarmored_mvmt': 10, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+6,3,"['Ki-Empowered Strikes', ' Monastic Tradition feature']",Monk,"{'ki_points': 6, 'unarmored_mvmt': 15, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+7,3,"['Evasion', ' Stillness of Mind']",Monk,"{'ki_points': 7, 'unarmored_mvmt': 15, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+8,3,['Ability Score Improvement'],Monk,"{'ki_points': 8, 'unarmored_mvmt': 15, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+9,4,['Unarmored Movement improvement'],Monk,"{'ki_points': 9, 'unarmored_mvmt': 15, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+10,4,['Purity of Body'],Monk,"{'ki_points': 10, 'unarmored_mvmt': 20, 'martial_arts_dice': 6, 'martial_arts_dmg': 1}",
+11,4,['Monastic Tradition feature'],Monk,"{'ki_points': 11, 'unarmored_mvmt': 20, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+12,4,['Ability Score Improvement'],Monk,"{'ki_points': 12, 'unarmored_mvmt': 20, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+13,5,['Tongue of the Sun and Moon'],Monk,"{'ki_points': 13, 'unarmored_mvmt': 20, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+14,5,['Diamond Soul'],Monk,"{'ki_points': 14, 'unarmored_mvmt': 25, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+15,5,['Timeless Body'],Monk,"{'ki_points': 15, 'unarmored_mvmt': 25, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+16,5,['Ability Score Improvement'],Monk,"{'ki_points': 16, 'unarmored_mvmt': 25, 'martial_arts_dice': 8, 'martial_arts_dmg': 1}",
+17,6,['Monastic Tradition feature'],Monk,"{'ki_points': 17, 'unarmored_mvmt': 25, 'martial_arts_dice': 10, 'martial_arts_dmg': 1}",
+18,6,['Empty Body'],Monk,"{'ki_points': 18, 'unarmored_mvmt': 30, 'martial_arts_dice': 10, 'martial_arts_dmg': 1}",
+19,6,['Ability Score Improvement'],Monk,"{'ki_points': 19, 'unarmored_mvmt': 30, 'martial_arts_dice': 10, 'martial_arts_dmg': 1}",
+20,6,['Perfect Self'],Monk,"{'ki_points': 20, 'unarmored_mvmt': 30, 'martial_arts_dice': 10, 'martial_arts_dmg': 1}",
+1,2,"['Divine Sense', ' Lay on Hands']",Paladin,,"{1: 0, 2: 0, 3: 0, 4: 0, 5: 0}"
+2,2,"['Fighting Style', ' Spellcasting', ' Divine Smite']",Paladin,,"{1: 2, 2: 0, 3: 0, 4: 0, 5: 0}"
+3,2,"['Divine Health', ' Sacred Oath', '  Harness Divine Power (Optional)']",Paladin,,"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+4,2,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Paladin,,"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+5,3,['Extra Attack'],Paladin,,"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+6,3,['Aura of Protection'],Paladin,,"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+7,3,['Sacred Oath feature'],Paladin,,"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+8,3,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Paladin,,"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+9,4,[],Paladin,,"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+10,4,['Aura of Courage'],Paladin,,"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+11,4,['Improved Divine Smite'],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+12,4,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Paladin,,"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+13,5,[],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+14,5,['Cleansing Touch'],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+15,5,['Sacred Oath feature'],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+16,5,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Paladin,,"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+17,6,[],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+18,6,['Aura improvements'],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+19,6,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Paladin,,"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
+20,6,['Sacred Oath feature'],Paladin,,"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
+1,2,"['Favored Enemy', ' Natural Explorer', '  Deft Explorer (Optional)  ', '  Favored Foe (Optional)']",Ranger,{'spells_known': 0},"{1: 0, 2: 0, 3: 0, 4: 0, 5: 0}"
+2,2,"['Fighting Style', ' Spellcasting', '  Spellcasting Focus (Optional)']",Ranger,{'spells_known': 2},"{1: 2, 2: 0, 3: 0, 4: 0, 5: 0}"
+3,2,"['Primeval Awareness', ' Ranger Conclave', '  Primal Awareness (Optional)']",Ranger,{'spells_known': 3},"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+4,2,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Ranger,{'spells_known': 3},"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+5,3,['Extra Attack'],Ranger,{'spells_known': 4},"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+6,3,"['Favored Enemy Improvement', ' Natural Explorer Improvement', '  Deft Explorer Improvement (Optional)']",Ranger,{'spells_known': 4},"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+7,3,['Ranger Conclave feature'],Ranger,{'spells_known': 5},"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+8,3,"['Ability Score Improvement', "" Land's Stride"", '  Martial Versatility (Optional)']",Ranger,{'spells_known': 5},"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+9,4,[],Ranger,{'spells_known': 6},"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+10,4,"['Natural Explorer Improvement', ' Hide in Plain Sight', '  Deft Explorer Feature (Optional)  ', ""  Nature's Veil (Optional)""]",Ranger,{'spells_known': 6},"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+11,4,['Ranger Conclave feature'],Ranger,{'spells_known': 7},"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+12,4,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Ranger,{'spells_known': 7},"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+13,5,[],Ranger,{'spells_known': 8},"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+14,5,"['Favored Enemy Improvement', ' Vanish']",Ranger,{'spells_known': 8},"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+15,5,['Ranger Conclave feature'],Ranger,{'spells_known': 9},"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+16,5,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Ranger,{'spells_known': 9},"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+17,6,[],Ranger,{'spells_known': 10},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+18,6,['Feral Senses'],Ranger,{'spells_known': 10},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+19,6,"['Ability Score Improvement', '  Martial Versatility (Optional)']",Ranger,{'spells_known': 11},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
+20,6,['Foe Slayer'],Ranger,{'spells_known': 11},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
+1,2,"['Expertise', ' Sneak Attack', "" Thieves' Cant""]",Rogue,"{'sneak_attack_die': 1, 'sneak_attack_dmg': 6}",
+2,2,['Cunning Action'],Rogue,"{'sneak_attack_die': 1, 'sneak_attack_dmg': 6}",
+3,2,"['Roguish Archetype', '  Steady Aim (Optional)']",Rogue,"{'sneak_attack_die': 2, 'sneak_attack_dmg': 6}",
+4,2,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 2, 'sneak_attack_dmg': 6}",
+5,3,['Uncanny Dodge'],Rogue,"{'sneak_attack_die': 3, 'sneak_attack_dmg': 6}",
+6,3,['Expertise'],Rogue,"{'sneak_attack_die': 3, 'sneak_attack_dmg': 6}",
+7,3,['Evasion'],Rogue,"{'sneak_attack_die': 4, 'sneak_attack_dmg': 6}",
+8,3,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 4, 'sneak_attack_dmg': 6}",
+9,4,['Roguish Archetype feature'],Rogue,"{'sneak_attack_die': 5, 'sneak_attack_dmg': 6}",
+10,4,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 5, 'sneak_attack_dmg': 6}",
+11,4,['Reliable Talent'],Rogue,"{'sneak_attack_die': 6, 'sneak_attack_dmg': 6}",
+12,4,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 6, 'sneak_attack_dmg': 6}",
+13,5,['Roguish Archetype feature'],Rogue,"{'sneak_attack_die': 7, 'sneak_attack_dmg': 6}",
+14,5,['Blindsense'],Rogue,"{'sneak_attack_die': 7, 'sneak_attack_dmg': 6}",
+15,5,['Slippery Mind'],Rogue,"{'sneak_attack_die': 8, 'sneak_attack_dmg': 6}",
+16,5,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 8, 'sneak_attack_dmg': 6}",
+17,6,['Roguish Archetype feature'],Rogue,"{'sneak_attack_die': 9, 'sneak_attack_dmg': 6}",
+18,6,['Elusive'],Rogue,"{'sneak_attack_die': 9, 'sneak_attack_dmg': 6}",
+19,6,['Ability Score Improvement'],Rogue,"{'sneak_attack_die': 10, 'sneak_attack_dmg': 6}",
+20,6,['Stroke of Luck'],Rogue,"{'sneak_attack_die': 10, 'sneak_attack_dmg': 6}",
+1,2,"['Spellcasting', ' Divine Domain']",Cleric,{'cantrips_known': 3},"{1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+2,2,"['Channel Divinity (x1)', ' Divine Domain feature', '  Harness Divine Power (Optional)']",Cleric,{'cantrips_known': 3},"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+3,2,[],Cleric,{'cantrips_known': 3},"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+4,2,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+5,3,['Destroy Undead (CR 1/2)'],Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+6,3,"['Channel Divinity (x2)', ' Divine Domain feature']",Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+7,3,[],Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+8,3,"['Ability Score Improvement', ' Destroy Undead (CR 1)', ' Divine Domain feature', '  Cantrip Versatility (Optional)']",Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+9,4,[],Cleric,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0}"
+10,4,['Divine Intervention'],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 0, 7: 0, 8: 0, 9: 0}"
+11,4,['Destroy Undead (CR 2)'],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+12,4,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+13,5,[],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+14,5,['Destroy Undead (CR 3)'],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+15,5,[],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+16,5,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+17,6,"['Destroy Undead (CR 4)', ' Divine Domain feature']",Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}"
+18,6,['Channel Divinity (x3)'],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}"
+19,6,"['Ability Score Improvement', '  Cantrip Versatility (Optional)']",Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1}"
+20,6,['Divine Intervention improvement'],Cleric,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1}"
+1,2,"['Spellcasting', ' Sorcerous Origin']",Sorcerer,"{'sorc_points': 0, 'cantrips_known': 4, 'spells_known': 2}","{1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+2,2,['Font of Magic'],Sorcerer,"{'sorc_points': 2, 'cantrips_known': 4, 'spells_known': 3}","{1: 3, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+3,2,['Metamagic'],Sorcerer,"{'sorc_points': 3, 'cantrips_known': 4, 'spells_known': 4}","{1: 4, 2: 2, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+4,2,"['Ability Score Improvement', '  Sorcerous Versatility (Optional)']",Sorcerer,"{'sorc_points': 4, 'cantrips_known': 5, 'spells_known': 5}","{1: 4, 2: 3, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+5,3,['Magical Guidance (Optional)'],Sorcerer,"{'sorc_points': 5, 'cantrips_known': 5, 'spells_known': 6}","{1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+6,3,['Sorcerous Origin feature'],Sorcerer,"{'sorc_points': 6, 'cantrips_known': 5, 'spells_known': 7}","{1: 4, 2: 3, 3: 3, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+7,3,[],Sorcerer,"{'sorc_points': 7, 'cantrips_known': 5, 'spells_known': 8}","{1: 4, 2: 3, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+8,3,"['Ability Score Improvement', '  Sorcerous Versatility (Optional)']",Sorcerer,"{'sorc_points': 8, 'cantrips_known': 5, 'spells_known': 9}","{1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+9,4,[],Sorcerer,"{'sorc_points': 9, 'cantrips_known': 5, 'spells_known': 10}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0}"
+10,4,['Metamagic'],Sorcerer,"{'sorc_points': 10, 'cantrips_known': 6, 'spells_known': 11}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 0, 7: 0, 8: 0, 9: 0}"
+11,4,[],Sorcerer,"{'sorc_points': 11, 'cantrips_known': 6, 'spells_known': 12}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+12,4,"['Ability Score Improvement', '  Sorcerous Versatility (Optional)']",Sorcerer,"{'sorc_points': 12, 'cantrips_known': 6, 'spells_known': 12}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+13,5,[],Sorcerer,"{'sorc_points': 13, 'cantrips_known': 6, 'spells_known': 13}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+14,5,['Sorcerous Origin feature'],Sorcerer,"{'sorc_points': 14, 'cantrips_known': 6, 'spells_known': 13}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+15,5,[],Sorcerer,"{'sorc_points': 15, 'cantrips_known': 6, 'spells_known': 14}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+16,5,"['Ability Score Improvement', '  Sorcerous Versatility (Optional)']",Sorcerer,"{'sorc_points': 16, 'cantrips_known': 6, 'spells_known': 14}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+17,6,['Metamagic'],Sorcerer,"{'sorc_points': 17, 'cantrips_known': 6, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}"
+18,6,['Sorcerous Origin feature'],Sorcerer,"{'sorc_points': 18, 'cantrips_known': 6, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}"
+19,6,"['Ability Score Improvement', '  Sorcerous Versatility (Optional)']",Sorcerer,"{'sorc_points': 19, 'cantrips_known': 6, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1}"
+20,6,['Sorcerous Restoration'],Sorcerer,"{'sorc_points': 20, 'cantrips_known': 6, 'spells_known': 15}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1}"
+1,2,"['Otherworldly Patron', ' Pact Magic']",Warlock,"{'cantrips_known': 2, 'spells_known': 2, 'invocations_known': 0}",{1: 1}
+2,2,['Eldritch Invocations'],Warlock,"{'cantrips_known': 2, 'spells_known': 3, 'invocations_known': 2}",{1: 2}
+3,2,['Pact Boon'],Warlock,"{'cantrips_known': 2, 'spells_known': 4, 'invocations_known': 2}",{2: 2}
+4,2,"['Ability Score Improvement', '  Eldritch Versatility (Optional)']",Warlock,"{'cantrips_known': 3, 'spells_known': 5, 'invocations_known': 2}",{2: 2}
+5,3,[],Warlock,"{'cantrips_known': 3, 'spells_known': 6, 'invocations_known': 3}",{3: 2}
+6,3,['Otherworldly Patron feature'],Warlock,"{'cantrips_known': 3, 'spells_known': 7, 'invocations_known': 3}",{3: 2}
+7,3,[],Warlock,"{'cantrips_known': 3, 'spells_known': 8, 'invocations_known': 4}",{4: 2}
+8,3,"['Ability Score Improvement', '  Eldritch Versatility (Optional)']",Warlock,"{'cantrips_known': 3, 'spells_known': 9, 'invocations_known': 4}",{4: 2}
+9,4,[],Warlock,"{'cantrips_known': 3, 'spells_known': 10, 'invocations_known': 5}",{5: 2}
+10,4,['Otherworldly Patron feature'],Warlock,"{'cantrips_known': 4, 'spells_known': 10, 'invocations_known': 5}",{5: 2}
+11,4,['Mystic Arcanum (6th level)'],Warlock,"{'cantrips_known': 4, 'spells_known': 11, 'invocations_known': 5}",{5: 3}
+12,4,"['Ability Score Improvement', '  Eldritch Versatility (Optional)']",Warlock,"{'cantrips_known': 4, 'spells_known': 11, 'invocations_known': 6}",{5: 3}
+13,5,['Mystic Arcanum (7th level)'],Warlock,"{'cantrips_known': 4, 'spells_known': 12, 'invocations_known': 6}",{5: 3}
+14,5,['Otherworldly Patron feature'],Warlock,"{'cantrips_known': 4, 'spells_known': 12, 'invocations_known': 6}",{5: 3}
+15,5,['Mystic Arcanum (8th level)'],Warlock,"{'cantrips_known': 4, 'spells_known': 13, 'invocations_known': 7}",{5: 3}
+16,5,"['Ability Score Improvement', '  Eldritch Versatility (Optional)']",Warlock,"{'cantrips_known': 4, 'spells_known': 13, 'invocations_known': 7}",{5: 3}
+17,6,['Mystic Arcanum (9th level)'],Warlock,"{'cantrips_known': 4, 'spells_known': 14, 'invocations_known': 7}",{5: 4}
+18,6,[],Warlock,"{'cantrips_known': 4, 'spells_known': 14, 'invocations_known': 8}",{5: 4}
+19,6,"['Ability Score Improvement', '  Eldritch Versatility (Optional)']",Warlock,"{'cantrips_known': 4, 'spells_known': 15, 'invocations_known': 8}",{5: 4}
+20,6,['Eldritch Master'],Warlock,"{'cantrips_known': 4, 'spells_known': 15, 'invocations_known': 8}",{5: 4}
+1,2,"['Spellcasting', ' Arcane Recovery']",Wizard,{'cantrips_known': 3},"{1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+2,2,['Arcane Tradition'],Wizard,{'cantrips_known': 3},"{1: 3, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+3,2,['Cantrip Formulas (Optional)'],Wizard,{'cantrips_known': 3},"{1: 4, 2: 2, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+4,2,['Ability Score Improvement'],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+5,3,[],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+6,3,['Arcane Tradition feature'],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+7,3,[],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+8,3,['Ability Score Improvement'],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}"
+9,4,[],Wizard,{'cantrips_known': 4},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0}"
+10,4,['Arcane Tradition feature'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 0, 7: 0, 8: 0, 9: 0}"
+11,4,[],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+12,4,['Ability Score Improvement'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 0, 8: 0, 9: 0}"
+13,5,[],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+14,5,['Arcane Tradition feature'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 0, 9: 0}"
+15,5,[],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+16,5,['Ability Score Improvement'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 0}"
+17,6,[],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}"
+18,6,['Spell Mastery'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}"
+19,6,['Ability Score Improvement'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1}"
+20,6,['Signature Spells'],Wizard,{'cantrips_known': 5},"{1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1}"
+1,2,"['Magical Tinkering', ' Spellcasting']",Artificer,"{'infusions_known': 0, 'infused_items': 0, 'cantrips_known': 2}","{1: 2, 2: 0, 3: 0, 4: 0, 5: 0}"
+2,2,['Infuse Item'],Artificer,"{'infusions_known': 4, 'infused_items': 2, 'cantrips_known': 2}","{1: 2, 2: 0, 3: 0, 4: 0, 5: 0}"
+3,2,"['Artificer Specialist', ' The Right Tool for the Job']",Artificer,"{'infusions_known': 4, 'infused_items': 2, 'cantrips_known': 2}","{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+4,2,['Ability Score Improvement'],Artificer,"{'infusions_known': 4, 'infused_items': 2, 'cantrips_known': 2}","{1: 3, 2: 0, 3: 0, 4: 0, 5: 0}"
+5,3,['Artificer Specialist feature'],Artificer,"{'infusions_known': 4, 'infused_items': 2, 'cantrips_known': 2}","{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+6,3,['Tool Expertise'],Artificer,"{'infusions_known': 6, 'infused_items': 3, 'cantrips_known': 2}","{1: 4, 2: 2, 3: 0, 4: 0, 5: 0}"
+7,3,['Flash of Genius'],Artificer,"{'infusions_known': 6, 'infused_items': 3, 'cantrips_known': 2}","{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+8,3,['Ability Score Improvement'],Artificer,"{'infusions_known': 6, 'infused_items': 3, 'cantrips_known': 2}","{1: 4, 2: 3, 3: 0, 4: 0, 5: 0}"
+9,4,['Artificer Specialist feature'],Artificer,"{'infusions_known': 6, 'infused_items': 3, 'cantrips_known': 2}","{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+10,4,['Magic Item Adept'],Artificer,"{'infusions_known': 8, 'infused_items': 4, 'cantrips_known': 3}","{1: 4, 2: 3, 3: 2, 4: 0, 5: 0}"
+11,4,['Spell-Storing Item'],Artificer,"{'infusions_known': 8, 'infused_items': 4, 'cantrips_known': 3}","{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+12,4,['Ability Score Improvement'],Artificer,"{'infusions_known': 8, 'infused_items': 4, 'cantrips_known': 3}","{1: 4, 2: 3, 3: 3, 4: 0, 5: 0}"
+13,5,['-'],Artificer,"{'infusions_known': 8, 'infused_items': 4, 'cantrips_known': 3}","{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+14,5,['Magic Item Savant'],Artificer,"{'infusions_known': 10, 'infused_items': 5, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 1, 5: 0}"
+15,5,['Artificer Specialist feature'],Artificer,"{'infusions_known': 10, 'infused_items': 5, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+16,5,['Ability Score Improvement'],Artificer,"{'infusions_known': 10, 'infused_items': 5, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 2, 5: 0}"
+17,6,['-'],Artificer,"{'infusions_known': 10, 'infused_items': 5, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+18,6,['Magic Item Master'],Artificer,"{'infusions_known': 12, 'infused_items': 6, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 1}"
+19,6,['Ability Score Improvement'],Artificer,"{'infusions_known': 12, 'infused_items': 6, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
+20,6,['Soul of Artifice'],Artificer,"{'infusions_known': 12, 'infused_items': 6, 'cantrips_known': 4}","{1: 4, 2: 3, 3: 3, 4: 3, 5: 2}"
