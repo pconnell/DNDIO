@@ -149,3 +149,26 @@ for s in test_commands:
 
 #### NOTES ####
 # - for `init`
+
+#ideas for roll commands - keep em simple.
+"roll init adv|dadv"
+#think that this should be for spells - roll both the spell attack roll and the damage roll
+#return back the roll(s) and the other pertinent data to keep it simple
+"roll spell [spellname] [slot_lvl] -a|-d"
+#i think that attack should look like this
+#and similarly, do the attack roll and the damage roll so as to keep it simple.
+"roll attack [weaponname] -a|-d"
+#stats and saves like this
+"roll save [stat] -a|-d"
+"roll skill [name] -a|-d"
+
+#lookup command structure
+#if there's a better structure, let me know.
+"lookup [class|weapon|armor|spell] [name] [level - for class only]"
+
+#init commands - these are ideas, don't let scope creep get in the way if any of this is too complicated.
+#this is what I think init may need to look like, depending
+"init" #just take everyone in the current discord channel and add them in
+"init user [discordUserID]" #add a user that's come to the party late
+"init remove [discordUserID]" #boot a player that's no longer part of the party
+"init check" #give a status of everyone that's in the channel, make sure they've got records in the DB.
