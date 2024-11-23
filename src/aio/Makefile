@@ -1,6 +1,9 @@
 VERSION=v1
 DOCKERUSER=pconnell89
 
+protobufs:
+	python3 -m grpc_tools.protoc -I./protobuf_spec --python_out=. --grpc_python_out=. ./protobuf_spec/*.proto
+
 grpc-build:
 	docker build -f grpc-Dockerfile -t grpctest .
 

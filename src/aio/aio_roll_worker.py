@@ -9,6 +9,7 @@ from aio_pika.abc import (
 from aio_pika import Message
 import asyncio
 import workerRoll_pb2, workerRoll_pb2_grpc
+import dndio_pb2, dndio_pb2_grpc
 ##################################################################
 
 ##################################################################
