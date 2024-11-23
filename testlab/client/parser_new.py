@@ -57,6 +57,41 @@ get_sub.add_argument("-c", "--char", default=None,
 ##########################################################################
 #                     Set Character Info Commands                        #
 ##########################################################################
+
+class SetValueSplitter(argparse.Action):
+    def __init__(self, valid_stats, valid_values, return_values=False, **kwargs):
+        self.return_values = "values" if return_values else "stats"
+        self.valid_stats = valid_stats
+        self.valid_values = valid_values
+        super().__init__(**kwargs)
+    
+    def __call__(self, parser, namespace, args, option_string=None):
+        if len(args) % 2 != 0:
+            raise ValueError("Values must be in key-value pairs.")
+
+        it = [iter(args)] * 2
+
+        stats = dict(zip(*it))
+
+        for stat in stats:
+            if not (
+                stat in self.valid_stats and int(stats[stat]) in self.valid_values
+            ):
+                raise ValueError(f"{stat}, {stats[stat]}.\nValid abilities are {self.valid_stats}, with scores ranging from {self.valid_values[0]} to {self.valid_values[-1]}.")
+
+        setattr(namespace, self.dest, eval(self.return_values))
+
+def create_set_value_parser(parser, name, valid_stats: list[str], valid_values: list[int]):
+    parser.add_argument(
+        name, 
+        nargs="+", 
+        action=SetValueSplitter, 
+        valid_stats=valid_stats, 
+        valid_values=valid_values
+    )
+
+    return parser
+
 char_set = char_sub.add_parser('set', 
                                help="Modify a value on your, another player's, or an NPC's character sheet.", 
                                aliases=['set'])
@@ -64,102 +99,53 @@ set_sub = char_set.add_subparsers()
 
 # Set ability score
 # dndio char set ability STR 17
-ability_sub = set_sub.add_parser('ability')
+char_set_parsers = {
+    "ability": 
+        (
+            ["CHA", "STR", "INT", "WIS", "DEX", "CON"], 
+            list(range(1, 21))
+        ),
+    "skill":
+        (
+            ["animalhandling", "arcana", "(etc.)"],
+            list(range(-5, 6))
+        )
+}
 
-ability_sub.add_argument("score", choices=['CHA', 'STR', 'INT', 'WIS', 'DEX', 'CON'], nargs="+")
-ability_sub.add_argument("value", type=int)
 
-# Set skills
-skill_sub = set_sub.add_parser('skills')
-skill_sub.add_argument('skill', choices=['''Populate this later'''])
+for target in char_set_parsers:
+    value_sub = set_sub.add_parser(target)
+    create_set_value_parser(
+        value_sub, 
+        target,
+        char_set_parsers[target][0],
+        char_set_parsers[target][1]        
+    )
 
-char_set.add_argument('-p','--prof_bonus',action='store')
-char_set.add_argument('-a','--ac',action='store')
-char_set.add_argument('-c','--class',action='store')
-char_set.add_argument('-r','--race',action='store')
-char_set.add_argument('-l','--level',action='store')
-char_set.add_argument('-n','--name',action='store')
-char_set.add_argument('-e','--equip',action='store')
-char_set.add_argument('-g','--spells',metavar='KEY=VALUE',action='append')
-char_set.add_argument('-q','--spellslots',metavar='KEY=VALUE',action='append')
-char_set.add_argument('-w','--weapons',metavar='KEY=VALUE',action='append')
 ##########################################################################
 
 #examples
 def parse_str(s):
     print(s)
-    print(parser.parse_args(shlex.split(s)))
+    print(parser.parse_args(s))
     print('*'*80)
 
 
 
-parse_str("char get -b ability")
-
-# parse_str("""char set -s STR=11 -s DEX=18 -s CON=14 -s INT=12 -s WIS=12 -s CHR=20 
-#     -p 3 
-#     -a 16 
-#     -c Sorcerer 
-#     -r Autognome 
-#     -l 7 
-#     -n Melinda"""
-# )
-# parse_str('char set -k Insight=4 -k Persuasion=8 -k Arcana=3 -k Religion=4')
-# parse_str("char set -w add='short sword' -w add='dagger' -w remove='compound bow'")
-# parse_str('char set -e sword')
-# parse_str("""char set 
-#           -g 'Mending'=0 
-#           -g 'Prestidigitation'=0 
-#           -g 'Shape Water'=0 
-#           -g 'Aid'=2 
-#           -g 'Scorching Ray'=2 
-#           -g 'Dispell Magic'=3 
-#           -g 'Fireball'=3 
-#           -g 'Summon Construct'=4
-# """)
+test_commands = [
+    "char set ability CHA 20 WIS 14 STR 12 INT 15",
+    "char get equipped",
+    "char get -b equipped",
+    "char set skill animalhandling 4",
+    "char set skill animalhandling 4 arcana -2"
+]
 
 
+for s in test_commands:
+    try:
+        parse_str(shlex.split(s))
+    except Exception as e:
+        print(e)
 
-##########################################################################
-# parser_lookup = subparsers.add_parser('lookup',help='lookup help')
-# lookup_sub = parser_lookup.add_subparsers(help='lookup commands')
-
-
-# lookup_spells = lookup_sub.add_parser('spells',help='spell search')
-# lookup_spells.add_argument('-s','--school',action='store')
-# lookup_spells.add_argument('-c','--class',action='store')
-# lookup_spells.add_argument('-l','--level',action='store')
-# lookup_spells.add_argument('-t','--conc',action='store_true')
-# lookup_spells.add_argument('-v','--save',action='store_true')
-
-# lookup_weapons = lookup_sub.add_parser('weapons',help='weapon search')
-# lookup_weapons.add_argument('-w','--weight',action='store')
-# lookup_weapons.add_argument('-p','--price',action='store')
-# lookup_weapons.add_argument('-n','--name',action='store')
-
-# lookup_armor = lookup_sub.add_parser('armor',help='armor search')
-# lookup_armor.add_argument('-w','--weight',action='store')
-# lookup_armor.add_argument('-p','--price',action='store')
-# lookup_armor.add_argument('-n','--name',action='store')
-##########################################################################
-
-##########################################################################
-# parser_roll = subparsers.add_parser('roll',help='roll help')
-# roll_sub = parser_roll.add_subparsers(help='roll commands')
-
-# shared_roll_parser = argparse.ArgumentParser(add_help=False)
-# adadv = shared_roll_parser.add_mutually_exclusive_group()
-# adadv.add_argument('-a','--adv',action='store_true')
-# adadv.add_argument('-d','--dadv',action='store_true')
-
-# roll_init = roll_sub.add_parser('initiative',aliases=['init'])
-
-# roll_atk = roll_sub.add_parser('attack',aliases=['atk'])
-
-# roll_spellcast = roll_sub.add_parser('spellcast',aliases=['sc'])
-
-# roll_dmg = roll_sub.add_parser('damage',aliases=['dmg'])
-
-# roll_save = roll_sub.add_parser('save',aliases=['save'])
-# ##########################################################################
-
-# parser.parse_args(shlex.split("dndio get -b"))
+#### NOTES ####
+# - for `init`

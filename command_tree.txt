@@ -2,60 +2,53 @@ command_tree
 |
 |/init
 |
-|/char
---| set
-----| CHR|STR|INT|WIS|DEX|CON [value]
-----| proficiency_bonus [value]
-----| skill [skillname]
-----| AC [value]
-----| class [classname]
-----| race [racename]
-----| spellDC [value]
-----| level [value]
-----| spells 
-------| add [spellname]
-------| remove [spellname]
-------| prepare [spellname]
-----| spellslots 
-------| add [level] [qty]
-------| remove [level] [qty]
-----| name [value]
-----| inv
-------| add [item] [qty]
-------| remove [item] [qty]
-------| equip [item]
-----| feats
-------| add [name]
---| get
-----| baseState?
-----| currState?
-----| sheet
-----| stats
-----| skills
-----| AC
-----| equipped
-----| inv
-----|
---| feats
-----| add [name]
+|/char ✅
+--| set ✅
+----| CHR|STR|INT|WIS|DEX|CON [value] ✅
+----| proficiency_bonus [value] ✅
+----| skill [skillname] ✅
+----| AC [value] ✅
+----| class [classname] ✅
+----| race [racename] ✅
+----| size [sizename] ✅
+----| spellDC [value] ✅
+----| level [value] ✅
+--| add ✅
+----| add [spellname] ✅
+----| spellslots [slot][qty] ✅
+----| name [value] ✅
+----| item [name][?qty] ✅
+----| feat [name]✅
+--| get ✅
+----| ?base ✅
+----| ?char ✅
+----| ability ✅
+----| skills ✅
+----| combat ✅
+----| equipped ✅
+----| inv ✅
+----| spellmod ✅
+----| spells ✅
+----| all ✅
+----| feats ✅
 --| init
-|
-|/lookup
---| spells [classname] [level]
---| backgrounds [background name]
---| feats [classname]
---| weapons
---| armor
+|/lookup ✅
+--| ?restrict ✅
+--| spells [classname] [-r --> level] ✅
+--| backgrounds [-r --> name] ✅
+--| feats [-r --> class] ✅
+--| weapons [-r --> name] ✅
+--| armor [-r --> name] ✅
 --| items #future implementation
 --| creatures [name] #future implementation
 --| statblock [creature_name]   # future implementation
 |
 |/roll
---| initiative [d/adv]
---| attack [d/adv]
---| spellcast [spellname | spell ID] [slot_level]
---| damage [weaponname or spellname]
---| save [stat] [d/adv]
---| 
+--| initiative ✅
+--| attack [name] ✅
+--| spellcast [spellname | spell ID] [slot_level] ✅
+--| damage [weaponname or spellname] ✅
+--| save [stat] ✅
+--| [?(dis)advantage] ✅
 |
 |/help [command]
