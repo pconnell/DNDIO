@@ -67,7 +67,20 @@ class rmq_client():
         )
         return await future
 ##################################################################
-
+QUERIES = {
+    'init_campaign':""" 
+INSERT INTO campaign (id,owner)
+VALUES ('{}','{}');
+""",
+    'init_users':""" 
+INSERT INTO users ({},{},{}) VALUES ({},{},{});
+""",
+    'create_chars':""" 
+INSERT INTO characters () VALUES ();
+""",
+    '':""" 
+"""
+}
 ##################################################################
 class rmq_server():
     def __init__(self,url,qname):
@@ -91,6 +104,9 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
+    async def initialize(self):
+        pass
+
     async def run(self):
         await self.connect()
         self.rmq_client = await self.rmq_client.connect()
@@ -109,6 +125,8 @@ class rmq_server():
                         inbound_msg.cmd,
                         inbound_msg.num
                     )
+                    ###call initialize here...
+                    ### use the response to pump the message back to grpc server for client
                     logger.info(f"  [x] Query generated {query}, sending to db worker...")
                     response = await self.rmq_client.call(query,msg.correlation_id)
                     # async with response:

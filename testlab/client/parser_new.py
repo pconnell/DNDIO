@@ -172,3 +172,5 @@ for s in test_commands:
 "init user [discordUserID]" #add a user that's come to the party late
 "init remove [discordUserID]" #boot a player that's no longer part of the party
 "init check" #give a status of everyone that's in the channel, make sure they've got records in the DB.
+
+

@@ -24,31 +24,55 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x64ndio.proto\"W\n\x08\x64ndiomsg\x12\x0b\n\x03\x63md\x18\x01 \x01(\t\x12\x0e\n\x06subcmd\x18\x02 \x01(\t\x12\x0c\n\x04\x61rgs\x18\x03 \x01(\t\x12\x12\n\ndc_channel\x18\x04 \x01(\t\x12\x0c\n\x04user\x18\x05 \x01(\t\"S\n\ndndioreply\x12\x10\n\x08orig_cmd\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x12\n\ndc_channel\x18\x03 \x01(\t\x12\x0f\n\x07\x64\x63_user\x18\x04 \x01(\t\"X\n\tcharreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x0f\n\x07\x63olumns\x18\x05 \x03(\t\x12\r\n\x05\x64type\x18\x06 \x03(\t\x12\x0e\n\x06values\x18\x07 \x03(\t\"Z\n\x0blookupreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x0f\n\x07\x63olumns\x18\x05 \x03(\t\x12\r\n\x05\x64type\x18\x06 \x03(\t\x12\x0e\n\x06values\x18\x07 \x03(\t\"u\n\trollreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x12\n\nroll_unmod\x18\x05 \x03(\x05\x12\x11\n\tmodifiers\x18\x06 \x01(\t\x12\x10\n\x08roll_mod\x18\x07 \x03(\x05\x12\x12\n\nroll_total\x18\x08 \x01(\x05\"(\n\tinitreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply2(\n\x07rollSvc\x12\x1d\n\x04roll\x12\t.dndiomsg\x1a\n.rollreply2(\n\x07\x63harSvc\x12\x1d\n\x04\x63har\x12\t.dndiomsg\x1a\n.charreply2.\n\tlookupSvc\x12!\n\x06lookup\x12\t.dndiomsg\x1a\x0c.lookupreply2(\n\x07initSvc\x12\x1d\n\x04init\x12\t.dndiomsg\x1a\n.initreplyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x64ndio.proto\"W\n\x08\x64ndiomsg\x12\x0b\n\x03\x63md\x18\x01 \x01(\t\x12\x0e\n\x06subcmd\x18\x02 \x01(\t\x12\x0c\n\x04\x61rgs\x18\x03 \x01(\t\x12\x12\n\ndc_channel\x18\x04 \x01(\t\x12\x0c\n\x04user\x18\x05 \x01(\t\"S\n\ndndioreply\x12\x10\n\x08orig_cmd\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\x08\x12\x12\n\ndc_channel\x18\x03 \x01(\t\x12\x0f\n\x07\x64\x63_user\x18\x04 \x01(\t\"X\n\tcharreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x0f\n\x07\x63olumns\x18\x05 \x03(\t\x12\r\n\x05\x64type\x18\x06 \x03(\t\x12\x0e\n\x06values\x18\x07 \x03(\t\"\xbf\x01\n\narmor_data\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0e\n\x06\x62\x61seac\x18\x02 \x01(\x05\x12\x10\n\x08\x63ost_amt\x18\x03 \x01(\x05\x12\x11\n\tcost_unit\x18\x04 \x01(\t\x12\x0c\n\x04\x64off\x18\x05 \x01(\t\x12\x0b\n\x03\x64on\x18\x06 \x01(\t\x12\x0e\n\x06minstr\x18\x07 \x01(\x05\x12\r\n\x05modac\x18\x08 \x01(\x05\x12\x0c\n\x04type\x18\t \x01(\t\x12\x16\n\x0estealth_disadv\x18\n \x01(\x08\x12\x0e\n\x06weight\x18\x0b \x01(\x05\"0\n\x0b\x64\x61mage_dice\x12\x0f\n\x07\x64ie_qty\x18\x01 \x01(\x05\x12\x10\n\x08\x64ie_size\x18\x02 \x01(\x05\"<\n\x0cwep_dmg_info\x12\x10\n\x08\x64mg_type\x18\x01 \x01(\t\x12\x1a\n\x04\x64ice\x18\x02 \x03(\x0b\x32\x0c.damage_dice\"\xbe\x01\n\x0bweapon_data\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nproperties\x18\x02 \x03(\t\x12\x10\n\x08norm_rng\x18\x03 \x01(\x05\x12\x10\n\x08long_rng\x18\x04 \x01(\x05\x12\x1d\n\x06weapon\x18\x05 \x03(\x0b\x32\r.wep_dmg_info\x12\x0c\n\x04type\x18\x06 \x01(\t\x12\x0c\n\x04\x63ost\x18\x07 \x01(\x05\x12\x11\n\tcost_unit\x18\x08 \x01(\t\x12\x0b\n\x03mod\x18\t \x03(\t\x12\x0e\n\x06weight\x18\n \x01(\x05\"W\n\nclass_data\x12\r\n\x05level\x18\x01 \x01(\x05\x12\r\n\x05\x63lass\x18\x02 \x01(\t\x12\x10\n\x08\x66\x65\x61tures\x18\x03 \x03(\t\x12\x19\n\x11proficiency_bonus\x18\x04 \x01(\x05\"(\n\nspell_data\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x65sc\x18\x02 \x01(\t\"I\n\x0elookup_weapons\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x1a\n\x04\x64\x61ta\x18\x02 \x03(\x0b\x32\x0c.weapon_data\"F\n\x0clookup_armor\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x19\n\x04\x64\x61ta\x18\x02 \x03(\x0b\x32\x0b.armor_data\"F\n\x0clookup_class\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x19\n\x04\x64\x61ta\x18\x02 \x03(\x0b\x32\x0b.class_data\"\x1e\n\x0clookupvalues\x12\x0e\n\x06values\x18\x01 \x03(\t\"r\n\x0blookupreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x0f\n\x07\x63olumns\x18\x05 \x03(\t\x12\x16\n\x06\x64types\x18\x06 \x03(\x0e\x32\x06.dtype\x12\x1d\n\x06values\x18\x07 \x03(\x0b\x32\r.lookupvalues\"f\n\x04roll\x12\x11\n\troll_type\x18\x01 \x01(\t\x12\x11\n\tdie_rolls\x18\x02 \x03(\x05\x12\x11\n\tmodifiers\x18\x03 \x03(\x05\x12\x16\n\x0emodified_rolls\x18\x04 \x03(\x05\x12\r\n\x05total\x18\x05 \x01(\x05\"A\n\trollreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply\x12\x17\n\x08\x64ierolls\x18\x02 \x03(\x0b\x32\x05.roll\"(\n\tinitreply\x12\x1b\n\x06\x63ommon\x18\x01 \x01(\x0b\x32\x0b.dndioreply*E\n\x05\x64type\x12\x07\n\x03STR\x10\x00\x12\x07\n\x03\x41RR\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\x0c\n\x08JSON_ARR\x10\x03\x12\x07\n\x03INT\x10\x04\x12\t\n\x05\x46LOAT\x10\x05\x32(\n\x07rollSvc\x12\x1d\n\x04roll\x12\t.dndiomsg\x1a\n.rollreply2(\n\x07\x63harSvc\x12\x1d\n\x04\x63har\x12\t.dndiomsg\x1a\n.charreply2.\n\tlookupSvc\x12!\n\x06lookup\x12\t.dndiomsg\x1a\x0c.lookupreply2(\n\x07initSvc\x12\x1d\n\x04init\x12\t.dndiomsg\x1a\n.initreplyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'dndio_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
+  _globals['_DTYPE']._serialized_start=1489
+  _globals['_DTYPE']._serialized_end=1558
   _globals['_DNDIOMSG']._serialized_start=15
   _globals['_DNDIOMSG']._serialized_end=102
   _globals['_DNDIOREPLY']._serialized_start=104
   _globals['_DNDIOREPLY']._serialized_end=187
   _globals['_CHARREPLY']._serialized_start=189
   _globals['_CHARREPLY']._serialized_end=277
-  _globals['_LOOKUPREPLY']._serialized_start=279
-  _globals['_LOOKUPREPLY']._serialized_end=369
-  _globals['_ROLLREPLY']._serialized_start=371
-  _globals['_ROLLREPLY']._serialized_end=488
-  _globals['_INITREPLY']._serialized_start=490
-  _globals['_INITREPLY']._serialized_end=530
-  _globals['_ROLLSVC']._serialized_start=532
-  _globals['_ROLLSVC']._serialized_end=572
-  _globals['_CHARSVC']._serialized_start=574
-  _globals['_CHARSVC']._serialized_end=614
-  _globals['_LOOKUPSVC']._serialized_start=616
-  _globals['_LOOKUPSVC']._serialized_end=662
-  _globals['_INITSVC']._serialized_start=664
-  _globals['_INITSVC']._serialized_end=704
+  _globals['_ARMOR_DATA']._serialized_start=280
+  _globals['_ARMOR_DATA']._serialized_end=471
+  _globals['_DAMAGE_DICE']._serialized_start=473
+  _globals['_DAMAGE_DICE']._serialized_end=521
+  _globals['_WEP_DMG_INFO']._serialized_start=523
+  _globals['_WEP_DMG_INFO']._serialized_end=583
+  _globals['_WEAPON_DATA']._serialized_start=586
+  _globals['_WEAPON_DATA']._serialized_end=776
+  _globals['_CLASS_DATA']._serialized_start=778
+  _globals['_CLASS_DATA']._serialized_end=865
+  _globals['_SPELL_DATA']._serialized_start=867
+  _globals['_SPELL_DATA']._serialized_end=907
+  _globals['_LOOKUP_WEAPONS']._serialized_start=909
+  _globals['_LOOKUP_WEAPONS']._serialized_end=982
+  _globals['_LOOKUP_ARMOR']._serialized_start=984
+  _globals['_LOOKUP_ARMOR']._serialized_end=1054
+  _globals['_LOOKUP_CLASS']._serialized_start=1056
+  _globals['_LOOKUP_CLASS']._serialized_end=1126
+  _globals['_LOOKUPVALUES']._serialized_start=1128
+  _globals['_LOOKUPVALUES']._serialized_end=1158
+  _globals['_LOOKUPREPLY']._serialized_start=1160
+  _globals['_LOOKUPREPLY']._serialized_end=1274
+  _globals['_ROLL']._serialized_start=1276
+  _globals['_ROLL']._serialized_end=1378
+  _globals['_ROLLREPLY']._serialized_start=1380
+  _globals['_ROLLREPLY']._serialized_end=1445
+  _globals['_INITREPLY']._serialized_start=1447
+  _globals['_INITREPLY']._serialized_end=1487
+  _globals['_ROLLSVC']._serialized_start=1560
+  _globals['_ROLLSVC']._serialized_end=1600
+  _globals['_CHARSVC']._serialized_start=1602
+  _globals['_CHARSVC']._serialized_end=1642
+  _globals['_LOOKUPSVC']._serialized_start=1644
+  _globals['_LOOKUPSVC']._serialized_end=1690
+  _globals['_INITSVC']._serialized_start=1692
+  _globals['_INITSVC']._serialized_end=1732
 # @@protoc_insertion_point(module_scope)

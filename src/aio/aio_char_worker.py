@@ -65,7 +65,16 @@ class rmq_client():
         )
         return await future
 ##################################################################
-
+QUERIES = {
+    'set_attr':"UPDATE characters SET {} WHERE char_id='{}' and campaign_id='{}';",
+    'add_char':"UPDATE char_map SET {} = {} + {} WHERE char_id='{}' and campaign_id='{}';",
+    'remove_char':"UPDATE char_map SET {} = {} - {} WHERE char_id='{}' and campaign_id='{}';",
+    'get_char':"",
+    'get_all':"",
+    'get_char_weapon':"",
+    'get_char_spells':"",
+    'get_armor':"",
+}
 ##################################################################
 class rmq_server():
     def __init__(self,url,qname):
@@ -89,6 +98,21 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
+    #when can certain things not be set? and where should that be handled?
+
+        # character stats between 1 and 20?
+
+        # proficiency bonus - automatically handle?
+
+        # a spell that's outside of the character's class
+
+    async def set_char(self):
+        
+        pass
+
+    async def get_char(self):
+        pass
+
     async def run(self):
         await self.connect()
         self.rmq_client = await self.rmq_client.connect()
@@ -103,6 +127,12 @@ class rmq_server():
                     inbound_msg = workerChar_pb2.msg()
                     inbound_msg.ParseFromString(msg.body)
                     logger.info("  [x] Parsed RPC to GRPC, converting to query")
+                    ##### HERE'S WHERE WE'LL PARSE THE MESSAGE FROM THE CLIENT
+                    ## AND USE THAT TO CRAFT DIFFERENT QUERIES
+                    ## the parsed command gets fed to one of the above char get/set functions
+                    ## and it will handle the query routing and response
+                    ## each will return a response to this function, and this function
+                    ## will send the final message.
                     query = "INSERT INTO worker (id,cmd,num) VALUES (uuid(),'{}',{})".format(
                         inbound_msg.cmd,
                         inbound_msg.num

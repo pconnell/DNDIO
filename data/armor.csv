@@ -1,15 +1,15 @@
-weName,minSTR,stealth_disadv,Weight,type,baseAC,modAC,cost_amt,cost_unit,Don,Doff
-Padded,0,True,8,light,11,DEX,5,gp,1 minute,1 minute
-Leather,0,False,10,light,11,DEX,10,gp,1 minute,1 minute
-Studded Leather,0,False,13,light,12,DEX,45,gp,1 minute,1 minute
-Hide,0,False,12,medium,12,DEX|2,10,gp,5 minutes,1 minute
-Chain Shirt,0,False,20,medium,13,DEX|2,50,gp,5 minutes,1 minute
-Scale Mail,0,True,45,medium,14,DEX|2,50,gp,5 minutes,1 minute
-Spiked Armor,0,True,45,medium,14,DEX|2,75,gp,5 minutes,1 minute
-Breastplate,0,False,20,medium,14,DEX|2,400,gp,5 minutes,1 minute
-Halfplate,0,True,40,medium,15,DEX|2,750,gp,5 minutes,1 minute
-Ring Mail,0,True,40,heavy,14,,30,gp,10 minutes,5 minutes
-Chain Mail,13,True,55,heavy,16,,75,gp,10 minutes,5 minutes
-Splint,15,True,60,heavy,17,,200,gp,10 minutes,5 minutes
-Plate,15,True,65,heavy,18,,1500,gp,10 minutes,5 minutes
-Shield,0,False,6,shield,2,,10,gp,1 action,1 action
+Name,minSTR,stealth_disadv,Weight,type,baseAC,modAC,cost_amt,cost_unit,Don,Doff
+Padded,0,TRUE,8,light,11,DEX,5,gp,1 minute,1 minute
+Leather,0,FALSE,10,light,11,DEX,10,gp,1 minute,1 minute
+Studded Leather,0,FALSE,13,light,12,DEX,45,gp,1 minute,1 minute
+Hide,0,FALSE,12,medium,12,DEX|2,10,gp,5 minutes,1 minute
+Chain Shirt,0,FALSE,20,medium,13,DEX|2,50,gp,5 minutes,1 minute
+Scale Mail,0,TRUE,45,medium,14,DEX|2,50,gp,5 minutes,1 minute
+Spiked Armor,0,TRUE,45,medium,14,DEX|2,75,gp,5 minutes,1 minute
+Breastplate,0,FALSE,20,medium,14,DEX|2,400,gp,5 minutes,1 minute
+Halfplate,0,TRUE,40,medium,15,DEX|2,750,gp,5 minutes,1 minute
+Ring Mail,0,TRUE,40,heavy,14,,30,gp,10 minutes,5 minutes
+Chain Mail,13,TRUE,55,heavy,16,,75,gp,10 minutes,5 minutes
+Splint,15,TRUE,60,heavy,17,,200,gp,10 minutes,5 minutes
+Plate,15,TRUE,65,heavy,18,,1500,gp,10 minutes,5 minutes
+Shield,0,FALSE,6,shield,2,,10,gp,1 action,1 action

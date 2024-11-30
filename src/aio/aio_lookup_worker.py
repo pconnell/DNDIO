@@ -67,7 +67,9 @@ class rmq_client():
         )
         return await future
 ##################################################################
+QUERIES = {
 
+}
 ##################################################################
 class rmq_server():
     def __init__(self,url,qname):
@@ -91,6 +93,18 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
+    async def lookup_weapons(self):
+        ## handle requests for lookup of weapon information
+        pass
+
+    async def lookup_armor(self):
+        ## handle requests for lookup of armor information
+        pass
+
+    async def lookup_spells(self):
+        ## handle requests for lookup of spell information
+        pass
+
     async def run(self):
         await self.connect()
         self.rmq_client = await self.rmq_client.connect()
@@ -109,6 +123,13 @@ class rmq_server():
                         inbound_msg.cmd,
                         inbound_msg.num
                     )
+                    ##### HERE'S WHERE WE'LL PARSE THE MESSAGE FROM THE CLIENT
+                    ## AND USE THAT TO CRAFT DIFFERENT QUERIES
+                    ## the parsed command gets fed to one of the above lookup_ functions
+                    ## and it will handle the query routing and response
+                    ## each will return a response to this function, and this function
+                    ## will send the final message.
+                    # reply
                     logger.info(f"  [x] Query generated {query}, sending to db worker...")
                     response = await self.rmq_client.call(query,msg.correlation_id)
                     # async with response:

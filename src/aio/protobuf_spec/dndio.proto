@@ -16,6 +16,19 @@ service initSvc {
     rpc init(dndiomsg) returns (initreply);
 }
 
+
+//do we want to sendup key/value pairs, or
+//just pickled JSON as the args? - this may be faster.
+//would like to keep it separated for responses - just use native protobuf
+message key_val_pair_str {
+    string key=1;
+    string value=2;
+}
+message key_val_pair_int {
+    string key=1;
+    int32 value=2
+}
+
 message dndiomsg {
     string cmd = 1;
     string subcmd = 2;
@@ -29,6 +42,8 @@ message dndioreply {
     bool status = 2;
     string dc_channel = 3;
     string dc_user = 4;
+    string addtl_data = 5;
+    string err_msg = 6;
 }
 
 message charreply {
@@ -42,27 +57,110 @@ message charreply {
     repeated string values = 7;
 }
 
+
+
+///////message types to support LOOKUP
+
+message armor_data {
+    string name=1;
+    int32 baseac=2;
+    int32 cost_amt=3;
+    string cost_unit=4;
+    string doff=5;
+    string don=6;
+    int32 minstr=7;
+    int32 modac=8;
+    string type=9;
+    bool stealth_disadv=10;
+    int32 weight=11;
+}
+
+message damage_dice {
+    int32 die_qty=1;
+    int32 die_size=2;
+}
+
+message wep_dmg_info {
+    string dmg_type=1;
+    repeated damage_dice dice = 2;
+}
+
+message weapon_data {
+    string name=1;
+    repeated string properties=2;
+    int32 norm_rng = 3;
+    int32 long_rng = 4;
+    repeated wep_dmg_info weapon= 5;
+    string type = 6;
+    int32 cost = 7;
+    string cost_unit = 8;
+    repeated string mod=9;
+    int32 weight = 10;
+}
+
+message class_data {
+    int32 level = 1;
+    string class = 2;
+    repeated string features = 3;
+    int32 proficiency_bonus = 4;
+}
+
+message spell_data {
+    string name = 1;
+    string desc = 2;
+}
+
+message lookup_weapons {
+    dndioreply common = 1;
+    repeated weapon_data data = 2;
+}
+
+message lookup_armor {
+    dndioreply common=1;
+    repeated armor_data data=2;
+}
+
+message lookup_class {
+    dndioreply common=1;
+    repeated class_data data=2;
+}
+
+message lookupvalues {
+    repeated string values = 1;
+}
+
+enum dtype {
+    STR=0;
+    ARR=1;
+    JSON=2;
+    JSON_ARR=3;
+    INT=4;
+    FLOAT=5;
+}
+
 message lookupreply {
 //    string orig_cmd = 1;
 //    bool status = 2;
 //    string dc_channel = 3;
 //    string dc_user = 4;
+
     dndioreply common = 1;
     repeated string columns = 5;
-    repeated string dtype = 6;
-    repeated string values = 7;
+    repeated dtype dtypes = 6;
+    repeated lookupvalues values = 7;
+}
+
+message roll {
+    string roll_type = 1;
+    repeated int32 die_rolls = 2;
+    repeated int32 modifiers = 3;
+    repeated int32 modified_rolls = 4;
+    int32 total = 5;
 }
 
 message rollreply {
-//    string orig_cmd = 1;
-//    bool status = 2;
-//   string dc_channel = 3;
-//    string dc_user = 4;
     dndioreply common = 1;
-    repeated int32 roll_unmod = 5; //update - may need repeated "roll" messages that capture damage type(s)
-    string modifiers = 6;
-    repeated int32 roll_mod = 7; //keep - could be useful if multiple rolls are done with different targets
-    int32 roll_total = 8; //useful if the dmg goes to a single target
+    repeated roll dierolls = 2;
 }
 
 message initreply {

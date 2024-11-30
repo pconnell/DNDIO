@@ -1,5 +1,26 @@
 USE DNDIO;
 
+/*
+ToDo:
+    * add fields to tables:
+        * character equipped items (limited map of text to text? or to list?)
+        * class table - should have a valid name
+        * update any other table fields / missing values in this file.
+    * update source data where not fully cleaned:
+        * any list column with no values should be a blank list
+        * fix the impact data for saves in spells table...?
+        * other fixes with maps and lists as needed - no fields should be blank, ever.
+    * db interface - 
+        * fix returns for character class data
+        * fix returns for spellslot data
+        * see if there's a way to do bulk query operations and forwarding with 
+        * a good structured/designed REST request
+    * fix the remaining 3 spell imports
+    * check all db input data for weird apostrophes
+
+*/
+
+
 CREATE TABLE campaign (
     id text, //unsure
     owner text, //unsure - maybe discord user name
@@ -12,11 +33,11 @@ CREATE TABLE users(
     PRIMARY KEY (user_id)
 );
 
-CREATE TABLE characters(
+CREATE TABLE char_table(
     campaign_id text,
     user_id text,
     char_name text,
-    class uuid,
+    char_class text,
     level smallint,
     align text, 
     max_hp smallint, 
@@ -28,39 +49,131 @@ CREATE TABLE characters(
     DEX smallint,
     CON smallint,
     AC smallint,
-    prof_bonus smallint,
-    hit_dice frozen<map<smallint,smallint>>,
+    /*prof_bonus smallint,
+    hit_dice frozen<map<smallint,smallint>>,*/
     background text,
+    //merging from char_map
+    spells list<text>,
+    armor list<text>,
+    weapons list<text>,
+    skills list<text>,
+    //end merge
+    equipped map<text,text>,
+    spellslots map<smallint, smallint>,
     PRIMARY KEY (campaign_id,user_id)
 );
 
-CREATE TABLE weapons (
-    id uuid,
+
+create table class_start (
+    char_class text,
+    hit_dice frozen<map<smallint, smallint>>,
+    lvl_hp frozen<map<smallint, smallint>>,
+    equip list<text>,
+    proficiencies frozen<map<text,list<text>>>,
+    start_hp text,
+    alt_lvl_hp text,
+    spell_dc text,
+    spell_atk_mod text,
+    PRIMARY KEY (char_class)
+);
+
+
+/*
+INSERT INTO char_table (
+    campaign_id,
+    user_id,
+    char_name,
+    char_class,
+    level,
+    align,
+    max_hp,
+    curr_hp,
+    CHR,STR,INT,WIS,DEX,CON,AC
+) VALUES (
+    'abcdef',
+    'chorky#8402',
+    'Bahlok',
+    'Warlock',
+    7,
+    'Chaotic Neutral',
+    53,
+    40,
+    15,15,15,15,15,15,15
+);*/
+
+/*CREATE TABLE weapons (
+    name text,
     weapon_type text,
     range smallint,
     properties text,
     weight smallint,
     dmg list<frozen<map<text,frozen<map<smallint,smallint>>>>>,
-    PRIMARY KEY (id)
+    PRIMARY KEY (name)
+);*/
+
+CREATE TABLE weapons (
+    name text,
+    type text,
+    subtype text,
+    cost smallint,
+    cost_unit text,
+    dmg frozen<map<text,frozen<map<text,frozen<map<smallint,smallint>>>>>>,
+    props list<text>,
+    normal_range smallint,
+    long_range smallint,
+    mod list<text>,
+    weight double,
+    PRIMARY KEY(name)
 );
 
-CREATE TABLE spells (
-    id uuid,
+/*CREATE TABLE spells (
+    //id uuid,
     name text,
-    school text,
+    save text,
+    hard_mod smallint,
+    mult smallint,
+    addspellmod boolean,
+    upcast frozen<map<smallint,frozen<map<smallint,smallint>>>>,
+    dmg frozen<map<int,frozen<map<text,list<frozen<map<smallint,smallint>>>>>>>,
+    time text,
+    range text,
+    components text,
+    duration text,
+    classes list<text>,
+    conc boolean,
     lvl smallint,
-    cast_time text,
-    range smallint,
+    PRIMARY KEY (name)
+);*/
+
+CREATE TABLE spells (
+    name text,
+    level smallint,
+    save text,
+    dmg frozen<map<int,frozen<map<text,list<frozen<map<smallint,smallint>>>>>>>,
+    upcast frozen<map<int,frozen<map<smallint,smallint>>>>,
+    addspellmod boolean,
+    hardmod smallint,
+    mult smallint,
+    conc boolean,
     duration text,
     components text,
-    material text,
-    conc boolean, 
-    requires_save boolean,
-    dmg list<frozen<map<int,list<frozen<map<text,frozen<map<smallint,smallint>>>>>>>>,
-    upcast boolean,
+    range text,
+    time text,
     description text,
-    PRIMARY KEY (id)
+    save_data text,
+    save_success text,
+    char_classes list<text>,
+    PRIMARY KEY (name)
 );
+
+
+
+create table skills (
+    skill text,
+    modifier text,
+    PRIMARY KEY(skill)
+);
+
 
 create table armor (
     id uuid,
@@ -78,6 +191,21 @@ create table armor (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE armor (
+    baseac smallint,
+    cost_amt smallint,
+    cost_unit text,
+    doff text,
+    don text,
+    minstr smallint,
+    modac text,
+    name text,
+    stealth_disadv boolean,
+    type text,
+    weight smallint,
+    PRIMARY KEY(name)
+); 
+
 create table classes (
     class_id text,
     level smallint,
@@ -89,6 +217,7 @@ create table classes (
     PRIMARY KEY (class_id)
 );
 
+/*
 CREATE TABLE char_map (
     campaign_id text,
     char_id text,
@@ -96,7 +225,7 @@ CREATE TABLE char_map (
     armor list<uuid>,
     weapons list<uuid>,
     PRIMARY KEY(campaign_id,char_id)
-);
+);*/
 
 CREATE TABLE classes (
     class_key text,
@@ -123,6 +252,7 @@ CREATE TABLE classes (
     PRIMARY KEY(class_key)
 );
 
+/*
 
 example thinking-through-it queries...
 ////////////////////////////////////////////////////////////
@@ -222,3 +352,5 @@ UPDATE char_map //add/remove to/from appropriate list...
 SELECT id FROM spells WHERE name = {};
 
 //UPDATE characters SET class={} WHERE 
+
+*/
