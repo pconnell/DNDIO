@@ -26,7 +26,7 @@ message key_val_pair_str {
 }
 message key_val_pair_int {
     string key=1;
-    int32 value=2
+    int32 value=2;
 }
 
 message dndiomsg {

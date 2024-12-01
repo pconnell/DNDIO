@@ -225,7 +225,11 @@ char_set_parsers = {
         ),
     "skill":
         (
-            ["animalhandling", "arcana", "(etc.)"],
+            # ["animalhandling", "arcana", "(etc.)"],
+            ["animal handling","investigation","performance",
+             "insight","survival","athletics","perception","history","persuasion",
+             "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
+             "medicine","religion"],
             list(range(-5, 6))
         )
 }
@@ -469,12 +473,12 @@ test_commands = [
     "lookup -f -r Monk"
 ]
 
-
-for s in test_commands:
-    try:
-        parse_str(shlex.split(s))
-    except Exception as e:
-        print("Error:", e)
+if __name__ == '__main__':
+    for s in test_commands:
+        try:
+            parse_str(shlex.split(s))
+        except Exception as e:
+            print("Error:", e)
         # exit()
 
 #### NOTES ####
