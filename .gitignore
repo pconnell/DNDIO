@@ -9,3 +9,4 @@ testlab/rest/tls.key
 testlab/workerChar/__pycache__
 .venv
 .vscode
+*/.env
