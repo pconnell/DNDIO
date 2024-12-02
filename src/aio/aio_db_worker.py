@@ -54,6 +54,15 @@ class cassDB():
         self.session.execute('USE {};'.format(self.db))
         logger.info( " [x] Connected to Cassandra Database!")
 
+    def recurse_dict(self,d:OrderedMapSerializedKey):
+        ret_d = {}
+        for k,v in d.items():
+            if isinstance(v,OrderedMapSerializedKey):
+                ret_d[k] = self.recurse_dict(v)
+            else:
+                ret_d[k] = v
+        return ret_d
+
     def rows_to_json(self,rows):
         result = []
         for row in rows:
@@ -61,8 +70,9 @@ class cassDB():
             for k,v in d.items():
                 if isinstance(v,uuid.UUID):
                     d[k] = str(v)
-                if isinstance(v,OrderedMap)
-                result.append(d)
+                if isinstance(v,OrderedMapSerializedKey):
+                    d[k] = self.recurse_dict(v)
+            result.append(d)
         return result
 
     def parse_spells(self,rows):
@@ -136,10 +146,10 @@ class cassDB():
         result['success']= True
         if len(l) > 0:
             result['rows'] = self.rows_to_json(l)
-        if "FROM spells" in s:
-            result['rows'] = self.parse_spells(result['rows'])
-        if "FROM weapons" in s:
-            result['rows'] = self.parse_weapons(result['rows'])
+        # if "FROM spells" in s:
+        #     result['rows'] = self.parse_spells(result['rows'])
+        # if "FROM weapons" in s:
+        #     result['rows'] = self.parse_weapons(result['rows'])
         return result
 
 class rmq_server():
@@ -189,5 +199,5 @@ class rmq_server():
                     logger.exception(" [!] Error processing for message: {}".format(msg))
 
 if __name__ == '__main__':
-    listener = rmq_server("amqp://guest:guest@{}:{}".format(RMQ_HOST,RMQ_PORT),'workerChar.db')
+    listener = rmq_server("amqp://guest:guest@{}:{}".format(RMQ_HOST,RMQ_PORT),'worker.db')
     asyncio.run(listener.run())

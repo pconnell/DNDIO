@@ -12,3 +12,4 @@ testlab/workerChar/__pycache__
 src/aio/__pycache__
 testlab/rest/tls.key
 src/aio/dndio-tls.key
+src/aio/recurse.py
