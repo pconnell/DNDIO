@@ -4,38 +4,38 @@ command_tree
 |
 |/char ✅
 --| set ✅
-----| CHR|STR|INT|WIS|DEX|CON [value] ✅
-----| proficiency_bonus [value] ✅
-----| skill [skillname] ✅
-----| AC [value] ✅
-----| class [classname] ✅
-----| race [racename] ✅
-----| size [sizename] ✅
-----| spellDC [value] ✅
-----| level [value] ✅
+----| CHR|STR|INT|WIS|DEX|CON [value] ✅ --> Status (200, 4XX, etc)
+----| proficiency_bonus [value] ✅ --------> Status (200, 4XX, etc)
+----| skill [skillname] ✅ ----------------> Status (200, 4XX, etc)
+----| AC [value] ✅ -----------------------> Status (200, 4XX, etc)
+----| class [classname] ✅-----------------> Status (200, 4XX, etc)
+----| race [racename] ✅-------------------> Status (200, 4XX, etc)
+----| size [sizename] ✅-------------------> Status (200, 4XX, etc)
+----| spellDC [value] ✅-------------------> Status (200, 4XX, etc)
+----| level [value] ✅---------------------> Status (200, 4XX, etc)
 --| add ✅
-----| add [spellname] ✅
-----| spellslots [slot][qty] ✅
-----| name [value] ✅
-----| item [name][?qty] ✅
-----| feat [name]✅
+----| add [spellname] ✅-------------------> Status (200, 4XX, etc)
+----| spellslots [slot][qty] ✅ -----------> Status (200, 4XX, etc)
+----| name [value] ✅----------------------> Status (200, 4XX, etc)
+----| item [name][?qty] ✅ ----------------> Status (200, 4XX, etc)
+----| feat [name]✅ -----------------------> Status (200, 4XX, etc)
 --| get ✅
-----| ?base ✅
+----| ?base ✅ 
 ----| ?char ✅
-----| ability ✅
-----| skills ✅
-----| combat ✅
-----| equipped ✅
-----| inv ✅
-----| spellmod ✅
-----| spells ✅
-----| all ✅
-----| feats ✅
+----| ability ✅ --------------------------> Repeated(<int, str>)
+----| skills ✅ ---------------------------> Repeated(<int, str>)
+----| combat ✅ ---------------------------> Repeated(<int, str>)
+----| equipped ✅ -------------------------> Repeated(<int, str>)
+----| inv ✅ ------------------------------> Repeated(<int, str>)
+----| spellmod ✅ -------------------------> int
+----| spells ✅ ---------------------------> Repeated(str) (?)
+----| all ✅ ------------------------------> (?)
+----| feats ✅ ----------------------------> Repeated(str)
 --| init
 |/lookup ✅
 --| ?restrict ✅
---| spells [classname] [-r --> level] ✅
---| backgrounds [-r --> name] ✅
+--| spells [classname] [-r --> level] ✅ --> 
+--| backgrounds [-r --> name] ✅ ---------->
 --| feats [-r --> class] ✅
 --| weapons [-r --> name] ✅
 --| armor [-r --> name] ✅

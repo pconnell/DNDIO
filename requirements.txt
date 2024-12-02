@@ -6,3 +6,5 @@ grpcio-tools
 protobuf-compiler
 #google apis?
 google-cloud-storage
+
+discord.py

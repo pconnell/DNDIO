@@ -1,9 +1,27 @@
-import argparse,shlex
+import argparse, shlex
+from functools import partial
 '''
 Parser: Defines the arguments passed by the client to the ingress controller.
 
 We will also need to translate these from the Discord command itself passed to the bot.
 '''
+####################### Argparse overrides ######################
+
+add_parser = argparse._SubParsersAction.add_parser
+
+def add_parser_dont_exit(self, name, **kwargs):
+    if 'exit_on_error' not in kwargs:
+        kwargs['exit_on_error'] = False
+    return add_parser(self, name, **kwargs)
+
+argparse._SubParsersAction.add_parser = add_parser_dont_exit
+
+
+# This is horrible please delete this
+def error_to_string(self, message):
+    raise argparse.ArgumentError(None, message)
+
+argparse.ArgumentParser.error = error_to_string
 
 ####################### Class definitions #######################
 
@@ -57,7 +75,7 @@ class SetValueSplitter(argparse.Action):
     
 ####################### ARGPARSER DEFINITIONS #######################
 
-parser = argparse.ArgumentParser(prog='dndio')
+parser = argparse.ArgumentParser(prog='dndio', exit_on_error=False)
 
 subparsers = parser.add_subparsers(
     help='subcommand help'
@@ -69,7 +87,7 @@ subparsers = parser.add_subparsers(
 #add for the following cases if we can
 # just add an individual that's come to the party late 
 # maybe  (not required) - option for removing users.
-parser_init = subparsers.add_parser('init',help='channel initialization')
+parser_init = subparsers.add_parser('init', help='channel initialization')
 
 parser_init.add_argument("-u", "--users", nargs="+")
 parser_init.add_argument("-o", "--owner", nargs="+")
@@ -225,6 +243,11 @@ char_set_parsers = {
         ),
     "skill":
         (
+            # ["animalhandling", "arcana", "(etc.)"],
+            ["animal handling","investigation","performance",
+             "insight","survival","athletics","perception","history","persuasion",
+             "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
+             "medicine","religion"],
             # ["animalhandling", "arcana", "(etc.)"],
             ["animal handling","investigation","performance",
              "insight","survival","athletics","perception","history","persuasion",
@@ -414,64 +437,73 @@ spellslot_parser.add_argument(
 
 
 #examples
-def parse_str(s):
-    print(s)
-    print(parser.parse_args(s))
-    print('*'*80)
+def parse_str(s, debug=False):
+    s = shlex.split(s)
+    if debug:
+        print(s)
+        print(parser.parse_args(s))
+        print('*'*80)
+    try:
+        result = parser.parse_args(s)
+    except Exception as e:
+        result = e
+    
+    return result
 
+if __name__ == "__main__":
+    test_commands = [
+        #currently char information is in two tables - char and char map
+        #thinking that since char map just stores lists and one-record per user,
+        # we move that into the char table as a single reference point
+        # we have a column for primary skills, weapons, armor (all lists)
+        # maybe add one for feat(s) too.
+        # and one for currently equipped as a map of 'weapon':value, 'armor':value, 
 
-
-test_commands = [
-    #currently char information is in two tables - char and char map
-    #thinking that since char map just stores lists and one-record per user,
-    # we move that into the char table as a single reference point
-    # we have a column for primary skills, weapons, armor (all lists)
-    # maybe add one for feat(s) too.
-    # and one for currently equipped as a map of 'weapon':value, 'armor':value, 
-
-    ##todo on DB side - see if we can have tables and data for race, for feat(s)? (may be too much) 
-    ## for 
-    "char set ability CHA 20 WIS 14 STR 12 INT 15",
-    "char get equipped",
-    "char get -b equipped",
-    #may be able to truncate these for skills.  if we set a skill as a primary skill
-    #the proficiency bonus and the modifier information are already available in the DB
-    "char set skill animalhandling 4",
-    "char set skill animalhandling 4 arcana -2",
-    #after we set level and/or class - should we do a check on the db side
-    #to automatically pull class-specific info & add to the char sheet?
-    "char set level 1",
-    "char set name alexis",
-    "char add spell \"Tasha's Hideous Laughter\"",
-    "char add item \"New Super Mario Brothers Wii for the Nintendo Wii\"",
-    "char add item \"Super Mario 3D World for the Nintendo Switch\" 7",
-    "char add spellslot 1 2 2 1",
-    #feats may be something we scrape from scope
-    #I had a lot of trouble getting spells - still haven't gotten feats or races integrated
-    "char add feat \"umm idk\"",
-    "init",
-    #does the -r mean level?
-    "lookup spells Monk -r 7",
-    #will this give you all spells for a Monk?
-    "lookup spells Monk",
-    #for these raw rolls - can we implement on the bot side vs. sending to cloud?
-    #really like the format for all of these - keeps it simple.  they can all take -a|-d arguments, right?
-    "roll raw 1d6",
-    "roll raw 1000d12",
-    "roll raw d",
-    "roll raw 7d19",
-    "roll save INT",
-    "roll check STR CHA WIS",
-    "roll attack \"Greatsword\"",
-    "roll initiative",
-    "roll init",
-    #can we have a roll skill [skillname]? like roll skill history, roll skill survival, etc?
-    # that can handle automatically adding proficiency bonus if the skill is in their primary skills.
-    "lookup --armor -n \"simple leather\"",
-    "lookup -a -n \"simple leather\"",
-    "lookup -f",
-    "lookup -f -r Monk"
-]
+        ##todo on DB side - see if we can have tables and data for race, for feat(s)? (may be too much) 
+        ## for 
+        "char set ability CHA 20 WIS 14 STR 12 INT 15",
+        "char get equipped",
+        "char get -b equipped",
+        #may be able to truncate these for skills.  if we set a skill as a primary skill
+        #the proficiency bonus and the modifier information are already available in the DB
+        "char set skill animalhandling 4",
+        "char set skill animalhandling 4 arcana -2",
+        #after we set level and/or class - should we do a check on the db side
+        #to automatically pull class-specific info & add to the char sheet?
+        "char set level 1",
+        "char set name alexis",
+        "char add spell \"Tasha's Hideous Laughter\"",
+        "char add item \"New Super Mario Brothers Wii for the Nintendo Wii\"",
+        "char add item \"Super Mario 3D World for the Nintendo Switch\" 7",
+        "char add spellslot 1 2 2 1",
+        #feats may be something we scrape from scope
+        #I had a lot of trouble getting spells - still haven't gotten feats or races integrated
+        "char add feat \"umm idk\"",
+        "init",
+        #does the -r mean level?
+        "lookup spells Monk -r 7",
+        #will this give you all spells for a Monk?
+        "lookup spells Monk",
+        #for these raw rolls - can we implement on the bot side vs. sending to cloud?
+        #really like the format for all of these - keeps it simple.  they can all take -a|-d arguments, right?
+        "roll raw 1d6",
+        "roll raw 1000d12",
+        "roll raw d",
+        "roll raw 7d19",
+        "roll save INT",
+        "roll check STR CHA WIS",
+        "roll check STR CHA WIS IAS",
+        "roll attack \"Greatsword\"",
+        "roll initiative",
+        "roll init",
+        #can we have a roll skill [skillname]? like roll skill history, roll skill survival, etc?
+        # that can handle automatically adding proficiency bonus if the skill is in their primary skills.
+        "lookup --armor -n \"simple leather\"",
+        "lookup -a -n \"simple leather\"",
+        "lookup -f",
+        "lookup -f -r Monk",
+        "init test"
+    ]
 
 if __name__ == '__main__':
     for s in test_commands:
@@ -481,5 +513,5 @@ if __name__ == '__main__':
             print("Error:", e)
         # exit()
 
-#### NOTES ####
-# - for `init`
+    #### NOTES ####
+    # - for `init`
