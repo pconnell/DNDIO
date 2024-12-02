@@ -4,6 +4,7 @@ from cassandra.cluster import (
     NoHostAvailable,
     OperationTimedOut
 )
+from cassandra.util import OrderedMapSerializedKey
 from concurrent import futures
 import uuid
 from typing import MutableMapping
@@ -19,7 +20,6 @@ CASS_HOST = os.getenv('CASS_HOST') or 'localhost'
 CASS_USER = os.getenv('CASS_USER') or 'cassandra'
 CASS_PASS = os.getenv('CASS_PASS') or 'changeme'
 CASS_DB = os.getenv('CASS_DB') or 'dndio'
-
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
@@ -61,6 +61,7 @@ class cassDB():
             for k,v in d.items():
                 if isinstance(v,uuid.UUID):
                     d[k] = str(v)
+                if isinstance(v,OrderedMap)
                 result.append(d)
         return result
 

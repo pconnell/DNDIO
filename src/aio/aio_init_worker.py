@@ -8,7 +8,8 @@ from aio_pika.abc import (
 )
 from aio_pika import Message
 import asyncio
-import workerInit_pb2, workerInit_pb2_grpc
+# import workerInit_pb2, workerInit_pb2_grpc
+import dndio_pb2, dndio_pb2_grpc
 ##################################################################
 
 ##################################################################
@@ -104,8 +105,6 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
-    async def initialize(self):
-        pass
 
     async def run(self):
         await self.connect()
@@ -118,48 +117,85 @@ class rmq_server():
                     # do processing here...
                     logger.info("  [x] Received new RPC request: {}".format(msg))
                     
-                    inbound_msg = workerInit_pb2.msg()
+                    inbound_msg = dndio_pb2.dndiomsg() #workerInit_pb2.msg()
                     inbound_msg.ParseFromString(msg.body)
+                    args = json.loads(inbound_msg.args)
                     logger.info("  [x] Parsed RPC to GRPC, converting to query")
-                    query = "INSERT INTO worker (id,cmd,num) VALUES (uuid(),'{}',{})".format(
-                        inbound_msg.cmd,
-                        inbound_msg.num
+                    resps = []
+                    if args['owner'] is not None:
+                        query = """INSERT INTO campaign (id,owner) VALUES ('{}','{}') IF NOT EXISTS""".format(
+                            inbound_msg.dc_channel,args['owner']
+                        )
+                        corr_id = str(uuid.uuid4())
+                        logger.info(f"  [x] Query generated {query}, sending to db worker...")
+                        resp = await self.rmq_client.call(query,corr_id)
+                        resps.append(resp)
+                    for user in args['users']:
+                        # make sure that the campaign exists
+                        query = "SELECT * FROM campaign WHERE id='{}'".format(
+                            inbound_msg.dc_channel
+                        )
+                        corr_id = str(uuid.uuid4())
+                        logger.info(f"  [x] Verifying campaign exists...")
+                        resp = await self.rmq_client.call(query,corr_id)
+                        resp = json.loads(resp)['rows']
+                        if len(resp) == 0:
+                            #campaign doesn't exist
+                            c = dndio_pb2.dndioreply(
+                                orig_cmd='init',
+                                dc_channel=inbound_msg.dc_channel,
+                                dc_user=inbound_msg.user,
+                                status=False,
+                                err_msg='Campaign {} does not exist, create a campaign with an owner first'
+                            )
+                            ret = dndio_pb2.initreply(
+                                common=c
+                            )
+                            await self.exchange.publish(
+                                Message(
+                                    body=ret.SerializeToString(),
+                                    correlation_id=msg.correlation_id
+                                ),
+                                routing_key=msg.reply_to
+                            )
+                        else:
+                            query = """INSERT INTO char_table (campaign_id,char_id) VALUES ('{}','{}') IF NOT EXISTS""".format(
+                                inbound_msg.dc_channel,user
+                            )
+                            corr_id = str(uuid.uuid4())
+                            logger.info(f"   [x] Query generated {query}, sending to db worker...")
+                            resp = await self.rmq_client.call(query,corr_id)
+                            resps.append(resp)
+                    #do error checking on responses - handle later
+                    c = dndio_pb2.dndioreply(
+                        orig_cmd='init',
+                        dc_channel=inbound_msg.dc_channel,
+                        dc_user=inbound_msg.user,
+                        status=True,
+                        addtl_data='',
+                        err_msg=''
                     )
-                    ###call initialize here...
-                    ### use the response to pump the message back to grpc server for client
-                    logger.info(f"  [x] Query generated {query}, sending to db worker...")
-                    response = await self.rmq_client.call(query,msg.correlation_id)
-                    # async with response:
-                    response = json.loads(response.decode())
-                    logger.info("  [x] Response to query received: {}".format(response))
-                    if response['success']:
-                        reply = workerInit_pb2.msgreply(
-                            response = "Command {} with num {} successful! ({})".format(
-                                inbound_msg.cmd,
-                                inbound_msg.num,
-                                json.dumps(response)
-                            ),
-                            outcome=True
-                        )
-                    else:
-                        reply = workerInit_pb2.msgreply(
-                            response = "Command {} with num {} failed!: {}".format(
-                                inbound_msg.cmd,
-                                inbound_msg.num,
-                                json.dumps(response)
-                            ),
-                            outcome=False
-                        )
+                    ret = dndio_pb2.initreply(
+                        common=c
+                    )
+
+                except:
+                    c = dndio_pb2.dndioreply(
+                        orig_cmd='',
+                        dc_channel=inbound_msg.dc_channel,
+                        dc_user=inbound_msg.user,
+                        err_msg='Unknown Error'
+                    )
+                    ret = dndio_pb2.initreply(common=c)
+                finally:
                     await self.exchange.publish(
                         Message(
-                            body=reply.SerializeToString(),
+                            body=ret.SerializeToString(),
                             correlation_id=msg.correlation_id
                         ),
                         routing_key=msg.reply_to
                     )
-                    logging.info(' [x] Processed Request')
-                except Exception:
-                    logging.exception(" [!] Error processing for message: {}".format(msg))
+
 
 
 if __name__=='__main__':

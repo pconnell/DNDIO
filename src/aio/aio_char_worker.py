@@ -106,7 +106,32 @@ class rmq_server():
 
         # a spell that's outside of the character's class
 
-    async def set_char(self):
+    async def add_char():
+        pass
+
+    async def spell_char():
+        pass
+    
+    async def ability_char():
+        pass
+
+    async def skill_char():
+        pass
+
+
+
+    async def set_char(self,msg):
+        campaign = msg.dc_channel,
+        user = msg.user
+        args = json.loads(msg.args)
+        funcs = {
+            'ability':self.ability_char,
+            'skill':self.skill_char,
+            'item':self.add_char,
+            'spell':self.spell_char,
+        }
+        func = funcs[args['action']] #?
+        resp = await func(args)
         
         pass
 

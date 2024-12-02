@@ -5,8 +5,10 @@ testlab/client/__pycache__
 testlab/client/go1.14.6.linux-amd64.tar.gz
 testlab/rest/__pycache__
 testlab/rest/tls.crt
-testlab/rest/tls.key
 testlab/workerChar/__pycache__
 .venv
 .vscode
 *.env
+src/aio/__pycache__
+testlab/rest/tls.key
+src/aio/dndio-tls.key

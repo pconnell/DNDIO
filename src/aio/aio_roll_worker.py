@@ -103,84 +103,202 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
-    async def roll_spell(self,spell,slot_lvl,campaign,char):
-        qs = []
-        qs.append(QUERIES.get('get_char').format(char,campaign))
-        # qs.append(QUERIES.get('get_char_map').format(char,campaign))
-        qs.append(QUERIES.get('get_class'))
-        qs.append(QUERIES.get('get_spells'))
-        #forward the queries over to db worker
-        #use await...
-        #get the response
-        #roll the dice
-        #craft a protobuf message
-        #return the result to RMQ via return statement
-        ## this gets called from run!
+    async def roll_spell(self,msg):
         pass
 
-    async def roll_initiative(self,msg,campaign,char):
-        #should be good to go!
-        char_query = """SELECT DEX from characters where campaign_id={} and char_id={} allow filtering;""".format(
-            campaign,char
-        )
-        char_resp = await self.rmq_client.call(char_query)['rows'][0]['DEX']
-        mod = char_resp #do some math here...
-        if msg.adv or msg.dadv:
-            rolls = [random.randint(1,20) for i in range(2)]
+    async def roll_raw(self,msg):
+        args = json.loads(msg.args)
+        rolls = []
+        if args.get('advantage') or args.get('disadvantage'):
+            add = max([args.get('advantage'),args.get('disadvantage'),0])
+            for k,v in args['rolls'].items():
+                r = [random.randint(1,int(k)) for i in range(int(v)+int(add))]
+                if args.get('disadvantage'):
+                    tot = min(r)
+                else:
+                    tot = max(r)
+                rolls.append(
+                    dndio_pb2.roll(
+                        roll_type='raw',
+                        die_rolls=r,
+                        modifiers=None,
+                        modified_rolls=None,
+                        total = tot
+                    )
+                )
         else:
-            rolls = [random.randint(1,20)]
+            rolls = []
+            for k,v in args['rolls'].items():
+                r = [random.randint(1,int(k)) for i in range(int(v))]
+                if args.get('disadvantage'):
+                    tot = min(r)
+                else:
+                    tot = max(r)
+                rolls.append(
+                    dndio_pb2.roll(
+                        roll_type='raw',
+                        die_rolls=r,
+                        modifiers=None,
+                        modified_rolls=None,
+                        total = tot
+                    )
+                )
+        common = dndio_pb2.dndioreply(
+            orig_cmd=msg.cmd,
+            status = True,
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            addtl_data=None,
+            err_msg=None
+        )
+        roll_reply = dndio_pb2.rollreply(
+            common=common,
+            dierolls=rolls
+        )
+        logger.info("  [x] roll reply: {}".format(roll_reply))
+        await asyncio.sleep(.1)
+        return roll_reply
+
+    async def roll_initiative(self,msg):
+        ### still need to handle advantage/disadvantage, subcmd vs cmd vs args...
+        args = json.loads(msg.args)
+        char_query = """SELECT dex from char_table where campaign_id='{}' and char_id='{}' allow filtering;""".format(
+            msg.dc_channel,msg.user
+        )
+        
+        corr_id = str(uuid.uuid4())
+        char_resp = await self.rmq_client.call(char_query,corr_id)
+        char_resp = json.loads(char_resp)
+        dex_mod = char_resp['rows'][0]['dex']
+        mod = (dex_mod-10)//2
+        ##determine if we need more dice to roll for advantage / disadvantage
+        if args['advantage']:
+            add = int(args['advantage'])
+        elif args['disadvantage']:
+            add = int(args['disadvantage'])
+        else:
+            add = 0
+        #roll the dice
+        rolls = [random.randint(1,20) for i in range(1+add)]
+        # add the modifier
         mod_rolls = [r+mod for r in rolls]
-        if msg.adv:
+        #select the roll based on advantage/disadvantage
+        if args['advantage']:
             total = [max(mod_rolls)]
-        elif msg.dadv:
+        elif args['disadvantage']:
             total = [min(mod_rolls)]
         else:
-            total = mod_rolls.copy()
-
-        return (rolls,mod_rolls,total)
-
-    async def roll_save(self,msg,campaign, char, stat):
-        
-        char_query = """SELECT char_class,{},save_throws from characters where campaign_id={} and char_id={} allow filtering;""".format(
+            total = max(mod_rolls)
+        #build the roll object
+        r = dndio_pb2.roll(
+            roll_type='initiative',
+            die_rolls=rolls,
+            modifiers=[mod],
+            modified_rolls=mod_rolls,
+            total = total
+        )
+        #build the common reply object
+        c = dndio_pb2.dndioreply(
+            orig_cmd='',
+            status=True,
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            addtl_data='',
+            err_msg=''
+        )
+        #build the roll reply using the other reply objects
+        resp = dndio_pb2.rollreply(
+            common=c,
+            dierolls=[r]
+        )
+        #return the response
+        return resp
+    
+    async def roll_save(self,msg):#,campaign, char, stat):
+        args = json.loads(msg.args)
+        stat = ','.join(args['ability']).lower()
+        campaign = msg.dc_channel
+        char=msg.user
+        char_query = """SELECT char_class,level,{} from char_table where campaign_id='{}' and char_id='{}' allow filtering;""".format(
             stat.lower(),campaign,char
         )
-        # class_query = """ 
-        #     SELECT prof_bonus FROM classes WHERE class_id='{}'
-        # """.format()
-        char_resp = await self.rmq_client.call(char_query,msg.correlation_id)['rows'][0]
-        mod = (char_resp[stat]-10)//2 #do some math to get the modifier
-        class_st_query = """SELECT proficiencies['Saving Throws'] FROM class_start WHERE char_class='{}'"""
-        class_query = """SELECT * FROM classes WHERE class_id='{}';""".format(
+        corr_id = str(uuid.uuid4())
+        char_resp = await self.rmq_client.call(char_query,corr_id)
+        char_resp = json.loads(char_resp)['rows'][0]
+        ability_mod = (char_resp[stat]-10)//2 #do some math to get the modifier
+
+
+        class_st_query = """SELECT proficiencies['Saving Throws'] FROM class_start WHERE char_class='{}'""".format(char_resp['char_class'],char_resp['level'])
+        class_query = """SELECT prof_bonus FROM classes WHERE class_id='{}';""".format(
             char_resp['char_class'] + '-' + str(char_resp['level'])
         )
-        class_st_resp = await self.rmq_client.call(class_st_query,msg.correlation_id)['rows'][0]
-        class_resp = await self.rmq_client.call(class_query,msg.correlation_id)['rows'][0]
+        class_st_resp = await self.rmq_client.call(class_st_query,corr_id)
+        class_st_resp = json.loads(class_st_resp)['rows'][0]
+        proficiencies = class_st_resp['proficiencies__Saving_Throws']
+        logger.info(" [!!!] {}".format(proficiencies,))
+        class_resp = await self.rmq_client.call(class_query,corr_id)
+        class_resp = json.loads(class_resp)['rows'][0]
+        logger.info(" [!!!] {}\t{}".format(proficiencies,class_resp))
+        # mod = class_resp['prof_bonus']
+        addtl_data = ""
         modifiers = []
-        modifiers.append((stat,mod))
-        if msg.adv or msg.dadv: #update modify to be correct...
-            roll = [random.randint(1,20) for i in range(2)]
+        modifiers.append(ability_mod)
+        if args['advantage']:
+            add = int(args['advantage'])
+        elif args['disadvantage']:
+            add = int(args['disadvantage'])
         else:
-            roll = [random.randint(1,20)]
-        if stat in class_st_resp:
-            modifiers.append(('prof_bonus',class_resp['prof_bonus']))
-            mod_roll= [r+class_resp['prof_bonus']+mod for r in roll]#char_resp['prof_bonus']+mod
+            add = 0
+        roll = [random.randint(1,20) for i in range(1+add)]
+        mod_roll = []
+        if stat.upper() in proficiencies:
+            addtl_data+= "You're proficient in {} saves - so you add your proficiency bonus ({})\n".format(
+                stat.upper(),
+                class_resp['prof_bonus']
+            )
+            modifiers.append((class_resp['prof_bonus']))
+            mod_roll= [r+class_resp['prof_bonus']+ability_mod for r in roll]#char_resp['prof_bonus']+mod
         else:
-            mod_roll+=[r+mod for r in roll]
-        if msg.adv:
-            total = [max(mod_roll)]
-        elif msg.dadv:
-            total = [min(mod_roll)]
+            mod_roll+=[r+ability_mod for r in roll]
+        if args['advantage']:
+            total = max(mod_roll)
+        elif args['disadvantage']:
+            total = min(mod_roll)
         else:
-            total = mod_roll.copy()
-        #update to a message or some other format?
-        return {
-            'rolls':roll,
-            'mod_rolls':mod_roll,
-            'modifiers':modifiers,
-            'total':total
-        }
+            total = max(mod_roll)
+        r = dndio_pb2.roll(
+            roll_type='{} save'.format(stat.upper()),
+            die_rolls=roll,
+            modifiers=modifiers,
+            modified_rolls=mod_roll,
+            total = total
+        )
+        #build the common reply object
+        addtl_data+='Your {} modifier is {}'.format(
+            stat.upper(),ability_mod
+        )
+        c = dndio_pb2.dndioreply(
+            orig_cmd='',
+            status=True,
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            addtl_data=addtl_data,
+            err_msg=''
+        )
+        #build the roll reply using the other reply objects
+        resp = dndio_pb2.rollreply(
+            common=c,
+            dierolls=[r]
+        )
+        #return the response
+        return resp
 
-    async def roll_skill(self,msg,campaign,char,skill):
+    async def roll_skill(self,msg):#,campaign,char,skill):
+        args = json.loads(msg.args)
+        campaign = args['dc_channel']
+        char=args['user']
+        skill=args['skill']
+
         #do we want to build a check for armor being worn on stealth checks? we have the data.
         char_query = """SELECT {},skills,str,wis,cha,con,int,dex,str prof_bonus from characters where campaign_id={} and char_id={} allow filtering;""".format(
             skill.lower(),campaign,char
@@ -216,7 +334,7 @@ class rmq_server():
 
         ## add handlers here - if this isn't a spellcaster, or there's missing data in their char sheet, return immediately.
 
-        if char_query['spellslots'] = {}
+        if isinstance(char_query['spellslots'],dict) and len(char_query['spellslots'].keys()) == 0:
             return Message(
                 #you're note a spellcaster
             )
@@ -225,7 +343,7 @@ class rmq_server():
         #     return Message(
         #         #need a spellsave dc
         #     )
-        if None in [char_dat['chr'],char_dat['wis'],char_dat['int']:
+        if None in [char_dat['chr'],char_dat['wis'],char_dat['int']]:
             return Message(
                 #need stats to be set
             )
@@ -398,97 +516,201 @@ class rmq_server():
         )
         return reply
 
-    async def roll_atk(self,weapon,campaign,char,adv,disadv):
+    async def roll_atk(self,msg): #weapon,campaign,char,adv,disadv):
         ##right now - this takes 4 queries to make it work.
         #building a way to send all queries across and execute them
         #and package the results / send them back may be ideal.
         ## generate and populate queries
-        char_query = """SELECT * from char_table WHERE char_id='{}' and campaign_id='{}' allow filtering;""".format(
+        args = json.loads(msg.args)
+        char = msg.user
+        campaign = msg.dc_channel #args['dc_channel']
+        weapon = args['action']
+        char_query = """SELECT * FROM char_table WHERE char_id='{}' and campaign_id='{}' allow filtering;""".format(
             char,campaign
         )
-        chr_data = await self.rmq_client.call(char_query)['rows'][0]
-        if weapon not in chr_data['weapons'] or weapon not in chr_data['equipped']:
-            response = dndio_pb2.dndioreply(
-                orig_command='',
+        corr_id = str(uuid.uuid4())
+        chr_data = await self.rmq_client.call(char_query,corr_id)
+        chr_data = json.loads(chr_data)['rows'][0]
+        if weapon not in chr_data['equipped'].values(): #or weapon not in chr_data['weapons'] ?
+            common = dndio_pb2.dndioreply(
+                orig_cmd='',
                 status=False,
                 dc_channel=campaign,
                 dc_user=char,
-                addtl_data='You do not have {} equipped.  You currently have {} equipped as a weapon'.format(weapon,chr_data['?'])
+                err_msg='You do not have {} equipped.  You currently have {} equipped as a weapon'.format(weapon,chr_data['equipped']['weapon'])
+            )
+            response = dndio_pb2.rollreply(
+                common=common
             )
             return response
-        wep_query = """SELECT * FROM weapons WHERE name='{}' allow filtering;""".format(weapon)
-        wep_data = await self.rmq_client.call(wep_query)['rows'][0]
+        wep_query = """SELECT name,dmg,mod,subtype FROM weapons WHERE name='{}' allow filtering;""".format(weapon)
+        corr_id = str(uuid.uuid4())
+        wep_data = await self.rmq_client.call(wep_query,corr_id)
+        wep_data = json.loads(wep_data)['rows'][0]
         prof_query = """SELECT proficiencies['weapon_class'] AS weapon_class,proficiencies['weapons'] AS weapons FROM class_start WHERE char_class='{}';""".format(chr_data['char_class'])
-        class_query = """SELECT * from classes WHERE class_id = {};""".format(chr_data['char_class']+'-'+str(chr_data['level']))
-        class_data = await self.rmq_client.call(class_query)['rows'][0]
-        prof_bonus = class_data['prof_bonus']
-        proficiencies = await self.rmq_client.call(prof_query)['rows'][0]
-        if adv or disadv:
-            rolls = [random.randint(1,20) for i in range(2)]
+        class_query = """SELECT prof_bonus from classes  WHERE class_id = '{}';""".format(chr_data['char_class']+'-'+str(chr_data['level']))
+        corr_id = str(uuid.uuid4())
+        class_data = await self.rmq_client.call(class_query,corr_id)
+        prof_bonus = json.loads(class_data)['rows'][0]['prof_bonus']
+        corr_id = str(uuid.uuid4())
+        proficiencies = await self.rmq_client.call(prof_query,corr_id)
+        proficiencies=json.loads(proficiencies)['rows'][0]
+        modifiers = []
+#         logger.info("""
+#  [!!!!!!] \nchar_data: {}\nweapon data: {}\nproficiency_bonus: {}\nproficiencies: {}                    
+# """.format(chr_data,wep_data,prof_bonus,proficiencies))
+        addtl_data = ''
+
+        if args['advantage']:
+            add = int(args['advantage'])
+        elif args['disadvantage']:
+            add = int(args['disadvantage'])
         else:
-            rolls = [random.randint(1,20)]
+            add = 0
+        rolls = [random.randint(1,20) for i in range(1+add)]
         
         mod_rolls = rolls.copy()
         #if the char is proficient in the weapon or class of weapons - add proficiency bonus.
+        for k,v in proficiencies.items():
+            if v is None:
+                proficiencies[k] = []
         if wep_data['name'] in proficiencies['weapons'] or wep_data['subtype'] in proficiencies['weapon_class']:
             #character type is proficient in the given weapon type
             mod_rolls = [m+prof_bonus for m in mod_rolls]
+            modifiers.append(prof_bonus)
+            addtl_data+="You're proficient with {}, and you add your proficiency bonus ({})\n".format(
+                wep_data['name'],prof_bonus
+            )
         
         #determine if STR or DEX is the maximum modifier
         #and which is available based on the weapon
         add_mods = []
         for m in wep_data['mod']:
             add_mods.append((m,(chr_data[m.lower()]-10)//2))
+            
         add_mod = max(add_mods,key=lambda x: x[1])
-
+        addtl_data+='Your {} modifier is {}.\n'.format(add_mod[0],add_mod[1])
+        if add_mod[0]=='DEX':
+            addtl_data+="Your DEX modifier is used because this weapon has finesse.\n"
+            modifiers.append(add_mod[1])
         #increment modified rolls based on max value
         mod_rolls = [m+add_mod[1] for m in mod_rolls]
 
         #extract the "total" based on advantage/disadvantage
-        if adv:
-            total = [max(mod_rolls)]
-        if disadv:
-            total = [min(mod_rolls)]
-        if not adv or disadv:
-            total = [max(mod_rolls)]
-        return {
-            'rolls':rolls,
-            'mod_rolls':mod_rolls,
-            'modifiers':[add_mods,],
-            'total':total
-        }
+        if args['advantage']:
+            total = max(mod_rolls)
+        if args['disadvantage']:
+            total = min(mod_rolls)
+        if not args['advantage'] or args['disadvantage']:
+            total = max(mod_rolls)
+        
+        r = dndio_pb2.roll(
+            roll_type='Attack: {}'.format(args['action']),
+            die_rolls=rolls,
+            modifiers=modifiers,
+            modified_rolls=mod_rolls,
+            total = total
+        )
+        c = dndio_pb2.dndioreply(
+            orig_cmd='',
+            status=True,
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            addtl_data=addtl_data,
+            err_msg=''
+        )
+        #build the roll reply using the other reply objects
+        resp = dndio_pb2.rollreply(
+            common=c,
+            dierolls=[r]
+        )
+        #return the response
+        return resp
 
-    async def roll_atk_dmg(self,weapon,campaign,char,num_hands,adv,disadv):
+    async def roll_atk_dmg(self,msg):#weapon,campaign,char,num_hands,adv,disadv):
+        args = json.loads(msg.args)['action']
+        num_hands = 1 #need a handler in the parser
+        weapon = args
+        char = msg.user
+        campaign = msg.dc_channel
+        corr_id = str(uuid.uuid4())
         char_query = """SELECT * from char_table WHERE char_id='{}' and campaign_id='{}' allow filtering;""".format(
             char,campaign
         )
-        chr_data = await self.rmq_client.call(char_query)['rows'][0]
-        if weapon not in chr_data['weapons'] or weapon not in chr_data['equipped']:
-            response = dndio_pb2.dndioreply(
-                orig_command='',
+        chr_data = await self.rmq_client.call(char_query,corr_id)
+        chr_data = json.loads(chr_data)['rows'][0]
+        if weapon not in chr_data['equipped'].values(): #weapon not in chr_data['weapons'] or
+            common = dndio_pb2.dndioreply(
+                orig_cmd='',
                 status=False,
                 dc_channel=campaign,
                 dc_user=char,
-                addtl_data='You do not have {} equipped.  You currently have {} equipped as a weapon'.format(weapon,chr_data['?'])
+                err_msg='You do not have {} equipped.  You currently have {} equipped as a weapon'.format(weapon,chr_data['equipped']['weapon'])
             )
+            response = dndio_pb2.rollreply(common=common)
             return response
         wep_query = """SELECT * FROM weapons WHERE name='{}' allow filtering;""".format(weapon)
-        wep_data = await self.rmq_client.call(wep_query)['rows'][0]
+        corr_id = str(uuid.uuid4())
+        wep_data = await self.rmq_client.call(wep_query,corr_id)
+        wep_data = json.loads(wep_data)['rows'][0]
+        modifiers = []
         add_mods = []
         for m in wep_data['mod']:
-            add_mods.append((m,chr_data[m.lower()]))
+            add_mods.append((m,(chr_data[m.lower()]-10)//2))
         add_mod = max(add_mods,key=lambda x: x[1])
+        modifiers.append(add_mod[1])
 
-        dmg_rolls = {'base':{},'modified':{},'total':0}
-        for hands,dmgs in wep_data['dmg'][str(num_hands)+'-hnd']:
-            for dmg_type, dmg_dice in dmgs.items():
-                for num_dice,dice_size in dmg_dice.items():
-                    rolls = [random.randint(1,dice_size) for i in range(num_dice)]
-                    dmg_rolls['base'][dmg_type] = rolls
-                    dmg_rolls['modified'][dmg_type] = [r+add_mod[1] for r in rolls]
-                    dmg_rolls['total']+= sum(dmg_rolls('modified'))
-        dmg_rolls['modifier'] = add_mod
-        return dmg_rolls
+        rolls = []
+        logger.info(wep_data['dmg'])
+        for dmg_type,dmg_dice in wep_data['dmg'][str(num_hands)+'hnd'].items():
+            logger.info("{}".format(dmg_type,dmg_dice))
+            for num_dice,dice_size in dmg_dice.items():
+                roll = [random.randint(1,int(dice_size)) for i in range(int(num_dice))]
+                mod_roll = [r+add_mod[1] for r in roll]
+                r = dndio_pb2.roll(
+                        roll_type='dmg-{}'.format(dmg_type),
+                        die_rolls = roll,
+                        modifiers = [add_mod[1]],
+                        modified_rolls = mod_roll,
+                        total = sum(mod_roll)
+                )
+                rolls.append(r)
+            # for dmg_type,dmg_dice in dmgs.items():
+            #     logger.info("{} {}".format(dmg_type,dmg_dice))
+            #     for num_dice,dice_size in dmg_dice.items():
+            #         roll = [random.randint(1,dice_size) for i in range(num_dice)]
+            #         mod_roll = [r+add_mod[1] for r in rolls]
+            #         r = dndio_pb2.roll(
+            #             roll_type='dmg-{}'.format(dmg_type),
+            #             die_rolls = roll,
+            #             modifiers = [add_mod[1]],
+            #             modified_rolls = mod_roll,
+            #             total = sum(mod_roll)
+            #         )
+            #         rolls.append(r)
+        c = dndio_pb2.dndioreply(
+            orig_cmd='',
+            status=True,
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            addtl_data='',
+            err_msg=''
+        )
+        reply = dndio_pb2.rollreply(
+            common=c,
+            dierolls=rolls
+        )
+        return reply
+        # dmg_rolls = {'base':{},'modified':{},'total':0}
+        # for hands,dmgs in wep_data['dmg'][str(num_hands)+'-hnd']:
+        #     for dmg_type, dmg_dice in dmgs.items():
+        #         for num_dice,dice_size in dmg_dice.items():
+        #             rolls = [random.randint(1,dice_size) for i in range(num_dice)]
+        #             dmg_rolls['base'][dmg_type] = rolls
+        #             dmg_rolls['modified'][dmg_type] = [r+add_mod[1] for r in rolls]
+        #             dmg_rolls['total']+= sum(dmg_rolls('modified'))
+        # dmg_rolls['modifier'] = add_mod
+        # return dmg_rolls
 
     async def run(self):
         await self.connect()
@@ -501,8 +723,10 @@ class rmq_server():
                     # do processing here...
                     logger.info("  [x] Received new RPC request: {}".format(msg))
                     
-                    inbound_msg = workerRoll_pb2.msg()
+                    inbound_msg = dndio_pb2.dndiomsg()
                     inbound_msg.ParseFromString(msg.body)
+                    logger.info(msg.body)
+                    logger.info(inbound_msg.subcmd)
                     logger.info("  [x] Parsed RPC to GRPC, converting to query")
                     ##### HERE'S WHERE WE'LL PARSE THE MESSAGE FROM THE CLIENT
                     ## AND USE THAT TO CRAFT DIFFERENT QUERIES
@@ -515,10 +739,16 @@ class rmq_server():
                         'attack':self.roll_atk,
                         'save':self.roll_save,
                         'skill':self.roll_skill,
-                        'spell':self.roll_spell
+                        'spell':self.roll_spell,
+                        'raw':self.roll_raw,
+                        'damage':self.roll_atk_dmg
                     }
-                    func = funcs[inbound_msg.cmd]
+                    func = funcs[inbound_msg.subcmd]
                     reply = await func(inbound_msg)
+                    # if inbound_msg.subcmd == 'raw':
+                    #     reply = func(inbound_msg)
+                    # else:
+                    #     reply = await func(inbound_msg)
                     # query = "INSERT INTO worker (id,cmd,num) VALUES (uuid(),'{}',{})".format(
                     #     inbound_msg.cmd,
                     #     inbound_msg.num
@@ -546,6 +776,8 @@ class rmq_server():
                     #         ),
                     #         outcome=False
                     #     )
+
+                    #################################################
                     await self.exchange.publish(
                         Message(
                             body=reply.SerializeToString(),
@@ -556,6 +788,7 @@ class rmq_server():
                     logging.info(' [x] Processed Request')
                 except Exception:
                     logging.exception(" [!] Error processing for message: {}".format(msg))
+                    # return reply
 
 
 if __name__=='__main__':

@@ -22,7 +22,7 @@ if __name__ == '__main__':
             user = 'chorky#8402'
         )
         print(vars(args))
-        print('*'*80)
+        print('*'*80) 
         print(to_send)
         print('*'*80)
         # connect to the grpc server - will change
