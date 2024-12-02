@@ -13,12 +13,12 @@ WORKDIR /app
 
 COPY aio_init_worker.py /app/aio_init_worker.py
 
-COPY workerInit_pb2.py /app/workerInit_pb2.py
+# COPY workerInit_pb2.py /app/workerInit_pb2.py
 
-COPY workerInit_pb2_grpc.py /app/workerInit_pb2_grpc.py
+# COPY workerInit_pb2_grpc.py /app/workerInit_pb2_grpc.py
 
-# COPY dndio_pb2.py /app/dndio_pb2.py
+COPY dndio_pb2.py /app/dndio_pb2.py
 
-# COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
+COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
 
 CMD ["python3", "aio_init_worker.py"]

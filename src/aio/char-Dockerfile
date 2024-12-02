@@ -13,8 +13,12 @@ WORKDIR /app
 
 COPY aio_char_worker.py /app/aio_char_worker.py
 
-COPY workerChar_pb2.py /app/workerChar_pb2.py
+# COPY workerChar_pb2.py /app/workerChar_pb2.py
 
-COPY workerChar_pb2_grpc.py /app/workerChar_pb2_grpc.py
+# COPY workerChar_pb2_grpc.py /app/workerChar_pb2_grpc.py
+
+COPY dndio_pb2.py /app/dndio_pb2.py
+
+COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
 
 CMD ["python3", "aio_char_worker.py"]

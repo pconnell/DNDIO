@@ -22,6 +22,14 @@ roll-build:
 lookup-build:
 	docker build -f lookup-Dockerfile -t lookupworker .
 
+pull:
+	docker pull pconnell89/grpctest
+	docker pull pconnell89/dbworker
+	docker pull pconnell89/charworker
+	docker pull pconnell89/initworker
+	docker pull pconnell89/rollworker
+	docker pull pconnell89/lookupworker
+
 build:
 	make grpc-build
 	make db-build

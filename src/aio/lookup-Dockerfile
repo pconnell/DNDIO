@@ -13,12 +13,12 @@ WORKDIR /app
 
 COPY aio_lookup_worker.py /app/aio_lookup_worker.py
 
-COPY workerLookup_pb2.py /app/workerLookup_pb2.py
+# COPY workerLookup_pb2.py /app/workerLookup_pb2.py
 
-COPY workerLookup_pb2_grpc.py /app/workerLookup_pb2_grpc.py
+# COPY workerLookup_pb2_grpc.py /app/workerLookup_pb2_grpc.py
 
 # COPY dndio_pb2.py /app/dndio_pb2.py
 
-# COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
+COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
 
 CMD ["python3", "aio_lookup_worker.py"]
