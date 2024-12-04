@@ -3,7 +3,7 @@ import logging
 import aio_pika
 from aio_pika import Message
 import grpc, json
-import workerChar_pb2, workerChar_pb2_grpc
+# import workerChar_pb2, workerChar_pb2_grpc
 # import workerInit_pb2,workerInit_pb2_grpc
 # import workerRoll_pb2,workerRoll_pb2_grpc
 # import workerLookup_pb2,workerLookup_pb2_grpc
@@ -62,7 +62,7 @@ class rmq_client():
     async def call(self,msg,correlation_id):
         loop = asyncio.get_running_loop()
         future = loop.create_future()
-        self.futures[correlation_id] = future
+        self.futures[str(correlation_id)] = future
         logger.info("  [!!!] futures: {}".format(self.futures))
         await self.channel.default_exchange.publish(
             Message(
@@ -182,40 +182,44 @@ class grpc_roll_worker(dndio_pb2_grpc.rollSvcServicer):
         logger.info(" [x] grpc roll server - received new request: {}".format(request))
         # self.rmq_cli = await self.rmq_cli.connect()
         logger.info(" [x] grpc roll server - pushing request to rabbit mq")
-        # corr_id = str(uuid.uuid4())
-        # resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
+        #do the real processing here!!
+        corr_id = str(uuid.uuid4())
+        data = await self.rmq_cli.call(request.SerializeToString(),corr_id)
         logger.info(" [x] grpc roll server - received response from rabbit mq: {}")#.format(resp))
-        data = dndio_pb2.dndioreply(
-            orig_cmd=request.cmd,
-            status=True,
-            dc_channel = request.dc_channel,
-            dc_user=request.user,
-            addtl_data = 'Test successful',
-            err_msg=None
-        )
-        r1 = [random.randint(1,20) for i in range(2)]
-        mr1 = [r+1 for r in r1]
-        r2 = [random.randint(1,8) for i in range(3)]
-        mr2 = [r+1 for r in r2]
-        roll1 = dndio_pb2.roll(
-            roll_type='initiative',
-            die_rolls=r1,
-            modifiers=[2,-1],
-            modified_rolls=mr1,
-            total=max(mr1)
-        )
-        roll2 = dndio_pb2.roll(
-            roll_type='attack damage',
-            die_rolls=r1,
-            modifiers=[2,-1],
-            modified_rolls=mr2,
-            total=max(mr2)
-        )
-        roll_reply  = dndio_pb2.rollreply(
-            common=data,
-            dierolls=[roll1,roll2]
-        )
-        # data.ParseFromString(resp)
+        # data = dndio_pb2.dndioreply(
+        #     orig_cmd=request.cmd,
+        #     status=True,
+        #     dc_channel = request.dc_channel,
+        #     dc_user=request.user,
+        #     addtl_data = 'Test successful',
+        #     err_msg=None
+        # )
+        # r1 = [random.randint(1,20) for i in range(2)]
+        # mr1 = [r+1 for r in r1]
+        # r2 = [random.randint(1,8) for i in range(3)]
+        # mr2 = [r+1 for r in r2]
+        # roll1 = dndio_pb2.roll(
+        #     roll_type='initiative',
+        #     die_rolls=r1,
+        #     modifiers=[2,-1],
+        #     modified_rolls=mr1,
+        #     total=max(mr1)
+        # )
+        # roll2 = dndio_pb2.roll(
+        #     roll_type='attack damage',
+        #     die_rolls=r1,
+        #     modifiers=[2,-1],
+        #     modified_rolls=mr2,
+        #     total=max(mr2)
+        # )
+        # roll_reply  = dndio_pb2.rollreply(
+        #     common=data,
+        #     dierolls=[roll1,roll2]
+        # )
+        # logger.info(type(data))
+        # logger.info(" [!!!]{}".format(data))
+        roll_reply= dndio_pb2.rollreply()
+        roll_reply.ParseFromString(data)
         logger.info(" [x] grpc roll server - request complete - issuing reply to requestor...")
         return roll_reply
 
@@ -230,25 +234,27 @@ class grpc_init_worker(dndio_pb2_grpc.initSvcServicer):
         context: grpc.aio.ServicerContext,
     ) -> dndio_pb2.initreply:
         logger.info(" [x] grpc init server - received new request: {}".format(request))
-        # self.rmq_cli = await self.rmq_cli.connect()
+        self.rmq_cli = await self.rmq_cli.connect()
         logger.info(" [x] grpc init server - pushing request to rabbit mq")
         corr_id = str(uuid.uuid4())
-        # resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
+        resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
         logger.info(" [x] grpc init server - received response from rabbit mq: {}")#.format(resp))
+        init_reply = dndio_pb2.initreply()
+        init_reply.ParseFromString(resp)
         # data = workerInit_pb2.msgreply()
-        # data.ParseFromString(resp)
+        # data.ParseFromString(resp)make 
         logger.info(" [x] grpc init server - request complete - issuing reply to requestor...")
-        data = dndio_pb2.dndioreply(
-            orig_cmd=request.cmd,
-            status=True,
-            dc_channel = request.dc_channel,
-            dc_user=request.user,
-            addtl_data = 'Test successful',
-            err_msg=None
-        )
-        init_reply = dndio_pb2.initreply(
-            common = data
-        )
+        # data = dndio_pb2.dndioreply(
+        #     orig_cmd=request.cmd,
+        #     status=True,
+        #     dc_channel = request.dc_channel,
+        #     dc_user=request.user,
+        #     addtl_data = 'Test successful',
+        #     err_msg=None
+        # )
+        # init_reply = dndio_pb2.initreply(
+        #     common = data
+        # )
         return init_reply
 
 async def serve() -> None:
@@ -280,7 +286,7 @@ async def serve() -> None:
     dndio_pb2_grpc.add_initSvcServicer_to_server(init_wrkr,server)
     # workerRoll_pb2_grpc.add_sendmsgServicer_to_server(roll_wrkr,server)
     # workerInit_pb2_grpc.add_sendmsgServicer_to_server(init_wrkr,server)
-    listen_addr = "localhost:5000"
+    listen_addr = "0.0.0.0:5000"
     server.add_insecure_port(listen_addr)
     logger.info("Starting server on %s", listen_addr)
     await server.start()

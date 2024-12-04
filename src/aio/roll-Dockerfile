@@ -11,8 +11,12 @@ WORKDIR /app
 
 COPY aio_roll_worker.py /app/aio_roll_worker.py
 
-COPY workerRoll_pb2.py /app/workerRoll_pb2.py
+# COPY workerRoll_pb2.py /app/workerRoll_pb2.py
 
-COPY workerRoll_pb2_grpc.py /app/workerRoll_pb2_grpc.py
+# COPY workerRoll_pb2_grpc.py /app/workerRoll_pb2_grpc.py
+
+COPY dndio_pb2.py /app/dndio_pb2.py
+
+COPY dndio_pb2_grpc.py /app/dndio_pb2_grpc.py
 
 CMD ["python3", "aio_roll_worker.py"]
