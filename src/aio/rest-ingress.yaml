@@ -8,6 +8,8 @@ metadata:
   namespace: default
 spec:
   ingressClassName: nginx
+  # externalIPs:
+  #   - 192.168.0.110
   rules:
   - host: rest.default.svc.cluster.local
     http:

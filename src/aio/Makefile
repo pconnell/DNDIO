@@ -114,6 +114,7 @@ deploy:
 	make init-deploy
 	make roll-deploy
 	make lookup-deploy
+	kubectl expose deployment ingress-nginx-controller --type=LoadBalancer -n ingress-nginx --name ingress-nginx-service --external_ip='192.168.0.110' --port=44443 --protocol TCP
 
 grpc-disable:
 	kubectl delete -f rest-deployment.yaml

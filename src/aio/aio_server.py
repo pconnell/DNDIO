@@ -108,20 +108,22 @@ class grpc_char_worker(dndio_pb2_grpc.charSvcServicer):
         logger.info(" [x] grpc char server - received new request: {}".format(request))
         logger.info(" [x] grpc char server - pushing request to rabbit mq")
         corr_id = str(uuid.uuid4())
-        # resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
+        resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
         logger.info(" [x] grpc char server - received response from rabbit mq")
         logger.info(" [x] grpc char server - processing reply")
-        data = dndio_pb2.dndioreply(
-            orig_cmd=request.cmd,
-            status=True,
-            dc_channel = request.dc_channel,
-            dc_user=request.user,
-            addtl_data = 'Test successful',
-            err_msg=None
-        )
-        char_reply = dndio_pb2.charreply(
-            common = data
-        )
+        char_reply = dndio_pb2.charreply()
+        char_reply.ParseFromString(resp) 
+        # data = dndio_pb2.dndioreply(
+        #     orig_cmd=request.cmd,
+        #     status=True,
+        #     dc_channel = request.dc_channel,
+        #     dc_user=request.user,
+        #     addtl_data = 'Test successful',
+        #     err_msg=None
+        # )
+        # char_reply = dndio_pb2.charreply(
+        #     common = data
+        # )
         logger.info(" [x] grpc char server - request complete - issuing reply to requestor...")
         return char_reply
 

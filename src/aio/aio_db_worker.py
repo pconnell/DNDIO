@@ -75,82 +75,86 @@ class cassDB():
             result.append(d)
         return result
 
-    def parse_spells(self,rows):
-        #convert data back to JSON/py dictionary
-        for i in range(len(rows)):
-            row = rows[i]
-            dmg_dict = {}
-            dmg = row['dmg']
-            for level,dmgmap in dmg.items():
-                dmg_dict[level] = {}
-                for dmgtype,die_list in dmgmap.items():
-                    dmg_dict[level][dmgtype] = []
-                    for die in die_list:
-                        dmg_dict[level][dmgtype].append(dict(die))
-            upcast = dict(row['upcast'])
-            curr_dict = rows[i].copy()
-            curr_dict['upcast'] = upcast
-            curr_dict['dmg']=dmg_dict
-            rows[i] = curr_dict.copy()
-        return rows
+    # def parse_spells(self,rows):
+    #     #convert data back to JSON/py dictionary
+    #     for i in range(len(rows)):
+    #         row = rows[i]
+    #         dmg_dict = {}
+    #         dmg = row['dmg']
+    #         for level,dmgmap in dmg.items():
+    #             dmg_dict[level] = {}
+    #             for dmgtype,die_list in dmgmap.items():
+    #                 dmg_dict[level][dmgtype] = []
+    #                 for die in die_list:
+    #                     dmg_dict[level][dmgtype].append(dict(die))
+    #         upcast = dict(row['upcast'])
+    #         curr_dict = rows[i].copy()
+    #         curr_dict['upcast'] = upcast
+    #         curr_dict['dmg']=dmg_dict
+    #         rows[i] = curr_dict.copy()
+    #     return rows
 
-    def parse_weapons(self,rows):
-        #convert data back to JSON/py dictionary
-        for i in range(len(rows)):
-            row = rows[i]
-            dmg_dict = {}
-            dmg = row['dmg']
-            for hands,dmgmap in dmg.items():
-                dmg_dict[hands]={}
-                for dmgtype,dice in dmgmap.items():
-                    dmg_dict[hands][dmgtype] = dict(dice)
-            curr_dict = row.copy()
-            curr_dict['dmg'] = dmg_dict
-            rows[i] = curr_dict.copy()
-        return rows
+    # def parse_weapons(self,rows):
+    #     #convert data back to JSON/py dictionary
+    #     for i in range(len(rows)):
+    #         row = rows[i]
+    #         dmg_dict = {}
+    #         dmg = row['dmg']
+    #         for hands,dmgmap in dmg.items():
+    #             dmg_dict[hands]={}
+    #             for dmgtype,dice in dmgmap.items():
+    #                 dmg_dict[hands][dmgtype] = dict(dice)
+    #         curr_dict = row.copy()
+    #         curr_dict['dmg'] = dmg_dict
+    #         rows[i] = curr_dict.copy()
+    #     return rows
 
-    ## parse out class data
-    def parse_class(self,rows):
-        pass
+    # ## parse out class data
+    # def parse_class(self,rows):
+    #     pass
 
-    ## parse out 
+    # ## parse out 
 
-    def _rows_to_json(self,rows):
-        result = []
-        for i in range(len(rows)):
-            row = rows[i]
-            d = row._asdict()
-            for k,v in d.items():
-                if isinstance(v,uuid.UUID):
-                    d[k] = str(v)
-            result.append(d)
-        return result
+    # def _rows_to_json(self,rows):
+    #     result = []
+    #     for i in range(len(rows)):
+    #         row = rows[i]
+    #         d = row._asdict()
+    #         for k,v in d.items():
+    #             if isinstance(v,uuid.UUID):
+    #                 d[k] = str(v)
+    #         result.append(d)
+    #     return result
 
     def exec_query(self,s):
-        result = {
-            'query':s,
-            'success':False
-        }
-        try: 
-            response = self.session.execute(s)
-        except NoHostAvailable:
-            self.connect()
-        except OperationTimedOut:
-            self.connect()
-        finally:
-            response = self.session.execute(s)
-            result['success'] = True
-        logger.info("  [x] DB on_request: query succeeded: {}".format(s))
-        #l = [r for r in response.all()]
-        l = response.all()
-        result['success']= True
-        if len(l) > 0:
-            result['rows'] = self.rows_to_json(l)
-        # if "FROM spells" in s:
-        #     result['rows'] = self.parse_spells(result['rows'])
-        # if "FROM weapons" in s:
-        #     result['rows'] = self.parse_weapons(result['rows'])
-        return result
+        try:
+            result = {
+                'query':s,
+                'success':False
+            }
+            try: 
+                response = self.session.execute(s)
+            except NoHostAvailable:
+                self.connect()
+            except OperationTimedOut:
+                self.connect()
+            finally:
+                response = self.session.execute(s)
+                result['success'] = True
+            logger.info("  [x] DB on_request: query succeeded: {}".format(s))
+            l = response.all()
+            result['success']= True
+            result['rows'] = []
+            logger.info(l)
+            if len(l) > 0:
+                result['rows'] = self.rows_to_json(l)
+            return result
+        except Exception as e:
+            return {
+                'query':s,
+                'success':False,
+                'msg':str(e)
+            }
 
 class rmq_server():
     def __init__(self,url,qname):
@@ -174,6 +178,13 @@ class rmq_server():
         logger.info(" [x] Establishing request queue: {}".format(self.qname))
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] DB Worker Listining for RPC Requests")
+
+    async def proc_err_msg(self,msg,err_msg):
+        return {
+            'query':msg.body.decode(),
+            'success':False,
+            'msg':err_msg
+        }
 
     async def run(self):
         await self.connect()

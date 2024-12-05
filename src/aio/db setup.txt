@@ -42,7 +42,7 @@ CREATE TABLE char_table(
     align text, 
     max_hp smallint, 
     curr_hp smallint,
-    CHR smallint, 
+    CHA smallint, 
     STR smallint,
     INT smallint,
     WIS smallint,
