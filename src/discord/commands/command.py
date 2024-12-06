@@ -2,7 +2,7 @@ from discord.ext.commands import Cog, Context, command
 import random as rd
 from argparse import ArgumentError
 
-from src .aio import parser, parser_protobuf
+from src .aio import dndio_parser, parser_protobuf
 from ..discord_bot import DNDIO
 
 class Commands(Cog):
