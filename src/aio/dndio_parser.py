@@ -409,7 +409,7 @@ item_parser.add_argument(
 
 
 #examples
-def parse_str(s, debug=False):
+async def parse_str(s, debug=False):
     s = shlex.split(s)
     if debug:
         print(s)
