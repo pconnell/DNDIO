@@ -36,7 +36,7 @@ class Commands(Cog):
     
     async def _parse_dndio_command(self, message):
         try:
-            result = parser.parse_str(message.content[1:])
+            result = dndio_parser.parse_str(message.content[1:])
             if type(result) == ArgumentError:
                 print(result)
         except (Exception, SystemExit) as e:

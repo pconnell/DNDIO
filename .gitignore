@@ -14,3 +14,4 @@ testlab/rest/tls.key
 src/aio/dndio-tls.key
 src/aio/recurse.py
 *__pycache__*
+src/discord/commands/__pycache__/command.cpython-312.pyc
