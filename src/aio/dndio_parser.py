@@ -1,5 +1,7 @@
 import argparse, shlex
 from functools import partial
+from src.aio.parser_consts import *
+
 '''
 Parser: Defines the arguments passed by the client to the ingress controller.
 
@@ -24,9 +26,6 @@ def error_to_string(self, message):
 argparse.ArgumentParser.error = error_to_string
 
 ####################### Class definitions #######################
-
-ability_scores = ["CHA", "STR", "INT", "WIS", "DEX", "CON"]
-
 class SetValueSplitter(argparse.Action):
     def __init__(self, valid_stats, valid_values, return_values=False, roll=False, **kwargs):
         self.return_values = "values" if return_values else "stats"
@@ -78,6 +77,7 @@ class SetValueSplitter(argparse.Action):
 parser = argparse.ArgumentParser(prog='dndio', exit_on_error=False)
 
 subparsers = parser.add_subparsers(
+    dest='command',
     help='subcommand help'
 )
 
@@ -100,7 +100,7 @@ lookup_parser = subparsers.add_parser("lookup",
                               help="Look up information from the Player's Handbook.",
                               aliases=['lookup'])
 
-lookup_sub = lookup_parser.add_subparsers()
+lookup_sub = lookup_parser.add_subparsers(dest='subcommand')
 
 spell_parser = lookup_sub.add_parser("spells", aliases=["spell"])
 
@@ -124,7 +124,11 @@ search_type.add_argument("-n", "--name", nargs=1)
 
 roll_parser = subparsers.add_parser("roll")
 
-roll_sub = roll_parser.add_subparsers()
+adv_mod = roll_parser.add_mutually_exclusive_group()
+adv_mod.add_argument("-a", "--advantage")
+adv_mod.add_argument("-d", "--disadvantage")
+
+roll_sub = roll_parser.add_subparsers(dest="subcommand")
 
 raw_parser = roll_sub.add_parser("raw")
 
@@ -142,10 +146,10 @@ spell_parser.add_argument("name")
 spell_parser.add_argument("level")
 
 check_parser = roll_sub.add_parser("check")
-check_parser.add_argument("ability", choices=ability_scores, nargs="+")
+check_parser.add_argument("ability", choices=ABILITY_SCORES + SKILLS, nargs="+")
 
 check_parser = roll_sub.add_parser("save")
-check_parser.add_argument("ability", choices=ability_scores, nargs="+")
+check_parser.add_argument("ability", choices=ABILITY_SCORES, nargs="+")
 
 attack_parser = roll_sub.add_parser("attack", aliases=["atk"])
 attack_parser.add_argument("action", type=str.lower)
@@ -157,17 +161,13 @@ init_parser = roll_sub.add_parser("initiative", aliases=["init"])
 
 roll_parser.add_argument("mod", nargs="?")
 
-adv_mod = roll_parser.add_mutually_exclusive_group()
-adv_mod.add_argument("-a", "--advantage")
-adv_mod.add_argument("-d", "--disadvantage")
-
 ##########################################################################
 #                          Character Commands                            #
 ##########################################################################
 
 parser_char = subparsers.add_parser('char',help='Character Commands')
 
-char_sub = parser_char.add_subparsers(help='/char Subcommands')
+char_sub = parser_char.add_subparsers(help='/char Subcommands', dest='subcommand')
 
 ##########################################################################
 #                            Char Get Commands                           #
@@ -233,33 +233,18 @@ char_set = char_sub.add_parser('set',
                                aliases=['set'])
 set_sub = char_set.add_subparsers()
 
-########## The following can take multiple values. ##########
+########## The following can take multiple values of type (string, int). ##########
 
 char_set_parsers = {
     "ability": 
         (
-            ability_scores, 
+            ABILITY_SCORES, 
             list(range(1, 21))
-        ),
-    "proficiency":
-        (
-            # ["animalhandling", "arcana", "(etc.)"],
-            ["animal handling","investigation","performance",
-             "insight","survival","athletics","perception","history","persuasion",
-             "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
-             "medicine","religion"],
-            # ["animalhandling", "arcana", "(etc.)"],
-            ["animal handling","investigation","performance",
-             "insight","survival","athletics","perception","history","persuasion",
-             "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
-             "medicine","religion"],
-            list(range(-5, 6))
         ),
     "equipped":
         (
-            ['armor','weapon']
+            'weapon', 
             [
-                'Chain Mail','Studded Leather','Halfplate','Leather','Chain Shirt','Plate','Shield','Padded','Breastplate','Hide','Splint','Ring Mail','Scale Mail','Spiked Armor',
                 'morningstar', 'blowgun', 'halberd', 'light crossbow', 'longsword', 'net', 'greatclub', 'shortsword', 'flail', 'quarterstaff', 'spear', 'club', 'glaive', 'lance', 
                 'battleaxe', 'dart', 'trident', 'javelin', 'greatsword', 'warhammer', 'sickle', 'mace', 'whip', 'light hammer', 'war pick', 'pike', 'rapier', 'greataxe', 'hand crossbow', 
                 'scimitar', 'dagger', 'heavy crossbow', 'sling', 'longbow', 'shortbow', 'maul', 'handaxe'
@@ -277,7 +262,24 @@ for target in char_set_parsers:
         char_set_parsers[target][1]        
     )
 
-########## The following can only take one value. ##########
+########## The following take one or more values of a single type. ##########
+
+char_set_arguments = {
+        "skill":
+        SKILLS
+}
+
+for stat in char_set_arguments:
+    value_sub = set_sub.add_parser(stat)
+    value_sub.add_argument(
+        stat,
+        choices = char_set_arguments[stat],
+        nargs="+",
+        type = str
+    )
+
+
+########## The following take one value. ##########
 
 char_set_arguments = {
     "AC":
@@ -285,43 +287,11 @@ char_set_arguments = {
             range(0, 51)
             ),
     "Class":
-        [
-            "barbarian", 
-            "bard", 
-            "cleric", 
-            "druid", 
-            "fighter", 
-            "monk", 
-            "paladin", 
-            "ranger", 
-            "rogue", 
-            "sorcerer", 
-            "warlock", 
-            "wizard"
-        ],
+        CLASSES,
     "race":
-        [
-            "aasimar",
-            "aarakocra",
-            "dragonborn",
-            "dwarf",
-            "elf",
-            "gnome",
-            "goliath",
-            "halfling",
-            "human",
-            "orc",
-            "tiefling",
-        ],
+        RACES,
     "size":
-        [
-            "Tiny",
-            "Small",
-            "Medium",
-            "Large",
-            "Huge",
-            "Gargantuan"
-        ],
+        SIZES,
     "level":
         list(
             range(21)
@@ -443,7 +413,8 @@ def parse_str(s, debug=False):
     s = shlex.split(s)
     if debug:
         print(s)
-        print(parser.parse_args(s))
+        result = parser.parse_args(s)
+        print(result)
         print('*'*80)
     try:
         result = parser.parse_args(s)
@@ -482,9 +453,7 @@ if __name__ == "__main__":
         #I had a lot of trouble getting spells - still haven't gotten feats or races integrated
         "char add feat \"umm idk\"",
         "init",
-        #does the -r mean level?
         "lookup spells Monk -r 7",
-        #will this give you all spells for a Monk?
         "lookup spells Monk",
         #for these raw rolls - can we implement on the bot side vs. sending to cloud?
         #really like the format for all of these - keeps it simple.  they can all take -a|-d arguments, right?
@@ -498,19 +467,19 @@ if __name__ == "__main__":
         "roll attack \"Greatsword\"",
         "roll initiative",
         "roll init",
-        #can we have a roll skill [skillname]? like roll skill history, roll skill survival, etc?
-        # that can handle automatically adding proficiency bonus if the skill is in their primary skills.
         "lookup --armor -n \"simple leather\"",
         "lookup -a -n \"simple leather\"",
         "lookup -f",
         "lookup -f -r Monk",
-        "init test"
+        "init test",
+        "roll -a 1d6",
+        "roll 1d6 -a"
     ]
 
 if __name__ == '__main__':
     for s in test_commands:
         try:
-            parse_str(shlex.split(s))
+            parse_str(s, debug=True)
         except Exception as e:
             print("Error:", e)
         # exit()

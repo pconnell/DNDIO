@@ -1,4 +1,4 @@
-from src .aio .parser import *
+from src.aio.dndio_parser import *
 import sys
 import os
 print(os.getcwd())
@@ -7,19 +7,17 @@ from argparse import Namespace
 import json
 import grpc
 
-if __name__ == '__main__':
+def parse_args():
     while True:
         x = input("Enter a command: ")
-        #sys.argv will change for the discord bot - this works for cli testing
-        dat = x.split(' ')
         args = parser.parse_args(shlex.split(x))
         #build a basic message based upon the 
         # command line arguments
         # take the args and parse them to a dictionary and dump into a string
-        if dat[0]!='init':
+        if args.command != 'init':
             to_send = dndio_pb2.dndiomsg(
-                cmd = dat[0],
-                subcmd= dat[1],
+                cmd = args.command,
+                subcmd= args.subcommand,
                 args = json.dumps(vars(args)),
                 dc_channel='abcdef',
                 user = 'chorky#8402'
@@ -70,3 +68,6 @@ if __name__ == '__main__':
         print(reply)
         # print(reply.common)
         print('*'*80)
+
+if __name__ == "__main__":
+    main()

@@ -2,16 +2,19 @@ import asyncio, os
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src.discord.discord_bot import DNDIO
+from src.discord.discord_bot import DNDIO, grpc_relay
 
 async def main():
     load_dotenv("src/discord/.env")
-    try:
-        token = os.getenv("DISCORD_TOKEN")
-    except:
-        raise NameError("No Discord bot token could be read from .env.")    
+
+    token = os.getenv("DISCORD_TOKEN")
+    ip = os.getenv('PUBLIC_IP')
+    port = os.getenv('PORT')
+    tls = os.getenv('TLS_CERT')    
     
-    bot = DNDIO()
+    relay = grpc_relay(ip, port, tls)
+
+    bot = DNDIO(relay)
     await bot.start(token)
 
 if __name__ == "__main__":
