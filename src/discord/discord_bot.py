@@ -1,47 +1,28 @@
 import logging, base64, jsonpickle, io
-import redis, json, os, hashlib
+import redis, json, hashlib
 
 import requests, base64, json, os, glob, subprocess, jsonpickle
 
 import discord
-import argparse
+from discord.ext import commands
+
+from cogwatch import watch
 
 import google.protobuf
 
-from . .aio import parser
+class DNDIO(commands.Bot):
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.message_content = True
 
-intents = discord.Intents.default()
-intents.message_content = True
+        super().__init__(command_prefix='~', intents=intents)
 
-client = discord.Client(intents=intents)
+    @watch(path='src/discord/commands', preload=True)
+    async def on_ready(self):
+        print(f"We have logged in as {self.user}")
 
-@client.event
-async def on_ready():
-    print(f"We have logged in as {client.user}")
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+    async def on_message(self, message):
+        if message.author.bot:
+            return
     
-    if message.content.startswith('~'):
-        try:
-            result = parser.parse_str(message.content[1:])
-        except Exception as e:
-            print(type(e))
-            result = e
-        except SystemExit as e:
-            result = e
-        
-        await message.channel.send(result)
-
-def run_bot(token=None):
-    try:
-        client.run(token)
-    except Exception as e:
-        print(e)
-
-if __name__ == "__main__":
-    import sys
-    token = sys.argv[1]
-    run_bot(token)
+        await self.process_commands(message)

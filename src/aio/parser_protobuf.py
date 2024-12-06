@@ -1,6 +1,8 @@
-from parser import *
+from src .aio .parser import *
 import sys
-import dndio_pb2,dndio_pb2_grpc
+import os
+print(os.getcwd())
+from src .aio import dndio_pb2, dndio_pb2_grpc
 from argparse import Namespace
 import json
 import grpc

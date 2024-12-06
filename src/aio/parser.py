@@ -241,7 +241,7 @@ char_set_parsers = {
             ability_scores, 
             list(range(1, 21))
         ),
-    "skill":
+    "proficiency":
         (
             # ["animalhandling", "arcana", "(etc.)"],
             ["animal handling","investigation","performance",
@@ -270,10 +270,6 @@ for target in char_set_parsers:
 ########## The following can only take one value. ##########
 
 char_set_arguments = {
-    "proficiency":
-        [
-            1, 3, 6
-        ],
     "AC":
         list(
             range(0, 51)
@@ -293,7 +289,7 @@ char_set_arguments = {
             "warlock", 
             "wizard"
         ],
-    "Race":
+    "race":
         [
             "aasimar",
             "aarakocra",
@@ -316,10 +312,6 @@ char_set_arguments = {
             "Huge",
             "Gargantuan"
         ],
-    "spellDC":
-        list(
-            range(31)
-        ),
     "level":
         list(
             range(21)
@@ -363,15 +355,15 @@ feat_parser.add_argument(
 
 ########## The following can take multiple values. ##########
 
-spellslot_parser = add_sub.add_parser("spellslot")
+# spellslot_parser = add_sub.add_parser("spellslot")
 
-spellslot_parser.add_argument(
-    "slot",
-    nargs="+",
-    action=SetValueSplitter, 
-    valid_stats=list(range(1, 10)), 
-    valid_values=list(range(1, 4))
-)
+# spellslot_parser.add_argument(
+#     "slot",
+#     nargs="+",
+#     action=SetValueSplitter, 
+#     valid_stats=list(range(1, 10)), 
+#     valid_values=list(range(1, 4))
+# )
 
 item_parser = add_sub.add_parser("item")
 
@@ -419,15 +411,15 @@ item_parser.add_argument(
 
 ########## The following can take multiple values. ##########
 
-spellslot_parser = remove_sub.add_parser("spellslot")
+# spellslot_parser = remove_sub.add_parser("spellslot")
 
-spellslot_parser.add_argument(
-    "slot",
-    nargs="+",
-    action=SetValueSplitter, 
-    valid_stats=list(range(1, 10)), 
-    valid_values=list(range(1, 4))
-)
+# spellslot_parser.add_argument(
+#     "slot",
+#     nargs="+",
+#     action=SetValueSplitter, 
+#     valid_stats=list(range(1, 10)), 
+#     valid_values=list(range(1, 4))
+# )
 
 
 ##########################################################################

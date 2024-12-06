@@ -8,3 +8,4 @@ protobuf-compiler
 google-cloud-storage
 
 discord.py
+cogwatch
