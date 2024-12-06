@@ -254,6 +254,16 @@ char_set_parsers = {
              "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
              "medicine","religion"],
             list(range(-5, 6))
+        ),
+    "equipped":
+        (
+            ['armor','weapon']
+            [
+                'Chain Mail','Studded Leather','Halfplate','Leather','Chain Shirt','Plate','Shield','Padded','Breastplate','Hide','Splint','Ring Mail','Scale Mail','Spiked Armor',
+                'morningstar', 'blowgun', 'halberd', 'light crossbow', 'longsword', 'net', 'greatclub', 'shortsword', 'flail', 'quarterstaff', 'spear', 'club', 'glaive', 'lance', 
+                'battleaxe', 'dart', 'trident', 'javelin', 'greatsword', 'warhammer', 'sickle', 'mace', 'whip', 'light hammer', 'war pick', 'pike', 'rapier', 'greataxe', 'hand crossbow', 
+                'scimitar', 'dagger', 'heavy crossbow', 'sling', 'longbow', 'shortbow', 'maul', 'handaxe'
+            ]
         )
 }
 

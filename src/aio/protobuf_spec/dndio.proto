@@ -52,6 +52,8 @@ message charreply {
 //    string dc_channel = 3;
 //    string dc_user = 4;
     dndioreply common = 1;
+    //repeated string changes_made=2;
+    //repeated string not_changed=3;
     repeated string columns = 5;
     repeated string dtype = 6;
     repeated string values = 7;

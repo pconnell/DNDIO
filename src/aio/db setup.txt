@@ -35,14 +35,14 @@ CREATE TABLE users(
 
 CREATE TABLE char_table(
     campaign_id text,
-    user_id text,
+    char_id text,
     char_name text,
     char_class text,
     level smallint,
     align text, 
     max_hp smallint, 
     curr_hp smallint,
-    CHR smallint, 
+    CHA smallint, 
     STR smallint,
     INT smallint,
     WIS smallint,
@@ -60,7 +60,7 @@ CREATE TABLE char_table(
     //end merge
     equipped map<text,text>,
     spellslots map<smallint, smallint>,
-    PRIMARY KEY (campaign_id,user_id)
+    PRIMARY KEY (campaign_id,char_id)
 );
 
 

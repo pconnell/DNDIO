@@ -105,6 +105,17 @@ class rmq_server():
         self.queue = await self.channel.declare_queue(self.qname)
         logger.info(" [x] Char Worker Listening for RPC Requests")
 
+    def proc_err_msg(self,msg,err_msg):
+        c = dndio_pb2.dndioreply(
+            orig_cmd = 'init',
+            dc_channel=msg.dc_channel,
+            dc_user=msg.user,
+            status=False,
+            err_msg=err_msg
+        )
+        return dndio_pb2.initreply(
+            commmon=c
+        )
 
     async def run(self):
         await self.connect()
@@ -120,10 +131,19 @@ class rmq_server():
                     inbound_msg = dndio_pb2.dndiomsg() #workerInit_pb2.msg()
                     inbound_msg.ParseFromString(msg.body)
                     args = json.loads(inbound_msg.args)
+                    logger.info("  [x] pre-processed arguments: {}".format(args))
+                    logger.info("  [x] checking that the cmd has an owner")
+                    # if len(args.get('owner','')) > 0 :
+                    #     args['owner'] = json.loads(args['owner'])
+                    # logger.info("  [x] if the cmd has users")
+                    # if len(args.get('users','')) > 0:
+                    #     args['users'] = json.loads(args['users'])
                     logger.info("  [x] Parsed RPC to GRPC, converting to query")
+
+                    logger.info("  [x] post processed arguments: {}".format(args))
                     resps = []
                     if args['owner'] is not None:
-                        query = """INSERT INTO campaign (id,owner) VALUES ('{}','{}') IF NOT EXISTS""".format(
+                        query = """INSERT INTO campaign (id,owners) VALUES ('{}',{}) IF NOT EXISTS""".format(
                             inbound_msg.dc_channel,args['owner']
                         )
                         corr_id = str(uuid.uuid4())
@@ -136,24 +156,15 @@ class rmq_server():
                             inbound_msg.dc_channel
                         )
                         corr_id = str(uuid.uuid4())
-                        logger.info(f"  [x] Verifying campaign exists...")
+                        logger.info("  [x] Verifying campaign exists...")
                         resp = await self.rmq_client.call(query,corr_id)
                         resp = json.loads(resp)['rows']
                         if len(resp) == 0:
-                            #campaign doesn't exist
-                            c = dndio_pb2.dndioreply(
-                                orig_cmd='init',
-                                dc_channel=inbound_msg.dc_channel,
-                                dc_user=inbound_msg.user,
-                                status=False,
-                                err_msg='Campaign {} does not exist, create a campaign with an owner first'
-                            )
-                            ret = dndio_pb2.initreply(
-                                common=c
-                            )
+
+                            ret = self.proc_err_msg(msg,"This campaign does not exist.  Please create a campaign first.")
                             await self.exchange.publish(
                                 Message(
-                                    body=ret.SerializeToString(),
+                                    body=ret.SerializeToString('Campaign {} does not exist, create a campaign with an owner first.'.format(dc_channel)),
                                     correlation_id=msg.correlation_id
                                 ),
                                 routing_key=msg.reply_to
@@ -184,7 +195,7 @@ class rmq_server():
                         orig_cmd='',
                         dc_channel=inbound_msg.dc_channel,
                         dc_user=inbound_msg.user,
-                        err_msg='Unknown Error'
+                        err_msg='Unknown Error in run init worker'
                     )
                     ret = dndio_pb2.initreply(common=c)
                 finally:
@@ -195,7 +206,6 @@ class rmq_server():
                         ),
                         routing_key=msg.reply_to
                     )
-
 
 
 if __name__=='__main__':

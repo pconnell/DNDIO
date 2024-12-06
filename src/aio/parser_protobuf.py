@@ -7,9 +7,6 @@ from argparse import Namespace
 import json
 import grpc
 
-
-
-
 if __name__ == '__main__':
     while True:
         x = input("Enter a command: ")
@@ -19,14 +16,24 @@ if __name__ == '__main__':
         #build a basic message based upon the 
         # command line arguments
         # take the args and parse them to a dictionary and dump into a string
-        
-        to_send = dndio_pb2.dndiomsg(
-            cmd = dat[0],
-            subcmd= dat[1],
-            args = json.dumps(vars(args)),
-            dc_channel='abcdef',
-            user = 'chorky#8402'
-        )
+        if dat[0]!='init':
+            to_send = dndio_pb2.dndiomsg(
+                cmd = dat[0],
+                subcmd= dat[1],
+                args = json.dumps(vars(args)),
+                dc_channel='abcdef',
+                user = 'chorky#8402'
+            )
+        else:
+            dc = input("please enter the server name: ")
+            print(vars(args))
+            to_send = dndio_pb2.dndiomsg(
+                cmd = 'init',
+                subcmd= "",
+                args = json.dumps(vars(args)),
+                dc_channel=dc,
+                user = 'chorky#8402'
+            )
         print(vars(args))
         print('*'*80) 
         print(to_send)
@@ -38,7 +45,9 @@ if __name__ == '__main__':
         credentials = grpc.ssl_channel_credentials(cert_bytes)
         cert_cn = 'rest.default.svc.cluster.local'
         options = (('grpc.ssl_target_name_override', cert_cn,),)
-        channel = grpc.secure_channel('localhost:443', credentials, options)
+        # channel = grpc.secure_channel('localhost:443', credentials, options)
+        #channel = grpc.secure_channel('192.168.0.110:443',credentials,options)
+        channel = grpc.secure_channel('73.95.249.208:44443',credentials,options)
         #build all stubs
         #use them in a dict to lookup which to use
         ch_stub = dndio_pb2_grpc.charSvcStub(channel)
