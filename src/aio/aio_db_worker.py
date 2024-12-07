@@ -203,7 +203,8 @@ class rmq_server():
                     await self.exchange.publish(
                         Message(
                             body=json.dumps(resp).encode(),
-                            correlation_id=msg.correlation_id
+                            correlation_id=msg.correlation_id,
+                            expiration=10
                         ),
                         routing_key=msg.reply_to
                     )

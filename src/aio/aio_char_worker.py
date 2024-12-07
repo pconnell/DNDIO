@@ -11,7 +11,7 @@ import asyncio
 # import workerChar_pb2, workerChar_pb2_grpc
 import dndio_pb2, dndio_pb2_grpc
 import json
-
+from pika import BasicProperties
 
 RMQ_HOST = os.getenv('RMQ_HOST') or 'localhost'
 RMQ_PORT = os.getenv('RMQ_PORT') or 5672
@@ -71,7 +71,8 @@ class rmq_client():
                 msg.encode('utf-8'),
                 content_type='text/plain',
                 correlation_id=correlation_id,
-                reply_to=self.callback_queue.name
+                reply_to=self.callback_queue.name,
+                expiration=10
             ),
             routing_key='worker.db'
         )
@@ -485,6 +486,28 @@ class rmq_server():
                 query = "UPDATE char_table SET char_class='{}' WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
                     args['class'],char_data['char_id'],char_data['campaign_id']
                 )
+            elif to_set=='equipped':
+                #check to make sure they have the weapon, first... do that later.
+                logger.info("{}:{}".format(args['equipped'][0],args['equipped'][1]))
+                logger.info(char_data['equipped'])
+                if char_data['equipped'] is None:
+                    char_data['equipped'] = {'weapon':[],'armor':[]}
+                logger.info(char_data['equipped'])
+                if args['equipped'][0]=='weapon':
+                    s='s'
+                else:
+                    s=''
+                if args['equipped'][1] not in char_data[args['equipped'][0]+s]: #char_data['equipped'][args['equipped'][0]]:
+                    err_msg = await self.proc_err_msg(
+                        msg,
+                        'char set',
+                        "You don't have {} in your inventory. Here's what you do have for {}: {}".format(
+                            args['equipped'][1],args['equipped'][0],char_data['equipped'][args['equipped'][0]])
+                    )
+                    return err_msg
+                query = "UPDATE char_table SET equipped['{}']='{}' WHERE char_id='{}' and campaign_id='{}' IF EXISTS".format(
+                    args['equipped'][0],args['equipped'][1],char_data['char_id'],char_data['campaign_id']
+                )
             if (
                 to_set == 'level' and char_data['char_class'] is not None or
                 to_set == 'class' and char_data['level'] is not None
@@ -729,9 +752,10 @@ class rmq_server():
                         await self.exchange.publish(
                             Message(
                                 body=resp.SerializeToString(),
-                                correlation_id=msg.correlation_id
+                                correlation_id=msg.correlation_id,
+                                expiration=10
                             ),
-                            routing_key=msg.reply_to
+                            routing_key=msg.reply_to,                            
                         )
                     logging.info(' [x] Processed Request')
                 except Exception:

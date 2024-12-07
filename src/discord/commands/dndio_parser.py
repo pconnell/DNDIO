@@ -71,7 +71,45 @@ class SetValueSplitter(argparse.Action):
             rolls+= roll_temp
         
         return rolls
+
+
+class StrValueSplitter(argparse.Action):
+    def __init__(self, valid_stats, valid_values, return_values=False, roll=False, **kwargs):
+        self.return_values = "values" if return_values else "stats"
+        self.roll = roll
+
+        if valid_stats:
+            self.valid_stats = [str(s) for s in valid_stats]
+        if valid_values:
+            self.valid_values = valid_values
+        super().__init__(**kwargs)
     
+    def __call__(self, parser, namespace, args, opt_string=False): #idk what opt_string is but it breaks if it's not there
+
+        if self.roll:
+            args = self._convert_roll(args)
+
+        if self.nargs in ["*", "?"] or type(self.nargs) == str:
+            setattr(namespace, self.dest, args)
+            return
+        
+        if len(args) % 2 != 0:
+            raise ValueError("Values must be in key-value pairs.")
+
+        it = [iter(args)] * 2
+
+        stats = dict(zip(*it))
+
+        if self.valid_stats and self.valid_values:
+            for stat in stats:
+                if not (
+                    str(stat) in self.valid_stats and str(stats[stat]) in self.valid_values
+                ):
+                    raise ValueError(f"{stat}, {stats[stat]}.\nValid categories are {self.valid_stats}, with values ranging from {self.valid_values[0]} to {self.valid_values[-1]}.")
+
+        setattr(namespace, self.dest, eval(self.return_values))
+        return
+
 ####################### ARGPARSER DEFINITIONS #######################
 
 parser = argparse.ArgumentParser(prog='dndio', exit_on_error=False)
@@ -226,6 +264,17 @@ def create_set_value_parser(parser, name, valid_stats: list, valid_values: list[
 
     return parser
 
+def create_str_value_parser(parser, name, valid_stats: list, valid_values: list[str]):
+    parser.add_argument(
+        name, 
+        nargs="+", 
+        action=StrValueSplitter, 
+        valid_stats=valid_stats, 
+        valid_values=valid_values
+    )
+
+    return parser
+
 # Create parsers
 
 char_set = char_sub.add_parser('set', 
@@ -243,7 +292,7 @@ char_set_parsers = {
         ),
     "equipped":
         (
-            'weapon', 
+            ['weapon'], 
             [
                 'morningstar', 'blowgun', 'halberd', 'light crossbow', 'longsword', 'net', 'greatclub', 'shortsword', 'flail', 'quarterstaff', 'spear', 'club', 'glaive', 'lance', 
                 'battleaxe', 'dart', 'trident', 'javelin', 'greatsword', 'warhammer', 'sickle', 'mace', 'whip', 'light hammer', 'war pick', 'pike', 'rapier', 'greataxe', 'hand crossbow', 
@@ -255,12 +304,21 @@ char_set_parsers = {
 
 for target in char_set_parsers:
     value_sub = set_sub.add_parser(target)
-    create_set_value_parser(
-        value_sub, 
-        target,
-        char_set_parsers[target][0],
-        char_set_parsers[target][1]        
-    )
+    print(target)
+    if target != 'equipped':
+        create_set_value_parser(
+            value_sub, 
+            target,
+            char_set_parsers[target][0],
+            char_set_parsers[target][1]        
+        )
+    else:
+        create_str_value_parser(
+            value_sub,
+            target,
+            char_set_parsers[target][0],
+            char_set_parsers[target][1]
+        )
 
 ########## The following take one or more values of a single type. ##########
 
