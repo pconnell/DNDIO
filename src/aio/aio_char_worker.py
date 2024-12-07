@@ -117,7 +117,8 @@ class rmq_server():
             'item':self.add_item,
             'spell':self.add_spell
         }
-        if not funcs.get(list(args.keys())[0]):
+        f = [a for a in list(args.keys()) if a not in ['command','subcommand']][0]
+        if not funcs.get(f):
             err_msg = await self.proc_err_msg(
                 msg,
                 'char add',
@@ -125,7 +126,7 @@ class rmq_server():
             )
             return err_msg
         else:
-            func = funcs[list(args.keys())[0]]
+            func = funcs[f] #list(args.keys())[0]]
             return await func(msg)
 
     async def add_feat(self,msg):
@@ -228,11 +229,11 @@ class rmq_server():
     async def check_spell_exists(self,msg,char_class,char_level):
         try:
             spell_level = (char_level - 1)//2
-            q1 = """SELECT name FROM spells WHERE char_class CONTAINS '{}' AND level <= {} allow filtering;""".format(char_class,spell_level)
+            q1 = """SELECT name FROM spells WHERE char_classes CONTAINS '{}' AND level <= {} allow filtering;""".format(char_class,spell_level)
             corr_id = str(uuid.uuid4())
             spell_resp = await self.rmq_client.call(q1,corr_id)
-            spellnames = json.loads(spell_resp)['rows']
-            spellnames = [s['name'] for s in spellnames]
+            spellnames = json.loads(spell_resp)
+            spellnames = [s['name'] for s in spellnames['rows']]
             args = json.loads(msg.args)
             res = {True:[],False:[]}
             for spell in args['spell']:
@@ -252,7 +253,7 @@ class rmq_server():
     async def check_skill_exists(self, skills:list):
         try:
             query = """SELECT * FROM skills;"""
-            corr_id=uuid.uuid4()
+            corr_id=str(uuid.uuid4())
             resp = await self.rmq_client.call(query,corr_id)
             resp = json.loads(resp)
             skillnames = set([s['name'] for s in resp])
@@ -343,46 +344,66 @@ class rmq_server():
                 ERR_MSGS['implementation_err']+'\n{}'.format(str(e))
             )
             return err_msg
-        
+    
     async def add_spell(self,msg):
         try:
-            char_exists = await self.check_char_exists(msg)
-            if not char_exists[0]:
+            char_data = await self.check_char_exists(msg)
+            if not char_data[0]:
                 err_msg = await self.proc_err_msg(
                     msg,
                     'char add spell',
                     ERR_MSGS['no_char']
                 )
                 return err_msg
-            char_data = char_exists[1]
-            spell_exists = await self.check_spell_exists(msg,char_data['char_class'],char_data['level'])
-            spell_exists[True] = [s for s in spell_exists['True'] if s not in char_data['spells']]
-            add_query = """UPDATE char_table SET spells = spells+{} WHERE char_id='{}' and campaign_id='{}' IF EXISTS;""".format(
-                spell_exists[True],
-                char_data['char_id'],
-                char_data['campaign_id']
+            char_data=char_data[1]
+            spellnames = await self.check_spell_exists(
+                msg,char_data['char_class'],char_data['level']
             )
-            corr_id = str(uuid.uuid4())
-            resp = await self.rmq_client.call(add_query,corr_id)
-            resp = json.loads(resp)
-            if not resp['success']:
-                err_msg = await self.proc_err_msg(
+            if len(spellnames[True]) == 0:
+                return await self.proc_err_msg(
                     msg,
                     'char add spell',
-                    ERR_MSGS['db_err'] + "\n{}".format(resp['msg'])
+                    "No spells to add - spells aren't present in the database"
                 )
-                return err_msg
-            else:
-                c = dndio_pb2.dndioreply(
-                    status=True,
-                    dc_channel=msg.dc_channel,
-                    dc_user=msg.user,
-                    addtl_data='',
-                    err_msg=''
+            can_add = set(spellnames[True])
+            if char_data['spells'] is None:
+                char_data['spells'] = []
+            can_add = list(can_add.difference(char_data['spells']))
+            # logger.info("[***************************************************************************] can add: {}".format(can_add))
+            if len(can_add) > 0:
+                add_query = """UPDATE char_table SET spells = spells+{} WHERE char_id='{}' and campaign_id='{}' IF EXISTS;""".format(
+                    can_add,
+                    char_data['char_id'],
+                    char_data['campaign_id']
                 )
-                return dndio_pb2.charreply(
+                logger.info(add_query)
+                corr_id = str(uuid.uuid4())
+                resp = await self.rmq_client.call(add_query,corr_id)
+                resp = json.loads(resp)
+                if resp['success']:
+                    c=dndio_pb2.dndioreply(
+                        status=True,
+                        dc_channel=msg.dc_channel,
+                        dc_user=msg.user
+                    )
+                else:
+                    c = dndio_pb2.dndioreply(
+                        status=False,
+                        dc_channel=msg.dc_channel,
+                        dc_user=msg.dc_user,
+                        err_msg=ERR_MSGS['db_err']
+                    )
+                ret = dndio_pb2.charreply(
                     common=c
                 )
+                return ret
+            else:
+                err_msg =  await self.proc_err_msg(
+                    msg,
+                    'char add spell',
+                    "No spells to add - all listed spells are already known by your character."
+                )
+                return err_msg
         except Exception as e:
             err_msg = await self.proc_err_msg(
                 msg,
@@ -395,6 +416,7 @@ class rmq_server():
         try:
             args = json.loads(msg.args)
             char_data = await self.check_char_exists(msg)
+
             if not char_data[0]:
                 err_msg = await self.proc_err_msg(
                     msg,
@@ -414,7 +436,8 @@ class rmq_server():
             # name
             # """
             logger.info("[!!!!!] {}".format(args))
-            to_set = list(args.keys())[0]
+            to_set = [a for a in list(args.keys()) if a not in ['command','subcommand','user','server']][0]
+            logger.info("[!!!!!] {}".format(to_set))
             query = ""
             if to_set == 'ability':
                 qstr = ''
@@ -424,22 +447,26 @@ class rmq_server():
                 query = "UPDATE char_table SET {} WHERE char_id='{}' AND campaign_id='{}' IF EXISTS;".format(
                     qstr,char_data['char_id'],char_data['campaign_id']
                 )
-            elif to_set == 'skill':
-                skill_data = await self.check_skill_exists(args[to_set])
+            elif to_set == 'proficiency':
+                # skill_data = await self.check_skill_exists(args[to_set])
+                # logger.info("[!!!!!] {}".format(to_add))
+                if char_data['skills'] is None:
+                    char_data['skills'] = []
                 char_skills = set(char_data['skills'])
                 to_add = list(
-                    set(skill_data[True]).difference(char_skills)
+                    set(args[to_set]).difference(char_skills)
                 )
                 query = "UPDATE char_table SET skills = skills + {} WHERE char_id='{}' AND campaign_id='{}' IF EXISTS;".format(
                     to_add,char_data['char_id'],char_data['campaign_id']
                 )
+                
             elif to_set == 'AC':
                 query = "UPDATE char_table SET ac={} WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
                     args['AC'],char_data['char_id'],char_data['campaign_id']
                 )
-            elif to_set=='Race':
+            elif to_set=='race':
                 query = "UPDATE char_table SET race='{}' WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
-                    args['Race'],char_data['char_id'],char_data['campaign_id']
+                    args['race'],char_data['char_id'],char_data['campaign_id']
                 )
             elif to_set=='size':
                 query = "UPDATE char_table SET size='{}' WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
@@ -454,11 +481,30 @@ class rmq_server():
                 query = "UPDATE char_table SET char_name='{}' WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
                     args['name'],char_data['char_id'],char_data['campaign_id']
                 )
-
-            corr_id=str(uuid.uuid4())
-            resp = await self.rmq_client.call(query,corr_id)
-            resp = json.loads(resp)
+            elif to_set =='class':
+                query = "UPDATE char_table SET char_class='{}' WHERE char_id='{}' AND campaign_id='{}' IF EXISTS".format(
+                    args['class'],char_data['char_id'],char_data['campaign_id']
+                )
+            if (
+                to_set == 'level' and char_data['char_class'] is not None or
+                to_set == 'class' and char_data['level'] is not None
+            ):
+                #handling code here for updating spellslots or other stuff...
+                pass
+            if query != '':
+                corr_id=str(uuid.uuid4())
+                resp = await self.rmq_client.call(query,corr_id)
+                resp = json.loads(resp)
+            else: 
+                err_msg = await self.proc_err_msg(
+                    msg,
+                    'char set '+to_set,
+                    err_msg='The issued query to the database was blank.'
+                )
+                return err_msg
+            logger.info("{}: {}".format(type(msg),msg))
             if resp['success']:
+                logger.info("{}: {}".format(type(msg),msg))
                 #we're good
                 c = dndio_pb2.dndioreply(
                     orig_cmd='char set '+to_set,
@@ -480,10 +526,11 @@ class rmq_server():
                 )
                 return err_msg
         except Exception as e:
+            import traceback
             err_msg = await self.proc_err_msg(
                 msg,
                 'char set',
-                ERR_MSGS['implementation_err']+'\n{}'.format(str(e))
+                ERR_MSGS['implementation_err']+'\n{}: {}'.format(e,traceback.format_exc(e))
             )
             return err_msg
 
@@ -515,6 +562,7 @@ class rmq_server():
             logger.info(args)
             to_get = args['info']
             char_resp = await self.check_char_exists(msg)
+            # char_resp = json.loads(char_resp)
             if not char_resp[0]:
                 err_msg = await self.proc_err_msg(
                     msg,

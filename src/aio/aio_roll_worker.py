@@ -10,6 +10,7 @@ from aio_pika import Message
 import asyncio
 # import workerRoll_pb2, workerRoll_pb2_grpc
 import dndio_pb2, dndio_pb2_grpc
+# from src.discord.commands import dndio_pb2, dndio_pb2_grpc
 import random 
 from argparse import Namespace
 ##################################################################
@@ -190,25 +191,29 @@ class rmq_server():
 
     async def roll_initiative(self,msg):
         ### still need to handle advantage/disadvantage, subcmd vs cmd vs args...
+
         try:
+            # loop = asyncio.get_running_loop()
+            # task = loop.create_task(self.check_char_exists(msg))
+            # char_dat = await task
             char_dat = await self.check_char_exists(msg)
             if not char_dat[0]:
                 err_msg = await self.proc_err_msg(
                     msg,
                     'roll initiative',
-
+                    ERR_MSGS['no_char']
                 )
                 return err_msg
             char_resp = char_dat[1]
             args = json.loads(msg.args)
-            # char_query = """SELECT dex from char_table where campaign_id='{}' and char_id='{}' allow filtering;""".format(
-            #     msg.dc_channel,msg.user
-            # )
-            
-            # corr_id = str(uuid.uuid4())
-            # char_resp = await self.rmq_client.call(char_query,corr_id)
-            # char_resp = json.loads(char_resp)
-            dex_mod = char_resp['rows'][0]['dex']
+            dex_mod = char_resp.get('dex',None)
+            if not dex_mod:
+                err_msg = await self.proc_err_msg(
+                    msg,
+                    'roll initiative',
+                    ERR_MSGS['char_err']
+                )
+                return err_msg
             mod = (dex_mod-10)//2
             ##determine if we need more dice to roll for advantage / disadvantage
             if args['advantage']:
@@ -238,7 +243,7 @@ class rmq_server():
             )
             #build the common reply object
             c = dndio_pb2.dndioreply(
-                orig_cmd='',
+                orig_cmd='roll initiative',
                 status=True,
                 dc_channel=msg.dc_channel,
                 dc_user=msg.user,
@@ -253,7 +258,7 @@ class rmq_server():
             #return the response
             return resp
         except Exception as e:
-            err_msg = self.proc_err_msg(
+            err_msg = await self.proc_err_msg(
                 msg,
                 "roll initiative",
                 ERR_MSGS['imp_err'] + " " + str(e)
@@ -910,10 +915,16 @@ class rmq_server():
                         'skill':self.roll_skill,
                         'spell':self.roll_spell_atk,
                         'raw':self.roll_raw,
-                        'damage':self.roll_atk_dmg
+                        'damage':self.roll_atk_dmg,
+                        'check':self.roll_save
                     }
                     func = funcs[inbound_msg.subcmd]
+                    # loop = asyncio.get_running_loop()
+                    # task = loop.create_task(func(inbound_msg))
+                    # reply = await task
                     reply = await func(inbound_msg)
+                    # # rep = dndio_pb2.rollreply()
+                    # rep = reply#.copy()
                     await self.exchange.publish(
                         Message(
                             body=reply.SerializeToString(),
