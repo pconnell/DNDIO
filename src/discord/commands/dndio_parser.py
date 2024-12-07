@@ -1,6 +1,10 @@
 import argparse, shlex
 from functools import partial
-from commands.parser_consts import *
+import re
+try:
+    from commands.parser_consts import *
+except:
+    from parser_consts import *
 
 '''
 Parser: Defines the arguments passed by the client to the ingress controller.
@@ -40,6 +44,11 @@ class SetValueSplitter(argparse.Action):
     def __call__(self, parser, namespace, args, opt_string=False): #idk what opt_string is but it breaks if it's not there
 
         if self.roll:
+            r = re.compile(r"[+-]\s?[0-9]+")
+            mods = list(filter(r.match, args))
+            args = [x for x in args if x not in mods]
+            setattr(namespace, "modifier", sum(int(x) for x in mods))
+            
             args = self._convert_roll(args)
 
         if self.nargs in ["*", "?"] or type(self.nargs) == int:
@@ -47,7 +56,8 @@ class SetValueSplitter(argparse.Action):
             return
         
         if len(args) % 2 != 0:
-            raise ValueError("Values must be in key-value pairs.")
+            if not self.roll:
+                raise ValueError("Values must be in key-value pairs.")
 
         it = [iter(args)] * 2
 
@@ -122,15 +132,17 @@ search_type.add_argument("-n", "--name", nargs=1)
 #                             Roll Commands                              #
 ##########################################################################
 
-roll_parser = subparsers.add_parser("roll")
+roll_parser = subparsers.add_parser("roll", conflict_handler='resolve')
 
-adv_mod = roll_parser.add_mutually_exclusive_group()
-adv_mod.add_argument("-a", "--advantage")
-adv_mod.add_argument("-d", "--disadvantage")
+def get_subparsers(parser):
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            for p in action.choices:
+                yield action.choices[p]
 
 roll_sub = roll_parser.add_subparsers(dest="subcommand")
 
-raw_parser = roll_sub.add_parser("raw")
+raw_parser = roll_sub.add_parser("raw", conflict_handler='resolve')
 
 raw_parser.add_argument(
     "rolls", 
@@ -141,25 +153,32 @@ raw_parser.add_argument(
     roll=True
 )
 
-spell_parser = roll_sub.add_parser("spell")
+spell_parser = roll_sub.add_parser("spell", conflict_handler='resolve')
 spell_parser.add_argument("name")
 spell_parser.add_argument("level")
 
-check_parser = roll_sub.add_parser("check")
-check_parser.add_argument("ability", choices=ABILITY_SCORES + SKILLS, nargs="+")
+check_parser = roll_sub.add_parser("check", conflict_handler='resolve')
+check_parser.add_argument("ability", choices=ABILITY_SCORES + SKILLS, nargs="?")
 
-check_parser = roll_sub.add_parser("save")
-check_parser.add_argument("ability", choices=ABILITY_SCORES, nargs="+")
+check_parser = roll_sub.add_parser("save", conflict_handler='resolve')
+check_parser.add_argument("ability", choices=ABILITY_SCORES, nargs="?")
 
-attack_parser = roll_sub.add_parser("attack", aliases=["atk"])
+attack_parser = roll_sub.add_parser("attack", aliases=["atk"], conflict_handler='resolve')
 attack_parser.add_argument("action", type=str.lower)
 
-dmg_parser = roll_sub.add_parser("damage", aliases=["dmg"])
+dmg_parser = roll_sub.add_parser("damage", aliases=["dmg"], conflict_handler='resolve')
 dmg_parser.add_argument("action", type=str.lower)
 
-init_parser = roll_sub.add_parser("initiative", aliases=["init"])
+init_parser = roll_sub.add_parser("initiative", aliases=["init"], conflict_handler='resolve')
 
-roll_parser.add_argument("mod", nargs="?")
+for i in get_subparsers(roll_parser):
+    adv_mod = i.add_mutually_exclusive_group()
+    adv_mod.add_argument('-a', '--advantage', type=int, default=0, const=1, nargs='?')
+    adv_mod.add_argument('-d', '--disadvantage', type=int, default=0, const=1, nargs='?')
+    
+    if i.prog != "dndio roll raw":
+        i.register('type', 'parse_modifier', lambda x, **kwargs: int(x) if re.match(r"[+-]\s?[0-9]+", x) else 0)
+        i.add_argument("modifier", nargs='?', type='parse_modifier')
 
 ##########################################################################
 #                          Character Commands                            #
@@ -476,13 +495,15 @@ if __name__ == "__main__":
         "roll 1d6 -a"
     ]
 
+    test_commands = ["roll save INT -a", "roll save INT -a 3", "roll raw -a 3 1d6 +5", "roll raw -a 3 1d6 -5"]
+
 if __name__ == '__main__':
     for s in test_commands:
-        try:
+        # try:
             parse_str(s, debug=True)
-        except Exception as e:
-            print("Error:", e)
-        # exit()
+        # except Exception as e:
+        #     print("Error:", e)
+        # # exit()
 
     #### NOTES ####
     # - for `init`

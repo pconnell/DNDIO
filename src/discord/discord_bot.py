@@ -17,7 +17,7 @@ class DNDIO(commands.Bot):
 
         super().__init__(command_prefix='/', intents=intents)
 
-    @watch(path='commands/command.py', preload=True)
+    @watch(path='commands/', preload=True)
     async def on_ready(self):
         print(f"We have logged in as {self.user}")
 

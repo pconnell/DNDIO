@@ -1,4 +1,4 @@
-from dndio_parser import *
+from commands.dndio_parser import *
 import dndio_pb2, dndio_pb2_grpc
 import json
 import grpc

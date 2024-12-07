@@ -10,7 +10,6 @@ from relay import grpc_relay
 import json
 
 class Commands(Cog):
-    
     def __init__(self, client: DNDIO):
         self.client = client
         #give this instance an instance of the relay - may want to parameterize this in the future.
