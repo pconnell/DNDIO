@@ -1,6 +1,6 @@
 import argparse, shlex
 from functools import partial
-from parser_consts import *
+from commands.parser_consts import *
 
 '''
 Parser: Defines the arguments passed by the client to the ingress controller.
@@ -265,7 +265,7 @@ for target in char_set_parsers:
 ########## The following take one or more values of a single type. ##########
 
 char_set_arguments = {
-        "skill":
+        "proficiency":
         SKILLS
 }
 
@@ -286,7 +286,7 @@ char_set_arguments = {
         list(
             range(0, 51)
             ),
-    "Class":
+    "class":
         CLASSES,
     "race":
         RACES,
@@ -409,7 +409,7 @@ item_parser.add_argument(
 
 
 #examples
-async def parse_str(s, debug=False):
+def parse_str(s, debug=False):
     s = shlex.split(s)
     if debug:
         print(s)

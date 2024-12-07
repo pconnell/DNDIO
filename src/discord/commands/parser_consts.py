@@ -1,9 +1,24 @@
 ABILITY_SCORES = ("CHA", "STR", "INT", "WIS", "DEX", "CON")
 
-SKILLS = ("animal handling","investigation","performance",
-                "insight","survival","athletics","perception","history","persuasion",
-                "stealth","intimidation","deception","nature","sleight of hand","acrobatics",
-                "medicine","religion")
+SKILLS = (
+    "animal handling",
+    "investigation",
+    "performance",
+    "insight",
+    "survival",
+    "athletics",
+    "perception",
+    "history",
+    "persuasion",
+    "stealth",
+    "intimidation",
+    "deception",
+    "nature",
+    "sleight of hand",
+    "acrobatics",
+    "medicine",
+    "religion"
+)
 
 CLASSES = (
     "barbarian", 

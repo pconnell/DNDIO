@@ -1,6 +1,10 @@
 import json
 import grpc
-import dndio_pb2_grpc,dndio_pb2
+
+import os; print(os.getcwd())
+
+import dndio_pb2_grpc, dndio_pb2
+
 
 class grpc_relay():
     def __init__(self,ip:str,port:str,tls_crt:str):
@@ -32,22 +36,27 @@ class grpc_relay():
             'lookup':{'stub':self.lookup_stub,'func':self.lookup_stub.lookup},
             'roll':{'stub':self.roll_stub,'func':self.roll_stub.roll}
         }
-    async def call(self,cmd,subcmd,svr,usr,args):
+    async def call(self,args: dict):
         #cmd - init/roll/lookup/char
         #subcmd - roll (damage|initiative|spell), char (add|remove|set|etc), ...
         #svr - name of the discord server
         #usr - the user sending up the command
         #args - the namespace arguments for the commands
-        stub = self.stubs.get(cmd,None)
+        print("call")
+        stub = self.stubs.get(args.get("command"),None)
+        print(stub)
         if stub:
+            print(args)
             to_send = dndio_pb2.dndiomsg(
-                cmd=cmd,
-                subcmd=subcmd,
+                cmd=args["command"],
+                subcmd=args.get("subcommand", None),
                 args=json.dumps(args),
-                dc_channel=svr,
-                user=usr
+                dc_channel=args["server"],
+                user=args["user"]
             )
+            print(stub)
             reply = stub['func'](to_send)
+            print(reply)
             return reply #may need handlers here to process the reply depending on type.
             #otherwise - we can return it as a string.
         else: 
