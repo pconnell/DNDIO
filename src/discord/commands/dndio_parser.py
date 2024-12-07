@@ -1,6 +1,6 @@
 import argparse, shlex
 from functools import partial
-from src.aio.parser_consts import *
+from parser_consts import *
 
 '''
 Parser: Defines the arguments passed by the client to the ingress controller.

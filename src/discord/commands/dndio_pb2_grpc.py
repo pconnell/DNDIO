@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import src.aio.dndio_pb2 as dndio__pb2
+import dndio_pb2 as dndio__pb2
 
 GRPC_GENERATED_VERSION = '1.66.2'
 GRPC_VERSION = grpc.__version__

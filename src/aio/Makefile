@@ -5,23 +5,43 @@ protobufs:
 	python3 -m grpc_tools.protoc -I./protobuf_spec --python_out=. --grpc_python_out=. ./protobuf_spec/*.proto
 
 grpc-build:
+	cp ../discord/dndio_pb2_grpc.py .
+	cp ../discord/dndio_pb2.py .
 	docker build -f grpc-Dockerfile -t grpctest .
+	rm ./dndio_pb2.py
+	rm ./dndio_pb2_grpc.py 
 
 db-build:
 	docker build -f db-Dockerfile -t dbworker .
 
 char-build:
+	cp ../discord/dndio_pb2_grpc.py .
+	cp ../discord/dndio_pb2.py .
 	docker build -f char-Dockerfile -t charworker .
+	rm ./dndio_pb2.py
+	rm ./dndio_pb2_grpc.py 
 
 init-build:
+	cp ../discord/dndio_pb2_grpc.py .
+	cp ../discord/dndio_pb2.py .
 	docker build -f init-Dockerfile -t initworker .
+	rm ./dndio_pb2.py
+	rm ./dndio_pb2_grpc.py 
 
 roll-build: 
+	cp ../discord/dndio_pb2_grpc.py .
+	cp ../discord/dndio_pb2.py .
 	docker build -f roll-Dockerfile -t rollworker .
+	rm ./dndio_pb2.py
+	rm ./dndio_pb2_grpc.py 
 
 lookup-build:
+	cp ../discord/dndio_pb2_grpc.py .
+	cp ../discord/dndio_pb2.py .
 	docker build -f lookup-Dockerfile -t lookupworker .
-
+	rm ./dndio_pb2.py
+	rm ./dndio_pb2_grpc.py 
+	
 pull:
 	docker pull pconnell89/grpctest
 	docker pull pconnell89/dbworker
