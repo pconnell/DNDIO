@@ -2,6 +2,7 @@ import asyncio
 import logging
 import aio_pika
 from aio_pika import Message
+from pika import BasicProperties
 import grpc, json
 # import workerChar_pb2, workerChar_pb2_grpc
 # import workerInit_pb2,workerInit_pb2_grpc
@@ -71,7 +72,8 @@ class rmq_client():
                 correlation_id=correlation_id,
                 reply_to=self.callback_queue.name
             ),
-            routing_key=self.wrkr
+            routing_key=self.wrkr,
+            properties=BasicProperties(expiration='5000')
         )
         return await future
 

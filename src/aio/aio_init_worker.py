@@ -62,7 +62,8 @@ class rmq_client():
                 msg.encode('utf-8'),
                 content_type='text/plain',
                 correlation_id=correlation_id,
-                reply_to=self.callback_queue.name
+                reply_to=self.callback_queue.name,
+                expiration=str('10000')
             ),
             routing_key='worker.db'
         )
@@ -204,7 +205,8 @@ class rmq_server():
                             body=ret.SerializeToString(),
                             correlation_id=msg.correlation_id
                         ),
-                        routing_key=msg.reply_to
+                        routing_key=msg.reply_to,
+                        expiration='10000'
                     )
 
 

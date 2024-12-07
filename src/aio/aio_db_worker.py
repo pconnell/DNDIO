@@ -4,7 +4,7 @@ from cassandra.cluster import (
     NoHostAvailable,
     OperationTimedOut
 )
-from cassandra.util import OrderedMapSerializedKey
+from cassandra.util import OrderedMapSerializedKey,SortedSet
 from concurrent import futures
 import uuid
 from typing import MutableMapping
@@ -134,12 +134,14 @@ class cassDB():
             }
             try: 
                 response = self.session.execute(s)
+                result['success'] = True
             except NoHostAvailable:
                 self.connect()
             except OperationTimedOut:
                 self.connect()
             finally:
-                response = self.session.execute(s)
+                if not result['success']:
+                    response = self.session.execute(s)
                 result['success'] = True
             logger.info("  [x] DB on_request: query succeeded: {}".format(s))
             l = response.all()
@@ -201,7 +203,8 @@ class rmq_server():
                     await self.exchange.publish(
                         Message(
                             body=json.dumps(resp).encode(),
-                            correlation_id=msg.correlation_id
+                            correlation_id=msg.correlation_id,
+                            expiration=10
                         ),
                         routing_key=msg.reply_to
                     )
