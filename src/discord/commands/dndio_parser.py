@@ -47,7 +47,7 @@ class SetValueSplitter(argparse.Action):
             r = re.compile(r"[+-]\s?[0-9]+")
             mods = list(filter(r.match, args))
             args = [x for x in args if x not in mods]
-            setattr(namespace, "modifier", sum(int(x) for x in mods))
+            setattr(namespace, "modifiers", [int(x) for x in mods])
             
             args = self._convert_roll(args)
 
@@ -215,8 +215,8 @@ for i in get_subparsers(roll_parser):
     adv_mod.add_argument('-d', '--disadvantage', type=int, default=0, const=1, nargs='?')
     
     if i.prog != "dndio roll raw":
-        i.register('type', 'parse_modifier', lambda x, **kwargs: int(x) if re.match(r"[+-]\s?[0-9]+", x) else 0)
-        i.add_argument("modifier", nargs='?', type='parse_modifier')
+        i.register('type', 'parse_modifiers', lambda x, **kwargs: int(x) if re.match(r"[+-]\s?[0-9]+", x) else 0)
+        i.add_argument("modifiers", nargs='?', type='parse_modifiers')
 
 ##########################################################################
 #                          Character Commands                            #
@@ -553,7 +553,7 @@ if __name__ == "__main__":
         "roll 1d6 -a"
     ]
 
-    test_commands = ["roll save INT -a", "roll save INT -a 3", "roll raw -a 3 1d6 +5", "roll raw -a 3 1d6 -5"]
+    test_commands = ["roll save INT -a", "roll save INT -a 3", "roll raw -a 3 1d6 +5", "roll raw -a 3 1d6 -5 2d8 +3"]
 
 if __name__ == '__main__':
     for s in test_commands:
