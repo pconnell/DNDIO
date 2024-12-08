@@ -45,8 +45,8 @@ class SetValueSplitter(argparse.Action):
 
         if self.roll:
             r = re.compile(r"[+-]\s?[0-9]+")
-            mods = list(filter(r.match, args))
-            args = [x for x in args if x not in mods]
+            mods = [x if re.match(r, x) else 0 for x in args]
+            args = [x if not re.match(r, x) else 0 for x in args]
             setattr(namespace, "modifiers", [int(x) for x in mods])
             
             args = self._convert_roll(args)
@@ -76,6 +76,8 @@ class SetValueSplitter(argparse.Action):
     def _convert_roll(self, args):
         rolls = []
         for roll in args:
+            if roll == 0:
+                continue
             roll_temp = roll.split('d')
             roll_temp.reverse()
             rolls+= roll_temp
