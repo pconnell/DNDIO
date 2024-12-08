@@ -44,7 +44,7 @@ class SetValueSplitter(argparse.Action):
     def __call__(self, parser, namespace, args, opt_string=False): #idk what opt_string is but it breaks if it's not there
 
         if self.roll:
-            r = re.compile(r"(\d+d\d+) ([+-]\s?[0-9]+)?")
+            r = re.compile(r"(\d+d\d+)(\s*[+-]\s?[0-9]+)?")
             pairs = re.findall(r, ' '.join(args))
             rolls = [x[0] for x in pairs]
             mods = [x[1] if x[1] != '' else 0 for x in pairs]
@@ -326,7 +326,7 @@ char_set_parsers = {
 
 for target in char_set_parsers:
     value_sub = set_sub.add_parser(target)
-    print(target)
+    # print(target)
     if target != 'equipped':
         create_set_value_parser(
             value_sub, 
@@ -556,7 +556,7 @@ if __name__ == "__main__":
         "roll 1d6 -a"
     ]
 
-    test_commands = ["roll raw -a 3 1d6 -5 2d8 3d12 +2"]
+    test_commands = ["roll raw -a 3 1d6 -5 2d8 3d12 +2 2d20"]
 
 if __name__ == '__main__':
     for s in test_commands:
