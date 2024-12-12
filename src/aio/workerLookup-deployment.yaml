@@ -21,7 +21,7 @@ spec:
             memory: 100Mi 
         env:
         - name: RMQ_HOST
-          value: rabbitmq
+          value: production-rabbitmqcluster #rabbitmq
         - name: RMQ_PORT
           value: "5672"
         - name: GET_HOSTS_FROM

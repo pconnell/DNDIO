@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -d -o rmq_files
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rabbit3
+  name: rabbit3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: rabbit3
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -d -o rmq_files
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/rabbitmq-cluster: "true"
+        io.kompose.service: rabbit3
+    spec:
+      containers:
+      - env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: secret string
+        - name: RABBITMQ_NODENAME
+          value: rabbit3
+        image: rabbitmq:3-management
+        imagePullPolicy: ""
+        name: rabbit3
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/rabbitmq/rabbitmq.config
+          name: rabbit3-claim0
+        - mountPath: /etc/rabbitmq/definitions.json
+          name: rabbit3-claim1
+      hostname: rabbit3
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: rabbit3-claim0
+        persistentVolumeClaim:
+          claimName: rabbit3-claim0
+      - name: rabbit3-claim1
+        persistentVolumeClaim:
+          claimName: rabbit3-claim1
+status: {}

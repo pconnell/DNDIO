@@ -26,7 +26,7 @@ spec:
             memory: 50Mi
         env:
         - name: RMQ_HOST
-          value: rabbitmq
+          value: production-rabbitmqcluster #haproxy #rabbitmq
         - name: RMQ_PORT
           value: "5672"
         - name: GET_HOSTS_FROM
@@ -34,19 +34,28 @@ spec:
         name: master
         ports:
         - containerPort: 5000
-
 ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   labels:
-#     app: rest #rest
-#   name: rest
-# spec:
-#   ports:
-#   - port: 80
-#     protocol: TCP
-#     targetPort: 5000
-#   selector:
-#     app: rest #rest
-#   type: ClusterIP
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rest
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rest
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 300Mi

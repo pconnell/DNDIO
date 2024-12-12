@@ -7,7 +7,7 @@ from aio_pika.abc import (
     AbstractChannel, AbstractConnection, AbstractIncomingMessage, AbstractQueue,
 )
 from aio_pika import Message
-from pika import BasicProperties
+# from pika import BasicProperties
 import asyncio
 # import workerRoll_pb2, workerRoll_pb2_grpc
 import dndio_pb2, dndio_pb2_grpc
@@ -23,7 +23,7 @@ RMQ_PORT = os.getenv('RMQ_PORT') or 5672
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,#INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[handler]
 )
@@ -52,23 +52,23 @@ class rmq_client():
         self.channel = await self.connection.channel()
         logger.info("  [x] establishing callback queue")
         self.callback_queue = await self.channel.declare_queue(exclusive=True)
-        await self.callback_queue.consume(self.on_response,no_ack=True)
+        await self.callback_queue.consume(self.on_response,no_ack=False) #True)
         logger.info("  [x] client connection with callback queue established!")
         return self
     async def on_response(self, msg: AbstractIncomingMessage):
         if msg.correlation_id is None:
             logger.info(" [!] Received bad inbound response: {}".format(msg))
             return
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         future: asyncio.Future = self.futures.pop(msg.correlation_id)
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         future.set_result(msg.body)
         
     async def call(self,msg,correlation_id):
         loop = asyncio.get_running_loop()
         future = loop.create_future()
         self.futures[correlation_id] = future
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         await self.channel.default_exchange.publish(
             Message(
                 msg.encode('utf-8'),
@@ -121,7 +121,7 @@ class rmq_server():
         corr_id = str(uuid.uuid4())
         char_resp = await self.rmq_client.call(char_query,corr_id)
         char_resp = json.loads(char_resp)
-        logger.info(char_resp)
+        logger.debug(char_resp)
         if len(char_resp['rows']) > 0:
             return (True,char_resp['rows'][0])
         else:
@@ -131,40 +131,63 @@ class rmq_server():
         try:
             args = json.loads(msg.args)
             rolls = []
-            if args.get('advantage') or args.get('disadvantage'):
-                add = max([args.get('advantage'),args.get('disadvantage'),0])
-                for k,v in args['rolls'].items():
-                    r = [random.randint(1,int(k)) for i in range(int(v)+int(add))]
-                    if args.get('disadvantage'):
-                        tot = min(r)
-                    else:
-                        tot = max(r)
-                    rolls.append(
-                        dndio_pb2.roll(
-                            roll_type='raw',
-                            die_rolls=r,
-                            modifiers=None,
-                            modified_rolls=None,
-                            total = tot
-                        )
+            # if args.get('advantage') or args.get('disadvantage'):
+            add = max([args.get('advantage'),args.get('disadvantage'),0])
+            ks = list(args['rolls'].keys())
+            vs = list(args['rolls'].values())
+            mds = args['modifiers']
+            for i in range(len(ks)):
+                k,v,m = int(ks[i]),int(vs[i]),int(mds[i])
+                logger.debug("{}:{}:{}".format(k,v,m))
+                drolls = [random.randint(1,k) for i in range(v+add)]
+                modified = [r+m for r in drolls]
+                if args.get('disadvantage') > 0:
+                    tot = min(modified)
+                elif args.get('advantage') > 0:
+                    tot = max(modified)
+                else:
+                    tot = sum(modified)
+                rolls.append(
+                    dndio_pb2.roll(
+                        roll_type='raw',
+                        die_rolls=drolls,
+                        modifiers=[m],
+                        modified_rolls=modified,
+                        total=tot
                     )
-            else:
-                rolls = []
-                for k,v in args['rolls'].items():
-                    r = [random.randint(1,int(k)) for i in range(int(v))]
-                    if args.get('disadvantage'):
-                        tot = min(r)
-                    else:
-                        tot = max(r)
-                    rolls.append(
-                        dndio_pb2.roll(
-                            roll_type='raw',
-                            die_rolls=r,
-                            modifiers=None,
-                            modified_rolls=None,
-                            total = tot
-                        )
-                    )
+                )
+                # for k,v in args['rolls'].items():
+                #     r = [random.randint(1,int(k)) for i in range(int(v)+int(add))]
+                #     if args.get('disadvantage'):
+                #         tot = min(r)
+                #     else:
+                #         tot = max(r)
+                #     rolls.append(
+                #         dndio_pb2.roll(
+                #             roll_type='raw',
+                #             die_rolls=r,
+                #             modifiers=None,
+                #             modified_rolls=None,
+                #             total = tot
+                #         )
+                #     )
+            # else:
+            #     rolls = []
+            #     for k,v in args['rolls'].items():
+            #         r = [random.randint(1,int(k)) for i in range(int(v))]
+            #         if args.get('disadvantage'):
+            #             tot = min(r)
+            #         else:
+            #             tot = max(r)
+            #         rolls.append(
+            #             dndio_pb2.roll(
+            #                 roll_type='raw',
+            #                 die_rolls=r,
+            #                 modifiers=None,
+            #                 modified_rolls=None,
+            #                 total = tot
+            #             )
+            #         )
             common = dndio_pb2.dndioreply(
                 orig_cmd=msg.cmd,
                 status = True,
@@ -177,8 +200,8 @@ class rmq_server():
                 common=common,
                 dierolls=rolls
             )
-            logger.info("  [x] roll reply: {}".format(roll_reply))
-            await asyncio.sleep(.1)
+            logger.debug("  [x] roll reply: {}".format(roll_reply))
+            # await asyncio.sleep(.1)
             return roll_reply
         except Exception as e:
             err_msg = await self.proc_err_msg(
@@ -227,9 +250,9 @@ class rmq_server():
             mod_rolls = [r+mod for r in rolls]
             #select the roll based on advantage/disadvantage
             if args['advantage']:
-                total = [max(mod_rolls)]
+                total = max(mod_rolls)
             elif args['disadvantage']:
-                total = [min(mod_rolls)]
+                total = min(mod_rolls)
             else:
                 total = max(mod_rolls)
             #build the roll object
@@ -266,7 +289,7 @@ class rmq_server():
     
     async def roll_check(self,msg):
         try:
-            logger.info(msg)
+            logger.debug(msg)
             char_resp = await self.check_char_exists(
                 msg
             )
@@ -279,13 +302,13 @@ class rmq_server():
                 return err_msg
             args = json.loads(msg.args)
             char_resp=char_resp[1]
-            logger.info(args['ability'])
-            if args['ability'][0] not in ['CHA','WIS','CON','INT','DEX','STR']:
+            logger.debug(args['ability'])
+            if args['ability'] not in ['CHA','WIS','CON','INT','DEX','STR']:
                 resp = await self.roll_skill(msg)
                 return resp 
-            stat = char_resp[args['ability'][0].lower()]
-            adv = args.get('advantage') or 0
-            dadv = args.get('disadvantage') or 0 
+            stat = char_resp[args['ability'].lower()]
+            adv = int(args.get('advantage') or 0)
+            dadv = int(args.get('disadvantage') or 0)
             dice = 1 + adv+dadv
             mod = (stat-10)//2
             rolls = [random.randint(1,20) for i in range(dice)]
@@ -296,12 +319,12 @@ class rmq_server():
                 status=True,
                 dc_channel=msg.dc_channel,
                 dc_user=msg.user,
-                addtl_data='Your {} modifier is {}.'.format(args['ability'][0],mod),
+                addtl_data='Your {} modifier is {}.'.format(args['ability'],mod),
                 err_msg=''
             )
 
             r = dndio_pb2.roll(
-                roll_type='{} check'.format(args['ability'][0]),
+                roll_type='{} check'.format(args['ability']),
                 die_rolls=rolls,
                 modifiers=[mod],
                 modified_rolls=mod_rolls,
@@ -315,53 +338,53 @@ class rmq_server():
         except Exception as e:
             err_msg = await self.proc_err_msg(
                 msg,
-                "roll initiative",
+                "roll check",
                 ERR_MSGS['imp_err'] + " " + str(e)
             )
             return err_msg
         pass
 
-    async def roll_save(self,msg):
-        try:
-            char_resp = await self.check_char_exists(
-                msg
-            )
-            if not char_resp[0]:
-                err_msg = await self.proc_err_msg(
-                    msg,
-                    "roll check",
-                    ERR_MSGS['char_err']
-                )
-                return err_msg
-            args = json.loads(msg.args)
+    # async def roll_save(self,msg):
+    #     try:
+    #         char_resp = await self.check_char_exists(
+    #             msg
+    #         )
+    #         if not char_resp[0]:
+    #             err_msg = await self.proc_err_msg(
+    #                 msg,
+    #                 "roll check",
+    #                 ERR_MSGS['char_err']
+    #             )
+    #             return err_msg
+    #         args = json.loads(msg.args)
 
-        except Exception as e:
-            err_msg = await self.proc_err_msg(
-                msg,
-                "roll initiative",
-                ERR_MSGS['imp_err'] + " " + str(e)
-            )
-            return err_msg
-        pass
+    #     except Exception as e:
+    #         err_msg = await self.proc_err_msg(
+    #             msg,
+    #             "roll initiative",
+    #             ERR_MSGS['imp_err'] + " " + str(e)
+    #         )
+    #         return err_msg
+    #     pass
 
     async def roll_save(self,msg):#,campaign, char, stat):
         try:
             args = json.loads(msg.args)
-            stat = ','.join(args['ability']).lower()
+            stat = args['ability'].lower() #','.join(args['ability']).lower()
             campaign = msg.dc_channel
             char=msg.user
-            adv = args.get('advantage') or 0
-            dadv = args.get('disadvantage') or 0
+            adv = int(args.get('advantage') or 0)
+            dadv = int(args.get('disadvantage') or 0)
             # adv = int(args.get('advantage',0))
             # dadv = int(args.get('disadvantage',0))
             cmd = 'roll-save'
             char_query = """SELECT char_class,level,{} from char_table where campaign_id='{}' and char_id='{}' allow filtering;""".format(
-                stat.lower(),campaign,char
+                stat,campaign,char
             )
             corr_id = str(uuid.uuid4())
             char_resp = await self.rmq_client.call(char_query,corr_id)
             char_resp = json.loads(char_resp)['rows'][0]
-            #re
+            logger.debug("[!!!!!!!!!!!!!] {}".format(char_resp))
             if not char_resp.get(stat,False):
                 err_msg = await self.proc_err_msg(
                     msg,
@@ -381,9 +404,9 @@ class rmq_server():
             # logger.info(" [!!!] {}".format(proficiencies,))
             corr_id = str(uuid.uuid4())
             class_resp = await self.rmq_client.call(class_query,corr_id)
-            logger.info("[!!!!!!!!!!!!!] {}".format(json.loads(class_resp)))
+            logger.debug("[!!!!!!!!!!!!!] {}".format(json.loads(class_resp)))
             class_resp = json.loads(class_resp)['rows'][0]
-            logger.info(" [!!!] {}\t{}".format(proficiencies,class_resp))
+            logger.debug(" [!!!] {}\t{}".format(proficiencies,class_resp))
             # mod = class_resp['prof_bonus']
             addtl_data = ""
             modifiers = []
@@ -446,7 +469,7 @@ class rmq_server():
             args = json.loads(msg.args)
             campaign = msg.dc_channel # args['dc_channel']
             char= msg.user #args['user']
-            skill=args['ability'][0]
+            skill=args['ability']
 
             #do we want to build a check for armor being worn on stealth checks? we have the data.
             char_query = """SELECT char_class,level,skills,str,wis,cha,con,int,dex,str from char_table where campaign_id='{}' and char_id='{}' allow filtering;""".format(
@@ -456,7 +479,7 @@ class rmq_server():
             corr_id = str(uuid.uuid4())
             char_resp = await self.rmq_client.call(char_query,corr_id)
             char_resp = json.loads(char_resp)['rows'][0]
-            logger.info(char_resp)
+            logger.debug(char_resp)
             prof_query = "SELECT prof_bonus FROM classes WHERE class_id='{}-{}';".format(
                 char_resp['char_class'],char_resp['level']                
             )
@@ -479,7 +502,7 @@ class rmq_server():
             if skill in char_resp['skills']:
                 mod_roll = [r+prof_bonus for r in mod_roll]
                 mods.append(prof_bonus)
-                addtl_data+="You're proficient in {} checks, so you add your proficiency bonus {}\n".format(args['ability'][0],prof_bonus)
+                addtl_data+="You're proficient in {} checks, so you add your proficiency bonus {}\n".format(args['ability'],prof_bonus)
             addtl_data+='Your {} modifier is {}'.format(skill_resp.upper(),stat_mod)
             if adv > 0:
                 total = max(mod_roll)
@@ -489,7 +512,7 @@ class rmq_server():
                 total = max(mod_roll)
             #update to a message or some other format?
             c = dndio_pb2.dndioreply(
-                orig_cmd='roll check {}'.format(args['ability'][0]),
+                orig_cmd='roll check {}'.format(args['ability']),
                 status=True,
                 dc_channel=msg.dc_channel,
                 dc_user=msg.user,
@@ -497,7 +520,7 @@ class rmq_server():
                 err_msg=''
             )
             r = dndio_pb2.roll(
-                roll_type='{} check'.format(args['ability'][0]),
+                roll_type='{} check'.format(args['ability']),
                 die_rolls=roll,
                 modifiers=mods,
                 modified_rolls=mod_roll,
@@ -520,6 +543,7 @@ class rmq_server():
             return err_msg
 
     async def proc_err_msg(self,msg,cmd,err_msg):
+        logger.error(' [x] processing error message')
         common = dndio_pb2.dndioreply(
             orig_cmd=cmd,
             status=False,
@@ -540,7 +564,7 @@ class rmq_server():
             addtl_data=addtl_data
         )
 
-    async def roll_spell_atk(self,msg):#,spell,slot_lvl,campaign,char):
+    async def roll_spell_atk(self,msg):
         try:
             char_dat = await self.check_char_exists(msg)
             if not char_dat[0]:
@@ -550,30 +574,16 @@ class rmq_server():
                     ERR_MSGS['no_char']
                 )
             char_dat = char_dat[1]
+            logger.debug(char_dat)
             args = json.loads(msg.args)
-            logger.info("[!!!!!] {}".format(args))
+            logger.debug("[!!!!!] {}".format(args))
             spell = args['name']
-            slot_lvl = int(args['level'])
+            slot_lvl = int(args['level'][0])
             campaign = msg.dc_channel
             char = msg.user
-            adv = [args['advantage'] if args['advantage'] else 0][0]
-            dadv = [args['disadvantage'] if args['disadvantage'] else 0][0]
-            # char_query = """ 
-            # SELECT spells,spellslots,cha,wis,int FROM char_table 
-            # WHERE char_id='{}' AND campaign_id='{}'
-            # """.format(char,campaign)
+            adv = int(args['advantage'])
+            dadv = int(args['disadvantage'])
             cmd='roll-spell-atk'
-            # corr_id = str(uuid.uuid4())
-            # char_dat = await self.rmq_client.call(char_query,corr_id)
-            # char_dat = json.loads(char_dat)
-            # char_dat = char_dat.get(['rows'],None)[0]
-            # if char_dat is None:
-            #     err_msg = await self.proc_err_msg(
-            #         msg,
-            #         cmd,
-            #         ERR_MSGS['no_char']
-            #     )
-            #     return err_msg
             errors = []
             err_msg = ""
             ## add handlers here - if this isn't a spellcaster, or there's missing data in their char sheet, return immediately.
@@ -974,9 +984,9 @@ class rmq_server():
                 add_mod = 0
             modifiers.append(add_mod[1])
             rolls = []
-            logger.info(wep_data['dmg'])
+            logger.debug(wep_data['dmg'])
             for dmg_type,dmg_dice in wep_data['dmg'][str(num_hands)+'hnd'].items():
-                logger.info("{}".format(dmg_type,dmg_dice))
+                logger.debug("{}".format(dmg_type,dmg_dice))
                 for num_dice,dice_size in dmg_dice.items():
                     roll = [random.randint(1,int(dice_size)) for i in range(int(num_dice))]
                     mod_roll = [r+add_mod[1] for r in roll]
@@ -1022,8 +1032,8 @@ class rmq_server():
                     
                     inbound_msg = dndio_pb2.dndiomsg()
                     inbound_msg.ParseFromString(msg.body)
-                    logger.info(msg.body)
-                    logger.info(inbound_msg.subcmd)
+                    logger.debug(msg.body)
+                    logger.debug(inbound_msg.subcmd)
                     logger.info("  [x] Parsed RPC to GRPC, converting to query")
                     ##### HERE'S WHERE WE'LL PARSE THE MESSAGE FROM THE CLIENT
                     ## AND USE THAT TO CRAFT DIFFERENT QUERIES
@@ -1052,7 +1062,7 @@ class rmq_server():
                         Message(
                             body=reply.SerializeToString(),
                             correlation_id=msg.correlation_id,
-                            expiration=10
+                            expiration=5000
                         ),
                         routing_key=msg.reply_to
                     )

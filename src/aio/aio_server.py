@@ -26,9 +26,9 @@ RMQ_HOST = os.getenv('RMQ_HOST') or 'localhost'
 RMQ_PORT = os.getenv('RMQ_PORT') or '5672'
 
 handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
+handler.setLevel(logging.DEBUG)#INFO)
 logging.basicConfig( 
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[handler]
 )
@@ -48,32 +48,32 @@ class rmq_client():
         self.channel = await self.connection.channel()
         logger.info("  [x] establishing callback queue")
         self.callback_queue = await self.channel.declare_queue(exclusive=True)
-        await self.callback_queue.consume(self.on_response,no_ack=True)
+        await self.callback_queue.consume(self.on_response,no_ack=False) #True)
         logger.info("  [x] client connection with callback queue established!")
         return self
     async def on_response(self, msg: AbstractIncomingMessage):
         if msg.correlation_id is None:
-            logger.info(" [!] Received bad inbound response: {}".format(msg))
+            logger.error(" [!] Received bad inbound response: {}".format(msg))
             return
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         future: asyncio.Future = self.futures.pop(msg.correlation_id)
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         future.set_result(msg.body)
         
     async def call(self,msg,correlation_id):
         loop = asyncio.get_running_loop()
         future = loop.create_future()
         self.futures[str(correlation_id)] = future
-        logger.info("  [!!!] futures: {}".format(self.futures))
+        logger.debug("  [!!!] futures: {}".format(self.futures))
         await self.channel.default_exchange.publish(
             Message(
                 msg,
                 content_type='text/plain',
                 correlation_id=correlation_id,
-                reply_to=self.callback_queue.name
+                reply_to=self.callback_queue.name,
+                expiration=5000
             ),
-            routing_key=self.wrkr,
-            properties=BasicProperties(expiration='5000')
+            routing_key=self.wrkr
         )
         return await future
 
@@ -107,7 +107,7 @@ class grpc_char_worker(dndio_pb2_grpc.charSvcServicer):
                    request:dndio_pb2.dndiomsg,
                    context:grpc.aio.ServicerContext
     ) -> dndio_pb2.dndioreply:
-        logger.info(" [x] grpc char server - received new request: {}".format(request))
+        logger.debug(" [x] grpc char server - received new request: {}".format(request))
         logger.info(" [x] grpc char server - pushing request to rabbit mq")
         corr_id = str(uuid.uuid4())
         resp = await self.rmq_cli.call(request.SerializeToString(),corr_id)
@@ -139,7 +139,7 @@ class grpc_lookup_worker(dndio_pb2_grpc.lookupSvcServicer):
         request: dndio_pb2.dndiomsg,
         context: grpc.aio.ServicerContext,
     ) -> dndio_pb2.dndioreply:
-        logger.info(" [x] grpc lookup server - received new request: {}".format(request))
+        logger.debug(" [x] grpc lookup server - received new request: {}".format(request))
         # self.rmq_cli = await self.rmq_cli.connect()
         logger.info(" [x] grpc lookup server - pushing request to rabbit mq")
         corr_id = str(uuid.uuid4())
@@ -183,7 +183,7 @@ class grpc_roll_worker(dndio_pb2_grpc.rollSvcServicer):
         request: dndio_pb2.dndiomsg,
         context: grpc.aio.ServicerContext,
     ) -> dndio_pb2.rollreply:
-        logger.info(" [x] grpc roll server - received new request: {}".format(request))
+        logger.debug(" [x] grpc roll server - received new request: {}".format(request))
         # self.rmq_cli = await self.rmq_cli.connect()
         logger.info(" [x] grpc roll server - pushing request to rabbit mq")
         #do the real processing here!!
@@ -237,7 +237,7 @@ class grpc_init_worker(dndio_pb2_grpc.initSvcServicer):
         request: dndio_pb2.dndiomsg,
         context: grpc.aio.ServicerContext,
     ) -> dndio_pb2.initreply:
-        logger.info(" [x] grpc init server - received new request: {}".format(request))
+        logger.debug(" [x] grpc init server - received new request: {}".format(request))
         self.rmq_cli = await self.rmq_cli.connect()
         logger.info(" [x] grpc init server - pushing request to rabbit mq")
         corr_id = str(uuid.uuid4())

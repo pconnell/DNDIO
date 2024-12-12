@@ -4,6 +4,18 @@
 # two services that point to the same pod.
 #
 #
+
+
+# apiVersion: rabbitmq.com/v1beta1
+# kind: RabbitmqCluster
+# metadata:
+#   name: rabbitmq
+#   labels:
+#     app: rabbitmq
+# spec:
+#   rabbitmq:
+     
+
 apiVersion: v1
 kind: Service
 metadata:

@@ -19,23 +19,39 @@ spec:
           requests:
             cpu: 100m 
             memory: 100Mi 
+          limits: 
+            cpu: 100m
+            memory: 100Mi
         env:
         - name: RMQ_HOST
-          value: rabbitmq
+          value: production-rabbitmqcluster #rabbitmq
         - name: RMQ_PORT
           value: "5672"
         - name: GET_HOSTS_FROM
           value: dns
----          
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: workerchar
-#   labels:
-#     app: workerchar
-#     tier: backend
-# spec:
-#   ports:
-#   selector:
-#     app: workerchar
-#     tier: backend
+---
+#autoscale config  
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: workerchar
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workerchar
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 75Mi

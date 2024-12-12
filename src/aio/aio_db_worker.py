@@ -143,11 +143,12 @@ class cassDB():
                 if not result['success']:
                     response = self.session.execute(s)
                 result['success'] = True
-            logger.info("  [x] DB on_request: query succeeded: {}".format(s))
+            logger.debug("  [x] DB on_request: query succeeded: {}".format(s))
+            logger.info("  [x] DB on_request: query succeeded")
             l = response.all()
             result['success']= True
             result['rows'] = []
-            logger.info(l)
+            logger.debug(l)
             if len(l) > 0:
                 result['rows'] = self.rows_to_json(l)
             return result
@@ -195,16 +196,17 @@ class rmq_server():
             async for msg in qiter:
                 try:
                     assert msg.reply_to is not None
-                    logger.info("  [x] Received request: {}".format(msg))
+                    logger.debug("  [x] Received request: {}".format(msg))
+                    logger.info("  [x] Received request")
                     q = msg.body.decode()
                     resp = self.db.exec_query(q)
-                    logger.info("  [x] Received response: {}".format(resp))
-
+                    logger.debug("  [x] Received response: {}".format(resp))
+                    logger.info("  [x] Received response")
                     await self.exchange.publish(
                         Message(
                             body=json.dumps(resp).encode(),
                             correlation_id=msg.correlation_id,
-                            expiration=10
+                            expiration=5000
                         ),
                         routing_key=msg.reply_to
                     )

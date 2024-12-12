@@ -49,23 +49,23 @@ class rmq_client():
         self.channel = await self.connection.channel()
         logger.info("  [x] establishing callback queue")
         self.callback_queue = await self.channel.declare_queue(exclusive=True)
-        await self.callback_queue.consume(self.on_response,no_ack=False) #True)
+        await self.callback_queue.consume(self.on_response,no_ack=True)
         logger.info("  [x] client connection with callback queue established!")
         return self
     async def on_response(self, msg: AbstractIncomingMessage):
         if msg.correlation_id is None:
-            logger.error(" [!] Received bad inbound response: {}".format(msg))
+            logger.info(" [!] Received bad inbound response: {}".format(msg))
             return
-        logger.debug("  [!!!] futures: {}".format(self.futures))
+        logger.info("  [!!!] futures: {}".format(self.futures))
         future: asyncio.Future = self.futures.pop(msg.correlation_id)
-        logger.debug("  [!!!] futures: {}".format(self.futures))
+        logger.info("  [!!!] futures: {}".format(self.futures))
         future.set_result(msg.body)
         
     async def call(self,msg,correlation_id):
         loop = asyncio.get_running_loop()
         future = loop.create_future()
         self.futures[correlation_id] = future
-        logger.debug("  [!!!] futures: {}".format(self.futures))
+        logger.info("  [!!!] futures: {}".format(self.futures))
         await self.channel.default_exchange.publish(
             Message(
                 msg.encode('utf-8'),
@@ -186,7 +186,7 @@ class rmq_server():
         corr_id = str(uuid.uuid4())
         char_resp = await self.rmq_client.call(char_query,corr_id)
         char_resp = json.loads(char_resp)
-        logger.debug(char_resp)
+        logger.info(char_resp)
         if len(char_resp['rows']) > 0:
             return (True,char_resp['rows'][0])
         else:
@@ -377,7 +377,7 @@ class rmq_server():
                     char_data['char_id'],
                     char_data['campaign_id']
                 )
-                logger.debug(add_query)
+                logger.info(add_query)
                 corr_id = str(uuid.uuid4())
                 resp = await self.rmq_client.call(add_query,corr_id)
                 resp = json.loads(resp)
@@ -413,12 +413,6 @@ class rmq_server():
             )
             return err_msg
 
-    async def get_query(self,query):
-        corr_id = uuid.uuid4()
-        resp = await self.rmq_client.call(query,corr_id)
-        resp = json.loads(resp)
-        return resp
-
     async def char_set(self,msg):
         try:
             args = json.loads(msg.args)
@@ -442,9 +436,9 @@ class rmq_server():
             # level
             # name
             # """
-            logger.debug("[!!!!!] {}".format(args))
-            to_set = [a for a in list(args.keys()) if a not in ['command','subcommand','user','server']][0]
-            logger.debug("[!!!!!] {}".format(to_set))
+            logger.info("[!!!!!] {}".format(args))
+            to_set = [a for a in list(args.keys()) if a not in ['command','subcommand','user','server']]
+            logger.info("[!!!!!] {}".format(to_set))
             query = ""
             if to_set == 'ability':
                 qstr = ''
@@ -493,13 +487,13 @@ class rmq_server():
                     args['class'],char_data['char_id'],char_data['campaign_id']
                 )
             elif to_set=='equipped':
-                logger.debug("[!!!!!!!!!!!!] {}".format(args))
+                logger.info("[!!!!!!!!!!!!] {}".format(args))
                 #check to make sure they have the weapon, first... do that later.
-                logger.debug("{}:{}".format(args['equipped'][0],args['equipped'][1]))
-                logger.debug(char_data['equipped'])
+                logger.info("{}:{}".format(args['equipped'][0],args['equipped'][1]))
+                logger.info(char_data['equipped'])
                 if char_data['equipped'] is None:
                     char_data['equipped'] = {'weapon':[],'armor':[]}
-                logger.debug(char_data['equipped'])
+                logger.info(char_data['equipped'])
                 if args['equipped'][0]=='weapon':
                     s='s'
                 else:
@@ -515,7 +509,12 @@ class rmq_server():
                 query = "UPDATE char_table SET equipped['{}']='{}' WHERE char_id='{}' and campaign_id='{}' IF EXISTS".format(
                     args['equipped'][0],args['equipped'][1],char_data['char_id'],char_data['campaign_id']
                 )
-
+            if (
+                to_set == 'level' and char_data['char_class'] is not None or
+                to_set == 'class' and char_data['level'] is not None
+            ):
+                #handling code here for updating spellslots or other stuff...
+                pass
             if query != '':
                 corr_id=str(uuid.uuid4())
                 resp = await self.rmq_client.call(query,corr_id)
@@ -527,35 +526,9 @@ class rmq_server():
                     err_msg='The issued query to the database was blank.'
                 )
                 return err_msg
-            # logger.info("{}: {}".format(type(msg),msg))
-            if (
-                to_set == 'level' and char_data['char_class'] is not None or
-                to_set == 'class' and char_data['level'] is not None
-            ):
-                #handling code here for updating spellslots or other stuff...
-                if to_set == 'level':
-                    s = '{}-{}'.format(char_data['char_class'],args['level'])
-                else:
-                    s = '{}-{}'.format(args['class'],char_data['level'])
-                slot_query = "SELECT spellslots FROM classes WHERE class_id = '{}';".format(s)
-                logger.debug(slot_query)
-                corr_id = str(uuid.uuid4())
-                slot_resp = await self.rmq_client.call(slot_query,corr_id)
-                slot_resp = json.loads(slot_resp)
-                logger.debug(slot_resp)
-                if slot_resp['success'] and slot_resp['rows'][0]['spellslots'] is not None:
-                    #it's a spellcaster!
-                    d = {}
-                    for k,v in slot_resp['rows'][0]['spellslots'].items():
-                        d[int(k)] = int(v)
-                    update_query = "UPDATE char_table SET spellslots = {} WHERE char_id = '{}' and campaign_id='{}' IF EXISTS".format(
-                        d,char_data['char_id'],char_data['campaign_id']
-                    )
-                    corr_id = str(uuid.uuid4())
-                    update_resp = await self.rmq_client.call(update_query,corr_id)
-                    update_resp = json.loads(update_resp)
+            logger.info("{}: {}".format(type(msg),msg))
             if resp['success']:
-                logger.debug("{}: {}".format(type(msg),msg))
+                logger.info("{}: {}".format(type(msg),msg))
                 #we're good
                 c = dndio_pb2.dndioreply(
                     orig_cmd='char set '+to_set,
@@ -610,7 +583,7 @@ class rmq_server():
     async def get_char(self,msg):
         try:
             args = json.loads(msg.args)
-            logger.debug(args)
+            logger.info(args)
             to_get = args['info']
             char_resp = await self.check_char_exists(msg)
             # char_resp = json.loads(char_resp)
@@ -699,8 +672,7 @@ class rmq_server():
                 ret_data.update({'spells':char_data['spells']})
             # logger.info("[!!!!!!] {}".format(ret_data))
             c = dndio_pb2.dndioreply(
-                orig_cmd = 'char get {}'.format(' '.join(to_get)),
-                status=True,
+                orig_cmd = 'char get {}'.format(to_get),
                 dc_channel=msg.dc_channel,
                 dc_user=msg.user,
                 addtl_data=json.dumps(ret_data),
@@ -733,7 +705,7 @@ class rmq_server():
             args = json.loads(msg.args)
             args.pop('command')
             args.pop('subcommand')
-            logger.debug(args)
+            logger.info(args)
             to_remove = list(args.keys())[0]
             query = ''
             if to_remove == 'spell':
@@ -745,7 +717,7 @@ class rmq_server():
                 query = "UPDATE char_table SET weapons = weapons - {}, armor = armor-{} WHERE char_id = '{}' and campaign_id='{}'".format(
                     args['item'],args['item'],char_dat['char_id'],char_dat['campaign_id']
                 )
-            logger.debug(query)
+            logger.info(query)
             reply = await self.rmq_client.call(
                 query,str(uuid.uuid4())
             )
@@ -834,9 +806,9 @@ class rmq_server():
                             ),
                             routing_key=msg.reply_to,                            
                         )
-                    logger.info(' [x] Processed Request')
+                    logging.info(' [x] Processed Request')
                 except Exception:
-                    logger.exception(" [!] Error processing for message: {}".format(msg))
+                    logging.exception(" [!] Error processing for message: {}".format(msg))
 
 
 
